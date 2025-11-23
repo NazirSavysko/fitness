@@ -35,7 +35,6 @@ public class SecurityConfig {
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .addFilter()
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .formLogin(form ->
                         form
