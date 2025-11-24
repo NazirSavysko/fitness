@@ -15,8 +15,13 @@ public class AuthController {
     }
 
     @GetMapping("/register")
+    public String getRegistrationForm() {
+        return "registration";
+    }
+
+    @PostMapping("/register")
     public String register() {
-        return "register";
+        return "redirect:/auth/login?success";
     }
 
 }

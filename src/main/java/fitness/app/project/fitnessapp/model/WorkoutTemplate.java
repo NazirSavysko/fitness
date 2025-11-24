@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @AllArgsConstructor
@@ -28,12 +30,12 @@ public final class WorkoutTemplate {
     @JoinColumn(name = "user_id")
     private FitnessUser user;
 
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "template_exercise",
-    //     schema = "fitness_app",
-    //     joinColumns = @JoinColumn(name = "template_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "exercise_def_id")
-    // )
-    // private List<ExerciseDefinition> exercises;
+     @ManyToMany
+     @JoinTable(
+         name = "template_exercise",
+         schema = "fitness_app",
+         joinColumns = @JoinColumn(name = "template_id"),
+         inverseJoinColumns = @JoinColumn(name = "exercise_def_id")
+     )
+     private List<ExerciseDefinition> exercises;
 }
