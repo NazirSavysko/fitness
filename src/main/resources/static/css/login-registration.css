@@ -11,79 +11,81 @@ html, body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 20px;
 }
 
-.login-form {
+/* Основной контейнер формы */
+.login-form, .registration-form {
     background-color: #ffffff;
     padding: 2.5rem;
     border-radius: 15px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    width: 90%;
+    width: 100%;
     max-width: 400px;
     box-sizing: border-box;
-
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
 .form-title {
     text-align: center;
     color: #0B4C5F;
     margin-top: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
-.error-login {
+/* --- Блоки уведомлений --- */
+.error-login, .error-registration {
     width: 100%;
     background-color: crimson;
     border-radius: 8px;
     padding: 10px 15px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     text-align: center;
-    box-shadow: none;
+    box-sizing: border-box;
 }
+
 .alert-success {
     width: 100%;
     background-color: #4BB543;
     border-radius: 8px;
     padding: 10px 15px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     text-align: center;
-    box-shadow: none;
+    box-sizing: border-box;
 }
 
-.text-error.text-success {
+.text-error, .text-success {
     color: white;
     margin: 0;
     font-size: 1rem;
     font-weight: 500;
-    font-family: sans-serif;
 }
 
+/* --- Поля ввода --- */
 .form-group {
     width: 100%;
     margin-bottom: 1.5rem;
     text-align: left;
+    position: relative; /* Важно для позиционирования иконки */
 }
 
 .form-label {
     display: block;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
     color: #36454F;
 }
 
 .form-input {
-    width: calc(100% - 24px);
-    padding: 1rem 12px;
+    width: 100%;
+    padding: 1rem 45px 1rem 12px; /* 45px справа - место под иконку */
     font-size: 1.1rem;
-
     border-radius: 10px;
     border: 1px solid #A9D1DF;
-
     box-sizing: border-box;
     color: #0B4C5F;
+    height: 50px;
 }
 
 .form-input::placeholder {
@@ -96,22 +98,65 @@ html, body {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
+/* --- Иконка глазика (Material Symbols) --- */
+.material-symbols-outlined {
+    position: absolute;
+    right: 12px;
+    top: 38px; /* Центрирование относительно Label + Input */
+
+    width: auto;
+    height: auto;
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+
+    font-size: 24px;
+    color: #88AABB;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.3s ease;
+}
+
+.material-symbols-outlined:hover {
+    color: #007BFF;
+}
+
+/* --- Кнопка отправки --- */
 .submit-button {
     width: 100%;
     padding: 1rem;
     font-size: 1.2rem;
     font-weight: 700;
-
     color: #ffffff;
     background-color: #007BFF;
-
     border: none;
     border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
 }
 
 .submit-button:hover {
     background-color: #0056b3;
     box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+}
+
+/* --- Подвал формы (ссылки) --- */
+.auth-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #36454F;
+}
+
+.auth-footer a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
 }

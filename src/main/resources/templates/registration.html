@@ -1,36 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Log-in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link media="all" rel="stylesheet" th:href="@{/css/login-registration.css}" type="text/css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <title>Sign up</title>
 </head>
 <body>
 <div class="main-container">
 
     <form class="registration-form" action="/auth/register" method="post">
 
-        <h1 class="form-title">Sing up form</h1>
+        <h1 class="form-title">Sign up form</h1>
 
         <div class="error-registration" th:if="${param.error}">
             <p class="text-error">Invalid email or password</p>
-
         </div>
 
         <div class="form-group">
             <label for="email" class="form-label">Enter your email:</label>
-
             <input type="text" id="email" name="email" class="form-input" placeholder="example@email.com" required>
         </div>
 
         <div class="form-group">
             <label for="password" class="form-label">Enter your password:</label>
             <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+
+            <!-- ВАЖНО: type="button" -->
+            <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
         </div>
 
-        <button type="submit" class="submit-button">Sing up</button>
-        <br>
-        <p>Already have an account?</p> <a href="/login">Log in</a>
+        <button type="submit" class="submit-button">Sign up</button>
+
+        <div class="auth-footer">
+            <span>Already have an account?</span>
+            <a href="/login">Log in</a>
+        </div>
     </form>
 </div>
+
+<!-- Исправленный путь к JS -->
+<script th:src="@{/js/password-toggle.js}"></script>
 </body>
 </html>

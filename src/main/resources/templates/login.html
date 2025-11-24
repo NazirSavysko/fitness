@@ -1,11 +1,13 @@
 <!doctype html>
-<html lang="ru"> <!-- Указал русский язык -->
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link media="all" rel="stylesheet" th:href="@{/css/login.css}" type="text/css"/>
-
-    <title>Log-in</title>
+    <!-- Подключение CSS -->
+    <link media="all" rel="stylesheet" th:href="@{/css/login-registration.css}" type="text/css"/>
+    <!-- Подключение иконок Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <title>Log in</title>
 </head>
 <body>
 <div class="main-container">
@@ -24,19 +26,27 @@
 
         <div class="form-group">
             <label for="email" class="form-label">Enter your email:</label>
-
             <input type="text" id="email" name="email" class="form-input" placeholder="example@email.com" required>
         </div>
 
         <div class="form-group">
             <label for="password" class="form-label">Enter your password:</label>
             <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+
+            <!-- ВАЖНО: добавлен type="button", чтобы не отправлялась форма -->
+            <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
         </div>
 
         <button type="submit" class="submit-button">Log in</button>
-        <br>
-        <p>Don`t have an account?</p> <a href="/registration">Sing up</a>
+
+        <div class="auth-footer">
+            <span>Don`t have an account?</span>
+            <a href="/auth/register">Sign up</a>
+        </div>
     </form>
 </div>
+
+<!-- Исправленный путь к JS (без /static/) -->
+<script th:src="@{/js/password-toggle.js}"></script>
 </body>
 </html>
