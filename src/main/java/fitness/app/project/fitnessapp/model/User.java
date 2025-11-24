@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.entity;
+package fitness.app.project.fitnessapp.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

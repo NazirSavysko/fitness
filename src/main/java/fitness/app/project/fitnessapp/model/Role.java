@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.entity;
+package fitness.app.project.fitnessapp.model;
 
 public enum Role {
     ROLE_USER,

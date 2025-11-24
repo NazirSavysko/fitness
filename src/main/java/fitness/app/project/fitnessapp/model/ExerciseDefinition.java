@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.entity;
+package fitness.app.project.fitnessapp.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static jakarta.persistence.CascadeType.PERSIST;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @AllArgsConstructor
@@ -14,18 +13,15 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Setter
 @Getter
 @Entity
-@Table(name = "fitness_user", schema = "fitness_app")
-public final class FitnessUser {
+@Table(name = "exercise_definition", schema = "fitness_app")
+public final class ExerciseDefinition {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "exercise_def_id")
     private Integer id;
 
+    @Column
     private String name;
 
-    private String surname;
-
-    @OneToOne(cascade = {PERSIST,CascadeType.REMOVE})
-    @JoinColumn(name = "auth_id")
-    private User userDetails;
 }
