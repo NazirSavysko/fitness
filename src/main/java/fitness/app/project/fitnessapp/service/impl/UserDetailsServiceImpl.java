@@ -32,7 +32,6 @@ public final class UserDetailsServiceImpl  implements UserDetailsService {
         final User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(format(NOT_FOUND_ERROR, username)));
 
-
         return new UserDetails() {
             @Override
             public @NonNull Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,3 +50,4 @@ public final class UserDetailsServiceImpl  implements UserDetailsService {
         };
     }
 }
+

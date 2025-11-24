@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.security;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,7 +25,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @EnableWebSecurity
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
+
+    private final UserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity httpSecurity) throws Exception {
@@ -48,7 +52,6 @@ public class SecurityConfig {
                 .build();
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -56,6 +59,6 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(final PasswordEncoder passwordEncoder) {
-        return new DaoAuthenticationProvider();
+        return new DaoAuthenticationProvider(userDetailsService);
     }
 }
