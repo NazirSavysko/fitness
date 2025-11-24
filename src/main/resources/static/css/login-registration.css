@@ -14,7 +14,6 @@ html, body {
     padding: 20px;
 }
 
-/* Основной контейнер формы */
 .login-form, .registration-form {
     background-color: #ffffff;
     padding: 2.5rem;
@@ -34,7 +33,6 @@ html, body {
     margin-bottom: 1.5rem;
 }
 
-/* --- Блоки уведомлений --- */
 .error-login, .error-registration {
     width: 100%;
     background-color: crimson;
@@ -62,12 +60,11 @@ html, body {
     font-weight: 500;
 }
 
-/* --- Поля ввода --- */
 .form-group {
     width: 100%;
     margin-bottom: 1.5rem;
     text-align: left;
-    position: relative; /* Важно для позиционирования иконки */
+    position: relative;
 }
 
 .form-label {
@@ -79,7 +76,7 @@ html, body {
 
 .form-input {
     width: 100%;
-    padding: 1rem 45px 1rem 12px; /* 45px справа - место под иконку */
+    padding: 1rem 45px 1rem 12px;
     font-size: 1.1rem;
     border-radius: 10px;
     border: 1px solid #A9D1DF;
@@ -98,21 +95,20 @@ html, body {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
-/* --- Иконка глазика (Material Symbols) --- */
 .material-symbols-outlined {
     position: absolute;
-    right: 12px;
-    top: 38px; /* Центрирование относительно Label + Input */
-
-    width: auto;
-    height: auto;
-    background-color: transparent;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
     border: none;
-    padding: 4px;
-
-    font-size: 24px;
     color: #88AABB;
     cursor: pointer;
+    font-size: clamp(18px, 4vw, 24px);
     user-select: none;
     transition: color 0.3s ease;
 }
@@ -121,7 +117,6 @@ html, body {
     color: #007BFF;
 }
 
-/* --- Кнопка отправки --- */
 .submit-button {
     width: 100%;
     padding: 1rem;
@@ -141,7 +136,6 @@ html, body {
     box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
 }
 
-/* --- Подвал формы (ссылки) --- */
 .auth-footer {
     display: flex;
     justify-content: center;

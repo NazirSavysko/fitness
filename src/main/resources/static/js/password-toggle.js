@@ -5,10 +5,10 @@ function togglePassword() {
     if (passwordInput) {
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            if (toggleButton) toggleButton.textContent = 'visibility_off'; // Меняем иконку на зачеркнутый глаз
+            if (toggleButton) toggleButton.textContent = 'visibility_off';
         } else {
             passwordInput.type = 'password';
-            if (toggleButton) toggleButton.textContent = 'visibility'; // Возвращаем обычный глаз
+            if (toggleButton) toggleButton.textContent = 'visibility';
         }
     }
 }
