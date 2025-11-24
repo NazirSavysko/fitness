@@ -54,24 +54,8 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
     @Bean
     public AuthenticationProvider authenticationProvider(final PasswordEncoder passwordEncoder) {
-        return new DaoAuthenticationProvider(username -> new UserDetails() {
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return List.of((GrantedAuthority) () -> "ADMIN");
-            }
-
-            @Override
-            public String getPassword() {
-                return "1234";
-            }
-
-            @Override
-            public String getUsername() {
-                return "mama";
-            }
-        });
+        return new DaoAuthenticationProvider();
     }
 }

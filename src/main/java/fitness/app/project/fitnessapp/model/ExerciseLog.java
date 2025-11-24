@@ -29,20 +29,17 @@ public final class ExerciseLog {
     @Column(name = "reps")
     private Integer reps;
 
-    // DECIMAL(6, 2) в базе -> BigDecimal в Java
     @Column(name = "weight")
     private BigDecimal weight;
 
     @Column(name = "rest_seconds")
     private Integer restSeconds;
 
-    // К какой сессии относится этот подход
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id")
     private WorkoutSession workoutSession;
 
-    // Какое именно упражнение делали (Жим, Присед и т.д.)
-    // EAGER загрузка здесь нормальна, так как нам почти всегда нужно знать название упражнения
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "exercise_def_id")
     private ExerciseDefinition exerciseDefinition;
