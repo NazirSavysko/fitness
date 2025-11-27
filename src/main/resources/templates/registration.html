@@ -26,6 +26,7 @@
         <div class="form-group">
             <label for="password" class="form-label">Enter your password:</label>
             <input type="password" id="password" name="password" class="form-input" data-th-value="${registrationPayload?.password()}" placeholder="••••••••" required>
+            <label th:if="${param.e}"></label>
             <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
         </div>
 

@@ -28,12 +28,4 @@ public @interface ValidEmail {
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
-    // 2. Поля из стандартной @Email, перенаправленные внутрь (через OverridesAttribute)
-
-    @OverridesAttribute(constraint = Email.class, name = "regexp")
-    String regexp() default ".*";
-
-    @OverridesAttribute(constraint = Email.class, name = "flags")
-    Pattern.Flag[] flags() default {};
 }

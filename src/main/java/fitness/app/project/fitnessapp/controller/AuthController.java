@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
+import fitness.app.project.fitnessapp.facade.FitnessUserFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("api/v1/auth")
 @AllArgsConstructor
 public class AuthController {
 
-    private final RegistrationDTO registrationPayload;
+    private final FitnessUserFacade fitnessUserFacade;
 
     @GetMapping("/login")
     public String login() {
@@ -29,8 +30,10 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@ModelAttribute("registrationPayload") final RegistrationDTO registrationPayload,
+    public String register(@Valid @ModelAttribute("registrationPayload") final RegistrationDTO registrationPayload,
                            final BindingResult bindingResult) {
+
+        this.fitnessUserFacade.register(bindingResult,registrationPayload);
 
         return "redirect:/auth/login?success";
     }
