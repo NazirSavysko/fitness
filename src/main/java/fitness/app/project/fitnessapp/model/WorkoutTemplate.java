@@ -21,7 +21,7 @@ public final class WorkoutTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "template_id")
-    private Integer id;
+    private Integer templateId;
 
     @Column
     private String name;

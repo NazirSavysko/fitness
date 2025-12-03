@@ -19,7 +19,7 @@ public final class FitnessUser {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    private Integer userId;
 
     private String name;
 

@@ -22,7 +22,7 @@ public final class WorkoutSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "session_id")
-    private Integer id;
+    private Integer sessionId;
 
     @Column(name = "session_date")
     private LocalDateTime sessionDate;

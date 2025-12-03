@@ -19,7 +19,7 @@ public final class ExerciseDefinition {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "exercise_def_id")
-    private Integer id;
+    private Integer exerciseDefId;
 
     @Column
     private String name;

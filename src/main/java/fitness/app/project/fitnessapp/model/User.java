@@ -20,7 +20,7 @@ public final class User {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer id;
+    private Integer authId;
 
     private String email;
 

@@ -54,3 +54,8 @@ CREATE TABLE fitness_app.exercise_log
     weight          DECIMAL(6, 2),
     rest_seconds    INTEGER
 );
+
+CREATE TABLE fitness_app.deactivated_tokens(
+    id UUID PRIMARY KEY,
+    keep_until timestamp
+);

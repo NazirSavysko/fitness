@@ -23,7 +23,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 @AllArgsConstructor
 public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfigurer<TokenCookieAuthenticationConfigurer, HttpSecurity> {
 
-    private static final String AUTH_TOKEN_COOKIE_NAME = "__Host-auth-token";
+    private static final String AUTH_TOKEN_COOKIE_NAME = "auth-token";
 
     private final Function<String, Token> tokenCookieStringDeserializer;
     private final DeactivatedTokenRepository deactivatedTokenRepository;
@@ -31,14 +31,16 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
 
     @Override
     public void init(@NonNull HttpSecurity builder) {
-        builder.logout(logout -> logout.addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
+        builder.logout(logout ->
+                logout
+                        .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessUrl("/api/v1/auth/login")
+                        .addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null &&
                                     authentication.getPrincipal() instanceof TokenUser user) {
                                 final DeactivatedToken token = new DeactivatedToken(user.getToken().id(), Date.from(user.getToken().expiresAt()));
                                 this.deactivatedTokenRepository.save(token);
-
-                                response.setStatus(SC_NO_CONTENT);
                             }
                         })
         );

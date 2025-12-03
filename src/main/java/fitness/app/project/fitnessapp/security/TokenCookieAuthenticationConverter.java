@@ -24,7 +24,7 @@ public final class TokenCookieAuthenticationConverter implements AuthenticationC
         }
 
         return Stream.of(request.getCookies())
-                .filter(cookie -> cookie.getName().equals("__HOST-auth-token"))
+                .filter(cookie -> cookie.getName().equals("auth-token"))
                 .findFirst()
                 .map(cookie -> {
                     final Token token = this.tokenCookieStringDeserializer.apply(cookie.getValue());
