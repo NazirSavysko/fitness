@@ -1,13 +1,13 @@
 package fitness.app.project.fitnessapp.security;
 
+import fitness.app.project.fitnessapp.model.DeactivatedToken;
+import fitness.app.project.fitnessapp.repository.DeactivatedTokenRepository;
 import fitness.app.project.fitnessapp.security.token.Token;
-import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
@@ -16,22 +16,26 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import java.util.Date;
 import java.util.function.Function;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 
-public final class TokenCookieAuthenticationConfigurer
-        extends AbstractHttpConfigurer<TokenCookieAuthenticationConfigurer, HttpSecurity> {
+@AllArgsConstructor
+public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfigurer<TokenCookieAuthenticationConfigurer, HttpSecurity> {
+
+    private static final String AUTH_TOKEN_COOKIE_NAME = "__Host-auth-token";
 
     private Function<String, Token> tokenCookieStringDeserializer;
+    private final DeactivatedTokenRepository deactivatedTokenRepository;
 
     @Override
     public void init(@NonNull HttpSecurity builder) {
-        builder.logout(logout -> logout.addLogoutHandler(new CookieClearingLogoutHandler("__Host-auth-token"))
+        builder.logout(logout -> logout.addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null &&
                                     authentication.getPrincipal() instanceof TokenUser user) {
-//                                this.jdbcTemplate.update("insert into t_deactivated_token (id, c_keep_until) values (?, ?)",
-//                                        user.getToken().id(), Date.from(user.getToken().expiresAt()));
+                                final DeactivatedToken token = new DeactivatedToken(user.getToken().id(), Date.from(user.getToken().expiresAt()));
+                                this.deactivatedTokenRepository.save(token);
 
-                                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                                response.setStatus(SC_NO_CONTENT);
                             }
                         })
         );
