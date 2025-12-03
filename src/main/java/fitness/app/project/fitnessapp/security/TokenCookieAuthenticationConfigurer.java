@@ -6,11 +6,13 @@ import fitness.app.project.fitnessapp.security.token.Token;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.csrf.CsrfFilter;
 
 import java.util.Date;
@@ -23,8 +25,9 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
 
     private static final String AUTH_TOKEN_COOKIE_NAME = "__Host-auth-token";
 
-    private Function<String, Token> tokenCookieStringDeserializer;
+    private final Function<String, Token> tokenCookieStringDeserializer;
     private final DeactivatedTokenRepository deactivatedTokenRepository;
+    private final AuthenticationProvider preAuthenticatedAuthenticationProvider;
 
     @Override
     public void init(@NonNull HttpSecurity builder) {
@@ -54,7 +57,9 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
             new Http403ForbiddenEntryPoint();
         });
 
-        builder.addFilterAfter(cookieAuthenticationFilter, CsrfFilter.class);
+
+        builder.addFilterAfter(cookieAuthenticationFilter, CsrfFilter.class)
+                .authenticationProvider(preAuthenticatedAuthenticationProvider);
 
     }
 

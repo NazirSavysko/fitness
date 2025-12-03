@@ -1,11 +1,13 @@
 package fitness.app.project.fitnessapp.security;
 
 import fitness.app.project.fitnessapp.security.token.Token;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
+@Getter
 public final class TokenUser extends User {
 
     private final Token token;
@@ -20,7 +22,4 @@ public final class TokenUser extends User {
         this.token = token;
     }
 
-    public Token getToken() {
-        return token;
-    }
 }
