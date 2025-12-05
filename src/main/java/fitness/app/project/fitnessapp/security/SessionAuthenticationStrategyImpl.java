@@ -20,7 +20,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @Setter
 public final class SessionAuthenticationStrategyImpl implements SessionAuthenticationStrategy {
 
-    private static final String AUTH_TOKEN_COOKIE_NAME = "auth-token";
+    private static final String AUTH_TOKEN_COOKIE_NAME = "__HOST-auth-token";
 
     private Function<Authentication, Token> tokenCookieFactory ;
     private Function<Token, String> tokenStringSerializer= Objects::toString;
@@ -35,6 +35,7 @@ public final class SessionAuthenticationStrategyImpl implements SessionAuthentic
             cookie.setPath("/");
             cookie.setDomain(null);
             cookie.setHttpOnly(true);
+            cookie.setSecure(true);
             cookie.setMaxAge((int) SECONDS.between(Instant.now(), token.expiresAt()));
 
             response.addCookie(cookie);

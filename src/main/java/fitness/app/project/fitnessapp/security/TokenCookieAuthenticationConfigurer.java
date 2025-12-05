@@ -23,7 +23,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 @AllArgsConstructor
 public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfigurer<TokenCookieAuthenticationConfigurer, HttpSecurity> {
 
-    private static final String AUTH_TOKEN_COOKIE_NAME = "auth-token";
+    private static final String AUTH_TOKEN_COOKIE_NAME = "__HOST-auth-token";
 
     private final Function<String, Token> tokenCookieStringDeserializer;
     private final DeactivatedTokenRepository deactivatedTokenRepository;
