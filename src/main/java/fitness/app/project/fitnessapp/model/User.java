@@ -30,4 +30,10 @@ public final class User {
     private String passwordHash;
 
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void S(){
+        System.out.println("persi8i");
+    }
+
 }

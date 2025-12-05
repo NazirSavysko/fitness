@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
 import fitness.app.project.fitnessapp.facade.FitnessUserFacade;
+import fitness.app.project.fitnessapp.repository.UserRepository;
 import fitness.app.project.fitnessapp.security.TokenCookieAuthenticationConverter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @AllArgsConstructor
 public class AuthController {
 
-    private final FitnessUserFacade fitnessUserFacade;
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")

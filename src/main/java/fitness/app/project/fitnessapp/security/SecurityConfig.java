@@ -4,6 +4,7 @@ import com.nimbusds.jose.crypto.DirectDecrypter;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import fitness.app.project.fitnessapp.repository.DeactivatedTokenRepository;
+import fitness.app.project.fitnessapp.security.token.DefaultTokenCookieFactory;
 import fitness.app.project.fitnessapp.security.token.TokenCookieJwtStringSerializer;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,7 @@ public class SecurityConfig {
     public SessionAuthenticationStrategy sessionAuthenticationStrategy(final TokenCookieJwtStringSerializer jwtStringSerializer) {
         final SessionAuthenticationStrategyImpl sessionAuthenticationStrategy = new SessionAuthenticationStrategyImpl();
         sessionAuthenticationStrategy.setTokenStringSerializer(jwtStringSerializer);
+        sessionAuthenticationStrategy.setTokenCookieFactory(new DefaultTokenCookieFactory());
 
         return sessionAuthenticationStrategy;
     }
