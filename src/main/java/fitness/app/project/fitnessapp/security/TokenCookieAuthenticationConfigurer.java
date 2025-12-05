@@ -12,13 +12,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.authentication.AuthenticationFilter;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.csrf.CsrfFilter;
 
 import java.util.Date;
 import java.util.function.Function;
-
-import static jakarta.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 
 @AllArgsConstructor
 public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfigurer<TokenCookieAuthenticationConfigurer, HttpSecurity> {
@@ -33,14 +30,15 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
     public void init(@NonNull HttpSecurity builder) {
         builder.logout(logout ->
                 logout
-//                        .logoutUrl("/api/v1/auth/login?logout")
-//                        .logoutSuccessUrl("/api/v1/auth/login")
+                        .logoutUrl("/api/v1/auth/logout")
+                        .logoutSuccessUrl("/api/v1/auth/login")
                         .addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null &&
                                     authentication.getPrincipal() instanceof TokenUser user) {
                                 final DeactivatedToken token = new DeactivatedToken(user.getToken().id(), Date.from(user.getToken().expiresAt()));
                                 this.deactivatedTokenRepository.save(token);
+
                             }
                         })
         );
@@ -55,9 +53,7 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
         cookieAuthenticationFilter
                 .setSuccessHandler((request, response, authentication) -> {
                 });
-        cookieAuthenticationFilter.setFailureHandler((request, response, exception) -> {
-            new Http403ForbiddenEntryPoint();
-        });
+        cookieAuthenticationFilter.setFailureHandler((request, response, exception) -> new Http403ForbiddenEntryPoint());
 
 
         builder.addFilterAfter(cookieAuthenticationFilter, CsrfFilter.class)
