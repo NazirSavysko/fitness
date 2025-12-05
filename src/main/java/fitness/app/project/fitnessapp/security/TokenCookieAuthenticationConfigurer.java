@@ -33,8 +33,8 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
     public void init(@NonNull HttpSecurity builder) {
         builder.logout(logout ->
                 logout
-                        .logoutUrl("/api/v1/auth/logout")
-                        .logoutSuccessUrl("/api/v1/auth/login")
+//                        .logoutUrl("/api/v1/auth/login?logout")
+//                        .logoutSuccessUrl("/api/v1/auth/login")
                         .addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null &&
