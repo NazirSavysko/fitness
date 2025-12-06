@@ -14,6 +14,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Setter
 @Getter
+
 @Entity
 @Table(name = "auth", schema = "fitness_app")
 public final class User {
@@ -30,10 +31,4 @@ public final class User {
     private String passwordHash;
 
     private LocalDateTime createdAt;
-
-    @PrePersist
-    public void S(){
-        System.out.println("persi8i");
-    }
-
 }

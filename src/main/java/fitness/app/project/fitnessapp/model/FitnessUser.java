@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public final class FitnessUser {
 
     private String surname;
 
-    @OneToOne(cascade = {PERSIST,CascadeType.REMOVE})
+    @OneToOne(cascade = {PERSIST, REMOVE})
     @JoinColumn(name = "auth_id")
     private User userDetails;
 }

@@ -1,9 +1,7 @@
 package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
-import fitness.app.project.fitnessapp.facade.FitnessUserFacade;
-import fitness.app.project.fitnessapp.repository.UserRepository;
-import fitness.app.project.fitnessapp.security.TokenCookieAuthenticationConverter;
+import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
+    private final RegistrationFitnessUserFacade fitnessUserFacade;
 
     @GetMapping("/login")
     public String login() {
@@ -35,8 +34,8 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registrationPayload") final RegistrationDTO registrationPayload,
                            final BindingResult bindingResult) {
-        System.out.println( passwordEncoder.encode(registrationPayload.password()));
-//        this.fitnessUserFacade.register(bindingResult,registrationPayload);
+
+        this.fitnessUserFacade.register(bindingResult,registrationPayload);
 
         return "redirect:/auth/login?success";
     }
