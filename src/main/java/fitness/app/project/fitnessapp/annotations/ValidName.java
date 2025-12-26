@@ -15,7 +15,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
 @Documented
-@Constraint(validatedBy = {}) // 1. Обязательно: помечаем как валидацию
+@Constraint(validatedBy = {})
 // 2. Твои ограничения
 @Size(min = 10, max = 20, message = "{jakarta.validation.constraints.Password.size}")
 @Pattern(regexp = "^[A-Z][a-zA-Z0-9]*$",

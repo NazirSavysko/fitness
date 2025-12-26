@@ -10,7 +10,7 @@
 <body>
 <div class="main-container">
 
-    <form class="login-form" th:action="@{/api/v1/auth/log-in}" method="post">
+    <form class="login-form" th:action="@{/auth/log-in}" method="post">
 
         <h1 class="form-title">Log-in form</h1>
 
@@ -37,7 +37,7 @@
 
         <div class="auth-footer">
             <span>Don`t have an account?</span>
-            <a th:action="@{/api/v1/auth/register}">Sign up</a>
+            <a th:action="@{/auth/register}">Sign up</a>
         </div>
     </form>
 </div>

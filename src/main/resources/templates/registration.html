@@ -10,12 +10,15 @@
 <body>
 <div class="main-container">
 
-    <form class="registration-form" th:action="@{/api/v1/auth/register}" method="post">
+    <form class="registration-form" th:action="@{auth/register}" method="post">
 
         <h1 class="form-title">Sign up form</h1>
 
-        <div class="error-registration" th:if="${param.error}">
-            <p class="text-error">Invalid email or password</p>
+        <div class="error-registration" data-th-if="${erorrs}">
+            <h2>Validation Errors</h2>
+            <ul>
+                <li data-th-each="error : ${errors}" data-th-text="${error.getDefaultMessage()}"></li>
+            </ul>
         </div>
 
         <div class="form-group">
@@ -26,7 +29,6 @@
         <div class="form-group">
             <label for="password" class="form-label">Enter your password:</label>
             <input type="password" id="password" name="password" class="form-input" data-th-value="${registrationPayload?.password()}" placeholder="••••••••" required>
-            <label th:if="${param.e}"></label>
             <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
         </div>
 
@@ -34,7 +36,7 @@
 
         <div class="auth-footer">
             <span>Already have an account?</span>
-            <a th:action="@{/api/v1/auth/log-in}" >Log in</a>
+            <a th:action="@{/auth/log-in}" >Log in</a>
         </div>
     </form>
 </div>

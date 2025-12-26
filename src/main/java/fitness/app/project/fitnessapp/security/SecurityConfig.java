@@ -25,6 +25,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.validation.Validator;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -78,14 +79,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity httpSecurity,
                                            final SessionAuthenticationStrategy sessionAuthenticationStrategy,
-                                           final TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer) throws Exception {
+                                           final TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer,
+                                           final AuthenticationProvider authenticationProvider) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth ->
                         auth
-                                .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
                 )
+                .authenticationProvider(authenticationProvider)
                 .addFilterAfter(new GetCsrfTokenFilter(), ExceptionTranslationFilter.class)
                 .csrf(csrf ->
                         csrf.csrfTokenRepository(new CookieCsrfTokenRepository())
@@ -95,11 +98,11 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
                 .formLogin(form ->
                         form
-                                .loginPage("/api/v1/auth/login")
-                                .loginProcessingUrl("/api/v1/auth/log-in")
+                                .loginPage("/auth/login")
+                                .loginProcessingUrl("/auth/log-in")
                                 .usernameParameter("email")
-                                .defaultSuccessUrl("/api/v1/dashboard", true)
-                                .failureUrl("/api/v1/auth/login?error")
+                                .defaultSuccessUrl("/dashboard", true)
+                                .failureUrl("/auth/login?error")
                                 .permitAll()
                 )
                 .apply(tokenCookieAuthenticationConfigurer);
@@ -113,7 +116,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
-        return new DaoAuthenticationProvider(userDetailsService);
+    public AuthenticationProvider authenticationProvider(final Validator validator) {
+        return new DaoAuthenticationProviderWithValidation(userDetailsService, validator);
     }
 }

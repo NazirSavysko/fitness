@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.InvalidPropertiesFormatException;
 

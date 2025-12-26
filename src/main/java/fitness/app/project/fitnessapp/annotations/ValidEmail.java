@@ -22,7 +22,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Email
 public @interface ValidEmail {
 
-    // 1. Обязательные поля для любой валидации
     String message() default "{jakarta.validation.constraints.Email.message}";
 
     Class<?>[] groups() default {};
