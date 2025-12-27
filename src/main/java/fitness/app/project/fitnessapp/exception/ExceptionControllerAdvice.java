@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.exception;
 
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -8,7 +9,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.text.ParseException;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -31,12 +35,6 @@ class ExceptionControllerAdvice {
     @ExceptionHandler(UsernameNotFoundException.class)
     public void handleUsernameNotFoundException(final UsernameNotFoundException ex) {
         LOGGER.error(ex.getMessage(), ex);
-    }
-
-    @ExceptionHandler(InvalidFieldFormatException.class)
-    public void handleInvalidFieldFormatException(final InvalidFieldFormatException ex, final @NonNull Model model, final @NonNull BindingResult bindingResult) {
-        LOGGER.error(ex.getMessage(), ex);
-        model.addAttribute("errors", bindingResult.getAllErrors());
     }
 
 }

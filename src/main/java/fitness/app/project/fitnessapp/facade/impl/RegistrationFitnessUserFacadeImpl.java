@@ -1,7 +1,6 @@
 package fitness.app.project.fitnessapp.facade.impl;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
-import fitness.app.project.fitnessapp.exception.InvalidFieldFormatException;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
 import fitness.app.project.fitnessapp.model.FitnessUser;
@@ -19,12 +18,10 @@ import static java.lang.String.format;
 @Component
 @AllArgsConstructor
 public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitnessUserFacade {
-
-//    private final static String INVALID_REGISTRATION_DATA = "Invalid registration data";
     private final static String USER_FOUND_ERROR = "User with email %s already exists";
 
-
     private final FitnessUserService fitnessUserService;
+    private final MailService mailService;
     private final UserService userService;
 
 
@@ -46,5 +43,10 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
         fitnessUser.setUserDetails(user);
         this.userService.saveUser(user);
         this.fitnessUserService.saveFitnessUser(fitnessUser);
+    }
+
+    @Override
+    public void verifyEmail(final String email, final String code) {
+
     }
 }

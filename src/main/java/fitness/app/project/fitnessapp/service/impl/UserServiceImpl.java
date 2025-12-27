@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
        user.setPasswordHash(this.toEncryptedString(password));
        user.setCreatedAt(now());
        user.setRole(ROLE_USER);
+       user.setEnabled(false);
 
        return user;
     }

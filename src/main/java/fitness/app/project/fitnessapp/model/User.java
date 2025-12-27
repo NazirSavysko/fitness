@@ -31,4 +31,6 @@ public final class User {
     private String passwordHash;
 
     private LocalDateTime createdAt;
+
+    private Boolean enabled;
 }

@@ -5,4 +5,6 @@ import org.springframework.validation.BindingResult;
 
 public interface RegistrationFitnessUserFacade {
     void register(RegistrationDTO registrationPayload);
+
+    void verifyEmail(String email, String code);
 }

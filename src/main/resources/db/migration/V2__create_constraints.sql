@@ -1,59 +1,59 @@
--- ALTER TABLE fitness_app.auth
---     ALTER COLUMN email SET NOT NULL,
---     ALTER COLUMN password_hash SET NOT NULL,
---     ALTER COLUMN role SET NOT NULL,
---     ADD CONSTRAINT auth_email_uk UNIQUE (email);
---
---
--- ALTER TABLE fitness_app.fitness_user
---     ALTER COLUMN auth_id SET NOT NULL,
---     ADD CONSTRAINT fitness_user_auth_id_uk UNIQUE (auth_id),
---     ADD CONSTRAINT fk_fitness_user_auth
---         FOREIGN KEY (auth_id) REFERENCES fitness_app.auth (auth_id)
---             ON DELETE CASCADE;
---
---
--- ALTER TABLE fitness_app.exercise_definition
---     ALTER COLUMN name SET NOT NULL,
---     ADD CONSTRAINT exercise_definition_name_uk UNIQUE (name);
---
---
--- ALTER TABLE fitness_app.workout_template
---     ADD CONSTRAINT fk_workout_template_user
---         FOREIGN KEY (user_id) REFERENCES fitness_app.fitness_user (user_id)
---             ON DELETE CASCADE;
---
---
--- ALTER TABLE fitness_app.template_exercise
---     ADD CONSTRAINT pk_template_exercise PRIMARY KEY (template_id, exercise_def_id),
---
---     ADD CONSTRAINT fk_template_exercise_template
---         FOREIGN KEY (template_id) REFERENCES fitness_app.workout_template (template_id)
---             ON DELETE CASCADE,
---
---     ADD CONSTRAINT fk_template_exercise_exercise
---         FOREIGN KEY (exercise_def_id) REFERENCES fitness_app.exercise_definition (exercise_def_id)
---             ON DELETE CASCADE;
---
---
--- ALTER TABLE fitness_app.workout_session
---     ADD CONSTRAINT fk_workout_session_user
---         FOREIGN KEY (user_id) REFERENCES fitness_app.fitness_user (user_id)
---             ON DELETE CASCADE,
---
---     ADD CONSTRAINT fk_workout_session_template
---         FOREIGN KEY (template_id) REFERENCES fitness_app.workout_template (template_id)
---             ON DELETE SET NULL;
---
---
--- ALTER TABLE fitness_app.exercise_log
---     ALTER COLUMN session_id SET NOT NULL,
---     ALTER COLUMN exercise_def_id SET NOT NULL,
---
---     ADD CONSTRAINT fk_exercise_log_session
---         FOREIGN KEY (session_id) REFERENCES fitness_app.workout_session (session_id)
---             ON DELETE CASCADE, -- Если удаляем сессию, удаляем все ее логи
---
---     ADD CONSTRAINT fk_exercise_log_exercise
---         FOREIGN KEY (exercise_def_id) REFERENCES fitness_app.exercise_definition (exercise_def_id)
---             ON DELETE RESTRICT;
+ALTER TABLE fitness_app.auth
+    ALTER COLUMN email SET NOT NULL,
+    ALTER COLUMN password_hash SET NOT NULL,
+    ALTER COLUMN role SET NOT NULL,
+    ADD CONSTRAINT auth_email_uk UNIQUE (email);
+
+
+ALTER TABLE fitness_app.fitness_user
+    ALTER COLUMN auth_id SET NOT NULL,
+    ADD CONSTRAINT fitness_user_auth_id_uk UNIQUE (auth_id),
+    ADD CONSTRAINT fk_fitness_user_auth
+        FOREIGN KEY (auth_id) REFERENCES fitness_app.auth (auth_id)
+            ON DELETE CASCADE;
+
+
+ALTER TABLE fitness_app.exercise_definition
+    ALTER COLUMN name SET NOT NULL,
+    ADD CONSTRAINT exercise_definition_name_uk UNIQUE (name);
+
+
+ALTER TABLE fitness_app.workout_template
+    ADD CONSTRAINT fk_workout_template_user
+        FOREIGN KEY (user_id) REFERENCES fitness_app.fitness_user (user_id)
+            ON DELETE CASCADE;
+
+
+ALTER TABLE fitness_app.template_exercise
+    ADD CONSTRAINT pk_template_exercise PRIMARY KEY (template_id, exercise_def_id),
+
+    ADD CONSTRAINT fk_template_exercise_template
+        FOREIGN KEY (template_id) REFERENCES fitness_app.workout_template (template_id)
+            ON DELETE CASCADE,
+
+    ADD CONSTRAINT fk_template_exercise_exercise
+        FOREIGN KEY (exercise_def_id) REFERENCES fitness_app.exercise_definition (exercise_def_id)
+            ON DELETE CASCADE;
+
+
+ALTER TABLE fitness_app.workout_session
+    ADD CONSTRAINT fk_workout_session_user
+        FOREIGN KEY (user_id) REFERENCES fitness_app.fitness_user (user_id)
+            ON DELETE CASCADE,
+
+    ADD CONSTRAINT fk_workout_session_template
+        FOREIGN KEY (template_id) REFERENCES fitness_app.workout_template (template_id)
+            ON DELETE SET NULL;
+
+
+ALTER TABLE fitness_app.exercise_log
+    ALTER COLUMN session_id SET NOT NULL,
+    ALTER COLUMN exercise_def_id SET NOT NULL,
+
+    ADD CONSTRAINT fk_exercise_log_session
+        FOREIGN KEY (session_id) REFERENCES fitness_app.workout_session (session_id)
+            ON DELETE CASCADE, -- Если удаляем сессию, удаляем все ее логи
+
+    ADD CONSTRAINT fk_exercise_log_exercise
+        FOREIGN KEY (exercise_def_id) REFERENCES fitness_app.exercise_definition (exercise_def_id)
+            ON DELETE RESTRICT;

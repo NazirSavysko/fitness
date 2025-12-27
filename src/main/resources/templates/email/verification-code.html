@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Verification</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+        <tr>
+            <td align="center" style="padding: 20px 0; background-color: #007BFF; border-radius: 10px 10px 0 0;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Fitness App</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px 40px;">
+                <h2 style="color: #333333; margin-top: 0;">Confirm your email</h2>
+                <p style="color: #666666; font-size: 16px; line-height: 1.5;">
+                    Hello! To finish your registration, please enter the code below:
+                </p>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <span style="display: inline-block; font-size: 32px; font-weight: bold; color: #007BFF; letter-spacing: 5px; border: 2px dashed #007BFF; padding: 15px 30px; border-radius: 8px; background-color: #f0f8ff;" th:text="${code}">
+                        123456
+                    </span>
+                </div>
+
+                <p style="color: #666666; font-size: 14px;">This code expires in 15 minutes.</p>
+                <p style="color: #666666; font-size: 14px;">If you didn't request this, simply ignore this message.</p>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 20px; background-color: #f8f9fa; border-radius: 0 0 10px 10px; color: #999999; font-size: 12px;">
+                &copy; 2025 Fitness App. All rights reserved.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

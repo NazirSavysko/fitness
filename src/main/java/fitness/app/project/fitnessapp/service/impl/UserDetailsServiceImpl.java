@@ -47,6 +47,11 @@ public final class UserDetailsServiceImpl  implements UserDetailsService {
             public @NonNull String getUsername() {
                 return user.getEmail();
             }
+
+            @Override
+            public boolean isEnabled() {
+                return user.getEnabled();
+            }
         };
     }
 }
