@@ -2,37 +2,49 @@ package fitness.app.project.fitnessapp.facade.impl;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
 import fitness.app.project.fitnessapp.exception.InvalidFieldFormatException;
+import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
 import fitness.app.project.fitnessapp.model.FitnessUser;
-import fitness.app.project.fitnessapp.service.RegistrationFitnessUserService;
+import fitness.app.project.fitnessapp.model.User;
+import fitness.app.project.fitnessapp.service.UserService;
+import fitness.app.project.fitnessapp.service.FitnessUserService;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.InvalidPropertiesFormatException;
+import static java.lang.String.format;
 
 @Component
 @AllArgsConstructor
 public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitnessUserFacade {
 
-    private final static String INVALID_REGISTRATION_DATA = "Invalid registration data";
+//    private final static String INVALID_REGISTRATION_DATA = "Invalid registration data";
+    private final static String USER_FOUND_ERROR = "User with email %s already exists";
 
-    private final RegistrationFitnessUserService registrationFitnessUserService;
+
+    private final FitnessUserService fitnessUserService;
+    private final UserService userService;
 
 
-    @SneakyThrows(InvalidFieldFormatException.class)
+    @Transactional
+    @SneakyThrows({UserExistsException.class})
     @Override
-    public void register(final @NonNull BindingResult bindingResult, final RegistrationDTO registrationPayload)  {
-        if (bindingResult.hasErrors()) {
-            throw new InvalidFieldFormatException(INVALID_REGISTRATION_DATA);
-        }
+    public void register(final @NonNull RegistrationDTO registrationPayload) {
+        if(this.userService.isExistingEmail(registrationPayload.email())) {
+           throw new UserExistsException(format(USER_FOUND_ERROR,registrationPayload.email()));
+       }
 
-       final FitnessUser fitnessUser = this.registrationFitnessUserService.registerUser(registrationPayload.email(),
-                registrationPayload.password(),
+        final User user = this.userService.createUser(registrationPayload.email(), registrationPayload.password());
+
+        final FitnessUser fitnessUser = this.fitnessUserService.createFitnessUser(
                 registrationPayload.name(),
-                registrationPayload.surname());
+                registrationPayload.surname()
+        );
+
+        fitnessUser.setUserDetails(user);
+        this.userService.saveUser(user);
+        this.fitnessUserService.saveFitnessUser(fitnessUser);
     }
 }

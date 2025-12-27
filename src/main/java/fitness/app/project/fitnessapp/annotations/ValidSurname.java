@@ -16,12 +16,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
-@Size(min = 10, max = 20, message = "{jakarta.validation.constraints.Password.size}")
+@Size(min = 10, max = 30, message = "{jakarta.validation.constraints.Surname.size}")
 @Pattern(regexp = "^[A-Z][a-zA-Z0-9]*$",
-        message = "{jakarta.validation.constraints.Password.pattern}")
+        message = "{jakarta.validation.constraints.Surname.pattern}")
 public @interface ValidSurname {
 
-    String message() default "Invalid password";
+    String message() default "Invalid surname format";
 
     Class<?>[] groups() default {};
 

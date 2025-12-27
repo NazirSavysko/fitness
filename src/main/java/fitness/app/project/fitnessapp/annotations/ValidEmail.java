@@ -18,7 +18,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
-@Size(min = 10, max = 25, message = "{jakarta.validation.constraints.Email.size}")
+@Size(min = 10, max = 50, message = "{jakarta.validation.constraints.Email.size}")
 @Email
 public @interface ValidEmail {
 

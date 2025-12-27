@@ -14,7 +14,7 @@ html, body {
     padding: 20px;
 }
 
-.login-form, .registration-form {
+.registration-form {
     background-color: #ffffff;
     padding: 2.5rem;
     border-radius: 15px;
@@ -33,36 +33,23 @@ html, body {
     margin-bottom: 1.5rem;
 }
 
-.error-login, .error-registration {
-    width: 100%;
-    background-color: crimson;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    box-sizing: border-box;
+.form-input.input-error {
+    border-color: #dc3545 !important;
+    background-color: #fff8f8;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25) !important;
 }
 
-.alert-success {
-    width: 100%;
-    background-color: #4BB543;
-    border-radius: 8px;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    text-align: center;
-    box-sizing: border-box;
-}
-
-.text-error, .text-success {
-    color: white;
-    margin: 0;
-    font-size: 1rem;
+.field-error-text {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    margin-left: 2px;
     font-weight: 500;
 }
 
 .form-group {
     width: 100%;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
     text-align: left;
     position: relative;
 }
@@ -83,6 +70,7 @@ html, body {
     box-sizing: border-box;
     color: #0B4C5F;
     height: 50px;
+    transition: all 0.2s ease-in-out;
 }
 
 .form-input::placeholder {
@@ -98,7 +86,7 @@ html, body {
 .material-symbols-outlined {
     position: absolute;
     right: 0;
-    bottom: 0;
+    top: 0;
     height: 50px;
     width: 50px;
     display: flex;
@@ -108,9 +96,8 @@ html, body {
     border: none;
     color: #88AABB;
     cursor: pointer;
-    font-size: clamp(18px, 4vw, 24px);
+    font-size: 24px;
     user-select: none;
-    transition: color 0.3s ease;
 }
 
 .material-symbols-outlined:hover {
@@ -129,6 +116,7 @@ html, body {
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     margin-bottom: 1.5rem;
+    margin-top: 10px;
 }
 
 .submit-button:hover {

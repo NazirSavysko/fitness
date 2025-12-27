@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link media="all" rel="stylesheet" th:href="@{/css/login-registration.css}" type="text/css"/>
+    <link media="all" rel="stylesheet" th:href="@{/css/login.css}" type="text/css"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <title>Log in</title>
 </head>
@@ -29,15 +29,16 @@
 
         <div class="form-group">
             <label for="password" class="form-label">Enter your password:</label>
-            <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
-            <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
+            <div style="position: relative">
+                <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required>
+                <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
+            </div>
         </div>
-
         <button type="submit" class="submit-button">Log in</button>
 
         <div class="auth-footer">
             <span>Don`t have an account?</span>
-            <a th:action="@{/auth/register}">Sign up</a>
+            <a th:href="@{/auth/register}">Sign up</a>
         </div>
     </form>
 </div>

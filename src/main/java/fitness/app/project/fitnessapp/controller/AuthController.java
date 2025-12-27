@@ -26,16 +26,22 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String getRegistrationForm() {
-
+    public String getRegistrationForm(final Model model) {
+        model.addAttribute("registrationPayload", new RegistrationDTO(null, null, null, null));
         return "registration";
     }
 
     @PostMapping("/register")
     public String register(@Valid @ModelAttribute("registrationPayload") final RegistrationDTO registrationPayload,
-                           final BindingResult bindingResult,final Model model) {
+                           final BindingResult bindingResult,
+                           final Model model) {
 
-        this.fitnessUserFacade.register(bindingResult,registrationPayload);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errors", bindingResult.getAllErrors());
+            return "registration";
+        }
+
+        this.fitnessUserFacade.register(registrationPayload);
 
         return "redirect:/auth/login?success";
     }

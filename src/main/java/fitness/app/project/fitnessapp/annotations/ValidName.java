@@ -16,13 +16,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
-// 2. Твои ограничения
-@Size(min = 10, max = 20, message = "{jakarta.validation.constraints.Password.size}")
-@Pattern(regexp = "^[A-Z][a-zA-Z0-9]*$",
-        message = "{jakarta.validation.constraints.Password.pattern}")
+@Size(min = 10, max = 20, message = "{jakarta.validation.constraints.Name.size}")
+@Pattern(regexp = "^[A-Z][a-zA-Z\\\\-\\\\s]*$",
+        message = "{jakarta.validation.constraints.Name.pattern}")
 public @interface ValidName {
 
-    String message() default "Invalid password";
+    String message() default "Invalid name format";
 
     Class<?>[] groups() default {};
 

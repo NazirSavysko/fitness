@@ -1,9 +1,9 @@
 package fitness.app.project.fitnessapp.service;
 
-import fitness.app.project.fitnessapp.exception.UserExistsException;
-import fitness.app.project.fitnessapp.model.User;
+import fitness.app.project.fitnessapp.model.FitnessUser;
 
 public interface FitnessUserService {
+    FitnessUser createFitnessUser(String name, String surname);
 
-    User createUser(String email, String password) throws UserExistsException;
+    FitnessUser saveFitnessUser(FitnessUser fitnessUser);
 }
