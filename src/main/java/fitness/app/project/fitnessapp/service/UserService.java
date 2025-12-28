@@ -1,6 +1,5 @@
 package fitness.app.project.fitnessapp.service;
 
-import fitness.app.project.fitnessapp.annotations.ValidEmail;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.model.User;
 
@@ -10,5 +9,7 @@ public interface UserService {
 
     User createUser(String email, String password) throws UserExistsException;
 
-    User saveUser(User user);
+    void saveUser(User user);
+
+    User getUserByEmail(String email);
 }

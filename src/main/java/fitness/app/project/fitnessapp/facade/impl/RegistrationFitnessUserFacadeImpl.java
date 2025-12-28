@@ -3,8 +3,10 @@ package fitness.app.project.fitnessapp.facade.impl;
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
+import fitness.app.project.fitnessapp.model.EmailVerification;
 import fitness.app.project.fitnessapp.model.FitnessUser;
 import fitness.app.project.fitnessapp.model.User;
+import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import fitness.app.project.fitnessapp.service.UserService;
 import fitness.app.project.fitnessapp.service.FitnessUserService;
 import lombok.AllArgsConstructor;
@@ -21,12 +23,10 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
     private final static String USER_FOUND_ERROR = "User with email %s already exists";
 
     private final FitnessUserService fitnessUserService;
-    private final MailService mailService;
+    private final EmailVerificationService emailVerificationService;
     private final UserService userService;
 
 
-    @Transactional
-    @SneakyThrows({UserExistsException.class})
     @Override
     public void register(final @NonNull RegistrationDTO registrationPayload) {
         if(this.userService.isExistingEmail(registrationPayload.email())) {
@@ -43,10 +43,26 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
         fitnessUser.setUserDetails(user);
         this.userService.saveUser(user);
         this.fitnessUserService.saveFitnessUser(fitnessUser);
+
+        EmailVerification verification = this.emailVerificationService.createEmailVerificationRecord(user.getEmail());
+
+        this.emailVerificationService.saveVerificationRecord(verification);
+
+        this.emailVerificationService.sendVerificationEmail(user.getEmail(), verification);
     }
 
     @Override
     public void verifyEmail(final String email, final String code) {
+        final boolean isVerified = this.emailVerificationService.verifyEmailCode(email, code);
 
+        if (isVerified) {
+            final User user = this.userService.getUserByEmail(email);
+            user.setEnabled(true);
+            this.userService.saveUser(user);
+
+            this.emailVerificationService.deleteVerificationRecordByEmail(email);
+        } else {
+            throw new IllegalArgumentException("Invalid verification code");
+        }
     }
 }

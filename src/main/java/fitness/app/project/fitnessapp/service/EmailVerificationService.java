@@ -1,18 +1,18 @@
 package fitness.app.project.fitnessapp.service;
 
 import fitness.app.project.fitnessapp.model.EmailVerification;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import org.jspecify.annotations.NonNull;
 
 public interface EmailVerificationService {
     void sendVerificationEmail(String email, EmailVerification emailVerification);
 
-    boolean verifyEmailCode(Integer authId, String code);
+    boolean verifyEmailCode(String email, String code);
 
-    void deleteVerificationRecord(EmailVerification emailVerification);
+    void deleteVerificationRecordByEmail(String email);
 
     void saveVerificationRecord(EmailVerification emailVerification);
 
-    EmailVerification createEmailVerificationRecord(Integer authId);
+    EmailVerification createEmailVerificationRecord(String email);
 
     String generateVerificationCode();
 }

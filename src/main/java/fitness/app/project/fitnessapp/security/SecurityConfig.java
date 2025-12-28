@@ -117,6 +117,9 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(final Validator validator) {
-        return new DaoAuthenticationProviderWithValidation(userDetailsService, validator);
+        final DaoAuthenticationProvider authProvider = new DaoAuthenticationProviderWithValidation(userDetailsService, validator);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
     }
 }

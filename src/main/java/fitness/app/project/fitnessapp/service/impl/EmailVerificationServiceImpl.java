@@ -5,7 +5,6 @@ import fitness.app.project.fitnessapp.repository.EmailVerificationRepository;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -44,7 +43,6 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
 
         final String htmlContent = templateEngine.process(VERIFICATION_EMAIL_TEMPLATE, context);
 
-
         helper.setTo(email);
         helper.setSubject(VERIFICATION_EMAIL_SUBJECT);
         helper.setText(htmlContent, true);
@@ -53,15 +51,15 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     }
 
     @Override
-    public boolean verifyEmailCode(final Integer authId, final String code) {
-        return this.emailVerificationRepository.findByAuthId(authId)
+    public boolean verifyEmailCode(final String email, final String code) {
+        return this.emailVerificationRepository.findByEmail((email))
                 .map(record -> record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
                 .orElse(false);
     }
 
     @Override
-    public void deleteVerificationRecord(final EmailVerification emailVerification) {
-        this.emailVerificationRepository.delete(emailVerification);
+    public void deleteVerificationRecordByEmail(final String email) {
+        this.emailVerificationRepository.deleteEmailVerificationByEmail(email);
     }
 
     @Override
@@ -70,10 +68,10 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     }
 
     @Override
-    public @NonNull EmailVerification createEmailVerificationRecord(final Integer authId) {
+    public @NonNull EmailVerification createEmailVerificationRecord(final String email) {
         final EmailVerification emailVerification = new EmailVerification();
 
-        emailVerification.setAuthId(authId);
+        emailVerification.setEmail(email);
         emailVerification.setExpiryDate(now().plusMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
         emailVerification.setVerificationCode(this.generateVerificationCode());
 
@@ -86,4 +84,6 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
                 .map(i -> (int) (Math.random() * 10))
                 .mapToObj(String::valueOf).collect(Collectors.joining());
     }
+
+
 }

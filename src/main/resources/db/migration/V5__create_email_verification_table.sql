@@ -1,6 +1,7 @@
 CREATE TABLE fitness_app.email_verification (
-                                                auth_id INTEGER PRIMARY KEY,
+                                                auth_id SERIAL PRIMARY KEY,
                                                 verification_code VARCHAR(10),
-                                                expiry_date TIMESTAMP,
-                                                FOREIGN KEY (auth_id) REFERENCES fitness_app.auth(auth_id) ON DELETE CASCADE
+                                                email VARCHAR(255) UNIQUE ,
+                                                expiry_date TIMESTAMP
+
 );

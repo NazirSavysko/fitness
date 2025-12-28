@@ -1,0 +1,157 @@
+/* Базовые настройки как у тебя */
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    background-color: #F5F5DC; /* Твой бежевый фон */
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Карточка (Стили один в один как Sign up) */
+.verify-form {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: 15px; /* Скругление как у тебя */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.form-title {
+    color: #0B4C5F; /* Твой темно-синий */
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* Сообщение "Code sent to..." */
+/* Исправлено: теперь это не зеленый квадрат, а аккуратный блок в стиль формы */
+.info-message {
+    background-color: #F0F8FF; /* Очень светлый голубой */
+    border: 1px solid #A9D1DF; /* Твоя рамка как у инпутов */
+    color: #0B4C5F;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.info-message p {
+    margin: 0;
+}
+
+/* Ошибки */
+.error-message {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.error-message p {
+    margin: 0;
+}
+
+/* Группы полей */
+.form-group {
+    width: 100%;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #36454F;
+    text-align: center; /* Лейбл по центру для кода */
+}
+
+/* Поля ввода (Инпуты) */
+.form-input {
+    width: 100%;
+    padding: 1rem; /* Большие отступы как у тебя */
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #A9D1DF; /* Твоя голубая рамка */
+    box-sizing: border-box;
+    color: #0B4C5F;
+    height: 50px;
+    transition: all 0.2s ease-in-out;
+    background-color: #fff;
+}
+
+/* Специфика для ввода кода */
+.code-text {
+    text-align: center;      /* Цифры по центру */
+    letter-spacing: 0.5em;   /* Расстояние между цифрами */
+    font-family: monospace;
+    font-size: 1.4rem;
+    padding-left: 0.5em;     /* Компенсация, чтобы было ровно */
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.form-input::placeholder {
+    color: #88AABB;
+    letter-spacing: normal;
+    font-size: 1rem;
+    font-family: sans-serif;
+}
+
+/* Кнопка */
+.submit-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #007BFF; /* Твой синий */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 1.5rem;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.2);
+}
+
+/* Футер */
+.auth-footer {
+    font-size: 1rem;
+    color: #36454F;
+}
+
+.auth-footer a {
+    text-decoration: none;
+    color: #007BFF;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

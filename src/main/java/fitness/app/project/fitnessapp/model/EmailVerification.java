@@ -1,14 +1,14 @@
 package fitness.app.project.fitnessapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,9 +19,12 @@ import java.time.LocalDateTime;
 public final class EmailVerification {
 
     @Id
+    @GeneratedValue(strategy = IDENTITY)
     private Integer authId;
 
     private String verificationCode;
 
     private LocalDateTime expiryDate;
+
+    private String email;
 }

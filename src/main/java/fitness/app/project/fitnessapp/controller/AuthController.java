@@ -43,7 +43,7 @@ public class AuthController {
 
         this.fitnessUserFacade.register(registrationPayload);
 
-        return "redirect:/auth/login?success";
+        return "redirect:/auth/verify?email=" + registrationPayload.email();
     }
 
     @GetMapping("/verify")
@@ -58,11 +58,10 @@ public class AuthController {
                              final @RequestParam("code") String code,
                              final Model model) {
         try {
-
             fitnessUserFacade.verifyEmail(email, code);
 
             return "redirect:/auth/login?success";
-        } catch (Exception e) {
+        } catch (final IllegalArgumentException e) {
             model.addAttribute("error", "Wrong verification code");
             model.addAttribute("email", email);
 

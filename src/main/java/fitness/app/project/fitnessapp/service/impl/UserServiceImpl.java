@@ -14,7 +14,7 @@ import static java.time.LocalDateTime.now;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public final class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(final String email, final String password) throws UserExistsException {
        final User user = new User();
        user.setEmail(email);
-       user.setPasswordHash(this.toEncryptedString(password));
+       user.setPasswordHash(this.passwordEncoder.encode(password));
        user.setCreatedAt(now());
        user.setRole(ROLE_USER);
        user.setEnabled(false);
@@ -36,11 +36,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(final User user) {
-        return this.userRepository.save(user);
+    public void saveUser(final User user) {
+        this.userRepository.save(user);
     }
 
-    private String toEncryptedString(final String password) {
-       return this.passwordEncoder.encode(password);
+    @Override
+    public User getUserByEmail(final String email) {
+        return this.userRepository.findByEmail(email).orElseThrow(() ->
+                new UserExistsException(format("User with email %s not found", email))
+        );
     }
 }
