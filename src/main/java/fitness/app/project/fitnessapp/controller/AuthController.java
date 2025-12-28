@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
 import fitness.app.project.fitnessapp.exception.InvalidFieldFormatException;
+import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -41,9 +42,16 @@ public class AuthController {
             return "registration";
         }
 
-        this.fitnessUserFacade.register(registrationPayload);
+        try {
+            this.fitnessUserFacade.register(registrationPayload);
 
-        return "redirect:/auth/verify?email=" + registrationPayload.email();
+            return "redirect:/auth/verify?email=" + registrationPayload.email();
+
+        } catch (final UserExistsException e) {
+            model.addAttribute("global-error", e.getMessage());
+
+            return "registration";
+        }
     }
 
     @GetMapping("/verify")
