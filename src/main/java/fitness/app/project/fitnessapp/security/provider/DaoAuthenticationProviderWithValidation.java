@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.provider;
 
 import fitness.app.project.fitnessapp.dto.LoginDTO;
 import org.jspecify.annotations.NonNull;

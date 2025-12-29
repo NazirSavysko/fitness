@@ -1,6 +1,5 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.token;
 
-import fitness.app.project.fitnessapp.security.token.Token;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;

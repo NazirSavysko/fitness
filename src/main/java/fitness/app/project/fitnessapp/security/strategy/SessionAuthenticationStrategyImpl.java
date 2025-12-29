@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.strategy;
 
 import fitness.app.project.fitnessapp.security.token.Token;
 import jakarta.servlet.http.Cookie;

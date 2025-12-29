@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.service;
 
 import fitness.app.project.fitnessapp.security.token.Token;
 import lombok.Getter;

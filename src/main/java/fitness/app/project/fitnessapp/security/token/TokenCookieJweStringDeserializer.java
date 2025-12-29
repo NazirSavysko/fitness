@@ -1,10 +1,9 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.token;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWTClaimsSet;
-import fitness.app.project.fitnessapp.security.token.Token;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;

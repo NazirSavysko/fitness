@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;

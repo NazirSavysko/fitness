@@ -1,7 +1,9 @@
-package fitness.app.project.fitnessapp.security;
+package fitness.app.project.fitnessapp.security.config;
 
 import fitness.app.project.fitnessapp.model.DeactivatedToken;
 import fitness.app.project.fitnessapp.repository.DeactivatedTokenRepository;
+import fitness.app.project.fitnessapp.security.token.TokenCookieAuthenticationConverter;
+import fitness.app.project.fitnessapp.security.service.TokenUser;
 import fitness.app.project.fitnessapp.security.token.Token;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
