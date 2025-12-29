@@ -14,9 +14,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("auth")
 @AllArgsConstructor
-public class AuthController {
+@RequestMapping("auth")
+public final class AuthController {
 
     private final RegistrationFitnessUserFacade fitnessUserFacade;
 
@@ -28,6 +28,7 @@ public class AuthController {
     @GetMapping("/register")
     public String getRegistrationForm(final Model model) {
         model.addAttribute("registrationPayload", new RegistrationDTO(null, null, null, null));
+
         return "registration";
     }
 
@@ -48,7 +49,7 @@ public class AuthController {
             return "redirect:/auth/verify?email=" + registrationPayload.email();
 
         } catch (final UserExistsException e) {
-            model.addAttribute("global-error", e.getMessage());
+            bindingResult.rejectValue("email", "error..exist.user", e.getMessage());
 
             return "registration";
         }
