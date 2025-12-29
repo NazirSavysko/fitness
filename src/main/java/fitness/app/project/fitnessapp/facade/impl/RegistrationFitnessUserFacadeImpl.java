@@ -44,7 +44,7 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
         this.userService.saveUser(user);
         this.fitnessUserService.saveFitnessUser(fitnessUser);
 
-        EmailVerification verification = this.emailVerificationService.createEmailVerificationRecord(user.getEmail());
+        final EmailVerification verification = this.emailVerificationService.createEmailVerificationRecord(user.getEmail());
 
         this.emailVerificationService.saveVerificationRecord(verification);
 

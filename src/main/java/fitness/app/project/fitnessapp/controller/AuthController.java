@@ -49,7 +49,7 @@ public final class AuthController {
             return "redirect:/auth/verify?email=" + registrationPayload.email();
 
         } catch (final UserExistsException e) {
-            bindingResult.rejectValue("email", "error..exist.user", e.getMessage());
+            bindingResult.rejectValue("email", "error.exist.user", e.getMessage());
 
             return "registration";
         }
