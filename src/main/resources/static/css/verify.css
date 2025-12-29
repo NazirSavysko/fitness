@@ -103,7 +103,6 @@ html, body {
     font-family: sans-serif;
 }
 
-/* Здесь была ошибка: скобка не была закрыта */
 .code-text {
     text-align: center;
     letter-spacing: 0.5em;
