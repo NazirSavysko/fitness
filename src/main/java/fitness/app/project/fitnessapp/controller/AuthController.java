@@ -46,7 +46,7 @@ public final class AuthController {
         try {
             this.fitnessUserFacade.register(registrationPayload);
 
-            return "redirect:/verification" + registrationPayload.email() + "&type=EMAIL_VERIFICATION";
+            return "redirect:/verification?email=" + registrationPayload.email() + "&type=REGISTRATION";
 
         } catch (final UserExistsException e) {
             bindingResult.rejectValue("email", "error.exist.user", e.getMessage());

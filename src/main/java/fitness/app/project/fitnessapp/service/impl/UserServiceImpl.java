@@ -9,8 +9,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 import static fitness.app.project.fitnessapp.model.Role.ROLE_USER;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;

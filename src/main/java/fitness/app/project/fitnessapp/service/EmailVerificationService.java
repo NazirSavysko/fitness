@@ -14,6 +14,4 @@ public interface EmailVerificationService {
     EmailVerification createEmailVerificationRecord(String email);
 
     String generateVerificationCode();
-
-    boolean isExistByEmail(String email);
 }

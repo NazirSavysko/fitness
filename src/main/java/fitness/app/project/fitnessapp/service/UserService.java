@@ -3,8 +3,6 @@ package fitness.app.project.fitnessapp.service;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.model.User;
 
-import java.util.Optional;
-
 public interface UserService {
 
     boolean isExistingEmailAndEnableTrue(String email);

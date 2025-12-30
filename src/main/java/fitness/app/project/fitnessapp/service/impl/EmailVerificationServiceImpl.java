@@ -5,6 +5,7 @@ import fitness.app.project.fitnessapp.repository.EmailVerificationRepository;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,7 +13,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import lombok.AllArgsConstructor;
 
 import java.util.stream.Collectors;
 
@@ -88,10 +88,5 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
         return range(0, VERIFICATION_CODE_LENGTH)
                 .map(i -> (int) (Math.random() * 10))
                 .mapToObj(String::valueOf).collect(Collectors.joining());
-    }
-
-    @Override
-    public boolean isExistByEmail(final String email) {
-        return this.emailVerificationRepository.findByEmail(email).isPresent();
     }
 }
