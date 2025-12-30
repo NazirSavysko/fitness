@@ -12,10 +12,13 @@ import fitness.app.project.fitnessapp.security.token.DefaultTokenCookieFactory;
 import fitness.app.project.fitnessapp.security.token.TokenCookieJweStringDeserializer;
 import fitness.app.project.fitnessapp.security.token.TokenCookieJwtStringSerializer;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +32,8 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.validation.Validator;
+
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -55,7 +60,7 @@ public class SecurityConfig {
         return sessionAuthenticationStrategy;
     }
 
-    @Bean
+    @Bean("tokenAuthProvider")
     public AuthenticationProvider preAuthenticatedAuthenticationProvider(){
         final PreAuthenticatedAuthenticationProvider authenticationProvider = new PreAuthenticatedAuthenticationProvider();
         authenticationProvider.setPreAuthenticatedUserDetailsService(
@@ -69,6 +74,7 @@ public class SecurityConfig {
     @Bean
     public TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer(
             @Value("${jwt.cookie-token-key}") final String cookieTokenKey,
+            @Qualifier("tokenAuthProvider")
             AuthenticationProvider preAuthenticatedAuthenticationProvider) throws Exception {
         return new TokenCookieAuthenticationConfigurer(
                 new TokenCookieJweStringDeserializer(
@@ -78,12 +84,18 @@ public class SecurityConfig {
                 ), this.deactivatedTokenRepository,preAuthenticatedAuthenticationProvider);
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(
+            final @Qualifier("dbAuthProvider") AuthenticationProvider dbAuthProvider,
+            final @Qualifier("tokenAuthProvider") AuthenticationProvider tokenAuthProvider) {
+        return new ProviderManager(List.of(dbAuthProvider, tokenAuthProvider));
+    }
 
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity httpSecurity,
                                            final SessionAuthenticationStrategy sessionAuthenticationStrategy,
                                            final TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer,
-                                           final AuthenticationProvider authenticationProvider) throws Exception {
+                                          final AuthenticationManager authenticationManager) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth ->
                         auth
@@ -91,7 +103,7 @@ public class SecurityConfig {
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
                 )
-                .authenticationProvider(authenticationProvider)
+                .authenticationManager(authenticationManager)
                 .addFilterAfter(new GetCsrfTokenFilter(), ExceptionTranslationFilter.class)
                 .csrf(csrf ->
                         csrf.csrfTokenRepository(new CookieCsrfTokenRepository())
@@ -118,7 +130,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    @Bean("dbAuthProvider")
     public AuthenticationProvider authenticationProvider(final Validator validator) {
         final DaoAuthenticationProvider authProvider = new DaoAuthenticationProviderWithValidation(userDetailsService, validator);
         authProvider.setPasswordEncoder(passwordEncoder());
