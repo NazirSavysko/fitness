@@ -23,9 +23,11 @@ import static java.util.stream.IntStream.range;
 @AllArgsConstructor
 public final class EmailVerificationServiceImpl implements EmailVerificationService {
     private static final String VERIFICATION_EMAIL_SUBJECT = "Your Verification Code";
-    private static final String  VERIFICATION_EMAIL_TEMPLATE = "email/verification-code";
+    private static final String VERIFICATION_EMAIL_TEMPLATE = "email/verification-code";
     private static final int VERIFICATION_CODE_LENGTH = 6;
     private static final int VERIFICATION_CODE_EXPIRY_MINUTES = 15;
+
+    private final static String VERIFICATION_CODE_INVALID_ERROR = "Invalid verification code";
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final TemplateEngine templateEngine;
@@ -33,7 +35,9 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
 
     @Override
     @SneakyThrows(MessagingException.class)
-    public void sendVerificationEmail(final String email, final EmailVerification emailVerification) {
+    public void sendVerificationEmail(final String email) {
+        final EmailVerification emailVerification = this.createEmailVerificationRecord(email);
+        this.saveVerificationRecord(emailVerification);
 
         final MimeMessage mimeMessage = mailSender.createMimeMessage();
         final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -43,7 +47,7 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
 
         final String htmlContent = templateEngine.process(VERIFICATION_EMAIL_TEMPLATE, context);
 
-        helper.setTo(email);
+        helper.setTo(emailVerification.getEmail());
         helper.setSubject(VERIFICATION_EMAIL_SUBJECT);
         helper.setText(htmlContent, true);
 
@@ -51,10 +55,11 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     }
 
     @Override
-    public boolean verifyEmailCode(final String email, final String code) {
-        return this.emailVerificationRepository.findByEmail((email))
-                .map(record -> record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
-                .orElse(false);
+    public void verifyEmailCode(final String email, final String code) {
+        this.emailVerificationRepository.findByEmail((email))
+                .map(record ->
+                        record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
+                .orElseThrow(() -> new IllegalArgumentException(VERIFICATION_CODE_INVALID_ERROR));
     }
 
     @Override
@@ -85,5 +90,8 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
                 .mapToObj(String::valueOf).collect(Collectors.joining());
     }
 
-
+    @Override
+    public boolean isExistByEmail(final String email) {
+        return this.emailVerificationRepository.findByEmail(email).isPresent();
+    }
 }

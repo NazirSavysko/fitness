@@ -1,12 +1,11 @@
 package fitness.app.project.fitnessapp.service;
 
 import fitness.app.project.fitnessapp.model.EmailVerification;
-import org.jspecify.annotations.NonNull;
 
 public interface EmailVerificationService {
-    void sendVerificationEmail(String email, EmailVerification emailVerification);
+    void sendVerificationEmail(String email);
 
-    boolean verifyEmailCode(String email, String code);
+    void verifyEmailCode(String email, String code);
 
     void deleteVerificationRecordByEmail(String email);
 
@@ -15,4 +14,6 @@ public interface EmailVerificationService {
     EmailVerification createEmailVerificationRecord(String email);
 
     String generateVerificationCode();
+
+    boolean isExistByEmail(String email);
 }

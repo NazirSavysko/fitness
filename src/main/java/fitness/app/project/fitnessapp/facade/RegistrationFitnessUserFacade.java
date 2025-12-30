@@ -7,6 +7,4 @@ import org.springframework.validation.BindingResult;
 public interface RegistrationFitnessUserFacade {
     @Transactional
     void register(RegistrationDTO registrationPayload);
-    @Transactional
-    void verifyEmail(String email, String code);
 }

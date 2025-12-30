@@ -46,7 +46,7 @@ public final class AuthController {
         try {
             this.fitnessUserFacade.register(registrationPayload);
 
-            return "redirect:/auth/verify?email=" + registrationPayload.email();
+            return "redirect:/verification" + registrationPayload.email() + "&type=EMAIL_VERIFICATION";
 
         } catch (final UserExistsException e) {
             bindingResult.rejectValue("email", "error.exist.user", e.getMessage());
@@ -54,28 +54,4 @@ public final class AuthController {
             return "registration";
         }
     }
-
-    @GetMapping("/verify")
-    public String getVerifyPage(final @RequestParam("email") String email, final Model model) {
-
-        model.addAttribute("email", email);
-        return "verify";
-    }
-
-    @PostMapping("/verify")
-    public String verifyCode(final @RequestParam("email") String email,
-                             final @RequestParam("code") String code,
-                             final Model model) {
-        try {
-            fitnessUserFacade.verifyEmail(email, code);
-
-            return "redirect:/auth/login?success";
-        } catch (final IllegalArgumentException e) {
-            model.addAttribute("error", "Wrong verification code");
-            model.addAttribute("email", email);
-
-            return "verify";
-        }
-    }
-
 }

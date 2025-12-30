@@ -9,6 +9,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static fitness.app.project.fitnessapp.model.Role.ROLE_USER;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
@@ -22,8 +24,8 @@ public final class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public boolean isExistingEmail(final String email) {
-        return this.userRepository.findByEmail(email).isPresent();
+    public boolean isExistingEmailAndEnableTrue(final String email) {
+        return this.userRepository.existsByEmailAndEnabledIsTrue(email);
     }
 
     @Override
@@ -48,5 +50,10 @@ public final class UserServiceImpl implements UserService {
         return this.userRepository.findByEmail(email).orElseThrow(() ->
                 new UserExistsException(format(USER_NOT_FOUND_ERROR, email))
         );
+    }
+
+    @Override
+    public boolean isUserExist(final String email) {
+        return this.userRepository.existsByEmail(email);
     }
 }
