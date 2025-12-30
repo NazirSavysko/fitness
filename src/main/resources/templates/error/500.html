@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Internal Server Error</title>
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+<div class="error-container">
+    <div class="error-code">500</div>
+    <h2 class="error-title">Something went wrong</h2>
+    <p class="error-message">
+        We encountered an unexpected error on our server.<br>
+        Please try refreshing the page or come back later.
+    </p>
+    <a href="/" class="home-button">Go Home</a>
+</div>
+</body>
+</html>

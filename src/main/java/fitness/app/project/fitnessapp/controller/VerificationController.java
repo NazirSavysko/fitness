@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.controller;
 
+import fitness.app.project.fitnessapp.exception.InvalidVerificationCodeException;
 import fitness.app.project.fitnessapp.facade.MailFacade;
 import fitness.app.project.fitnessapp.model.VerificationType;
 import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectService;
@@ -39,7 +40,7 @@ public class VerificationController {
 
             return redirectService.getRedirectUrl(type, email, code);
 
-        } catch (final IllegalArgumentException e) {
+        } catch (final InvalidVerificationCodeException e) {
             model.addAttribute("error", "Wrong verification code");
             model.addAttribute("email", email);
             model.addAttribute("type", type);

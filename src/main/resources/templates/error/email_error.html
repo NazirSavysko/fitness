@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email Error</title>
+    <link rel="stylesheet" th:href="@{/css/error.css}">
+</head>
+<body>
+<div class="error-container">
+    <div class="error-code" style="color: #dc3545;">Oops!</div> <h2 class="error-title">Email Delivery Failed</h2>
+    <p class="error-message">
+        We couldn't send the email verification code.<br>
+        Please check your email address or try again in a few minutes.
+    </p>
+
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <a href="javascript:history.back()" class="home-button" style="background-color: #6c757d;">Go Back</a>
+        <a href="/" class="home-button">Go Home</a>
+    </div>
+</div>
+</body>
+</html>

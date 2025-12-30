@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.service.impl;
 
+import fitness.app.project.fitnessapp.exception.InvalidVerificationCodeException;
 import fitness.app.project.fitnessapp.model.EmailVerification;
 import fitness.app.project.fitnessapp.repository.EmailVerificationRepository;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
@@ -59,7 +60,7 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
         this.emailVerificationRepository.findByEmail((email))
                 .map(record ->
                         record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
-                .orElseThrow(() -> new IllegalArgumentException(VERIFICATION_CODE_INVALID_ERROR));
+                .orElseThrow(() -> new InvalidVerificationCodeException(VERIFICATION_CODE_INVALID_ERROR));
     }
 
     @Override

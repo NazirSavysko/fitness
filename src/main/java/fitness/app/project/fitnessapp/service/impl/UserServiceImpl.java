@@ -6,6 +6,7 @@ import fitness.app.project.fitnessapp.repository.UserRepository;
 import fitness.app.project.fitnessapp.service.UserService;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +47,7 @@ public final class UserServiceImpl implements UserService {
     @Override
     public User getUserByEmail(final String email) {
         return this.userRepository.findByEmail(email).orElseThrow(() ->
-                new UserExistsException(format(USER_NOT_FOUND_ERROR, email))
+                new UsernameNotFoundException(format(USER_NOT_FOUND_ERROR, email))
         );
     }
 
