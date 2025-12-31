@@ -66,6 +66,7 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     @Override
     public void deleteVerificationRecordByEmail(final String email) {
         this.emailVerificationRepository.deleteEmailVerificationByEmail(email);
+        this.emailVerificationRepository.flush();
     }
 
     @Override

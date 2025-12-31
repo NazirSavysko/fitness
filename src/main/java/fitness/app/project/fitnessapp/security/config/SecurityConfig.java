@@ -47,7 +47,7 @@ public class SecurityConfig {
 
 
     @Bean
-    public TokenCookieJwtStringSerializer jwtStringSerializer(@Value("${jwt.cookie-token-key}") final String cookieTokenKey) throws Exception {
+    public TokenCookieJwtStringSerializer jwtStringSerializer(final @Value("${jwt.cookie-token-key}") String cookieTokenKey) throws Exception {
         return new TokenCookieJwtStringSerializer(new DirectEncrypter(OctetSequenceKey.parse(cookieTokenKey)));
     }
 
@@ -73,9 +73,8 @@ public class SecurityConfig {
 
     @Bean
     public TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer(
-            @Value("${jwt.cookie-token-key}") final String cookieTokenKey,
-            @Qualifier("tokenAuthProvider")
-            AuthenticationProvider preAuthenticatedAuthenticationProvider) throws Exception {
+            final @Value("${jwt.cookie-token-key}")String cookieTokenKey,
+            final @Qualifier("tokenAuthProvider") AuthenticationProvider preAuthenticatedAuthenticationProvider) throws Exception {
         return new TokenCookieAuthenticationConfigurer(
                 new TokenCookieJweStringDeserializer(
                         new DirectDecrypter(
@@ -100,6 +99,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/verification/**").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
                 )

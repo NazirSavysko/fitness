@@ -45,6 +45,8 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
             final User user = this.userService.getUserByEmail(registrationPayload.email());
             user.setPasswordHash(registrationPayload.password());
             this.userService.saveUser(user);
+
+            this.emailVerificationService.deleteVerificationRecordByEmail(registrationPayload.email());
         }
 
         this.emailVerificationService.sendVerificationEmail(registrationPayload.email());
