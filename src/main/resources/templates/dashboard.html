@@ -1,14 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<h1>Dashboard</h1>
 
-<form method="post" th:action="@{/api/v1/auth/logout}">
-    <button type="submit">Logout</button>
-</form>
+<div class="page-container">
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item active">
+                    <i class="fa-solid fa-house menu-icon"></i> Dashboard
+                </a>
+                <a href="/templates" class="menu-item">
+                    <i class="fa-solid fa-dumbbell menu-icon"></i> Templates
+                </a>
+                <a href="/settings" class="menu-item">
+                    <i class="fa-solid fa-gear menu-icon"></i> Settings
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/api/v1/auth/logout}">
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </header>
+
+        <div class="dashboard-grid">
+
+            <div class="card">
+                <h3 class="card-title">Quick Start</h3>
+                <div class="workout-actions">
+                    <form th:action="@{/workout/start}" method="post" class="action-form">
+                        <button class="workout-btn empty-btn">
+                            <div class="icon-box"><i class="fa-solid fa-play"></i></div>
+                            <div class="text-box">
+                                <span class="main-text">Start Empty</span>
+                                <span class="sub-text">No template</span>
+                            </div>
+                        </button>
+                    </form>
+
+                    <a href="/templates" class="workout-btn template-btn">
+                        <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
+                        <div class="text-box">
+                            <span class="main-text">From Template</span>
+                            <span class="sub-text">My routines</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="card full-width-card">
+                <h3 class="card-title">Last Workout</h3>
+                <div class="empty-state">
+                    <p>No activity recorded yet.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+
 </body>
 </html>

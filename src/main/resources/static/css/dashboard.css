@@ -1,0 +1,128 @@
+.dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(112, 144, 176, 0.12);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 1 300px;
+}
+
+.full-width-card {
+    flex: 1 1 100%;
+    min-height: 150px;
+}
+
+.card-title {
+    margin-bottom: 15px;
+    color: #2b3674;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.workout-actions {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.action-form {
+    width: 100%;
+}
+
+.workout-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.empty-btn {
+    background: #e9f0ff;
+    color: #4318FF;
+}
+
+.empty-btn .icon-box {
+    background: #4318FF;
+    color: white;
+}
+
+.template-btn {
+    background: #f4f7fe;
+    color: #2b3674;
+    border: 1px solid #e0e5f2;
+}
+
+.template-btn .icon-box {
+    background: white;
+    color: #2b3674;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+}
+
+.icon-box {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.text-box {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.main-text {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.sub-text {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.workout-btn:hover {
+    transform: translateY(-2px);
+}
+
+.empty-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #a3aed0;
+    font-style: italic;
+    background: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+@media (min-width: 600px) {
+    .workout-actions {
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-grid .card {
+        flex: 1 1 100%;
+    }
+}
