@@ -58,7 +58,7 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     @Override
     public void verifyEmailCode(final String email, final String code) {
         this.emailVerificationRepository.findByEmail((email))
-                .map(record ->
+                .filter(record ->
                         record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
                 .orElseThrow(() -> new InvalidVerificationCodeException(VERIFICATION_CODE_INVALID_ERROR));
     }

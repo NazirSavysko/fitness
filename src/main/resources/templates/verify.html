@@ -10,7 +10,9 @@
 
 <div class="main-container">
 
-    <form class="verify-form" th:action="@{/auth/verify}" method="post">
+    <form class="verify-form" th:action="@{/verification}" method="post">
+        <input type="hidden" name="email" th:value="${email}">
+        <input type="hidden" name="type" th:value="${type}">
 
         <h1 class="form-title">Verify your email</h1>
 
@@ -21,8 +23,6 @@
         <div class="error-message" th:if="${error}">
             <p th:text="${error}">Invalid code</p>
         </div>
-
-        <input type="hidden" name="email" th:value="${param.email}">
 
         <div class="form-group">
             <label for="code" class="form-label" style="text-align: center;">Enter 6-digit code</label>
