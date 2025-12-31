@@ -2,9 +2,9 @@ package fitness.app.project.fitnessapp.security.config;
 
 import fitness.app.project.fitnessapp.model.DeactivatedToken;
 import fitness.app.project.fitnessapp.repository.DeactivatedTokenRepository;
-import fitness.app.project.fitnessapp.security.token.TokenCookieAuthenticationConverter;
 import fitness.app.project.fitnessapp.security.service.TokenUser;
 import fitness.app.project.fitnessapp.security.token.Token;
+import fitness.app.project.fitnessapp.security.token.TokenCookieAuthenticationConverter;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,8 +32,8 @@ public final class TokenCookieAuthenticationConfigurer extends AbstractHttpConfi
     public void init(@NonNull HttpSecurity builder) {
         builder.logout(logout ->
                 logout
-                        .logoutUrl("/api/v1/auth/logout")
-                        .logoutSuccessUrl("/api/v1/auth/login")
+                        .logoutUrl("/auth/logout")
+                        .logoutSuccessUrl("/auth/login")
                         .addLogoutHandler(new CookieClearingLogoutHandler(AUTH_TOKEN_COOKIE_NAME))
                         .addLogoutHandler((request, response, authentication) -> {
                             if (authentication != null &&

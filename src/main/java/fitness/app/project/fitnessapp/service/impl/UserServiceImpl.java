@@ -55,4 +55,9 @@ public final class UserServiceImpl implements UserService {
     public boolean isUserExist(final String email) {
         return this.userRepository.existsByEmail(email);
     }
+
+    @Override
+    public void deleteUser(final User user) {
+        this.userRepository.delete(user);
+    }
 }

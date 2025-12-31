@@ -28,8 +28,7 @@ class ExceptionControllerAdvice {
         return "error/500"; // Общая страница ошибки
     }
 
-    // 2. Пользователь не найден -> Страница 404
-    @ExceptionHandler(UsernameNotFoundException.class)
+    @ExceptionHandler({UsernameNotFoundException.class, FitnessUserNotFoundException.class})
     public String handleUsernameNotFoundException(final @NonNull UsernameNotFoundException ex,final HttpServletResponse response) {
         LOGGER.error("User not found: {}", ex.getMessage());
         response.setStatus(SC_NOT_FOUND);

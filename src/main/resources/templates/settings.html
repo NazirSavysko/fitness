@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/settings.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="page-container">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/settings" class="menu-item active"> <i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+            <h1 class="page-title">Settings</h1>
+        </header>
+
+        <div class="settings-grid">
+
+            <div class="card">
+                <h3 class="card-title">Personal Info</h3>
+                <form th:action="@{/settings/profile}" method="post" th:object="${profile}">
+
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text"
+                               class="form-input"
+                               th:field="*{name}"
+                               th:classappend="${#fields.hasErrors('name')} ? 'field-error' : ''"
+                               placeholder="Your name">
+                        <div class="field-error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text"
+                               class="form-input"
+                               th:field="*{surname}"
+                               th:classappend="${#fields.hasErrors('surname')} ? 'field-error' : ''"
+                               placeholder="Your surname">
+                        <div class="field-error-text" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Update Profile</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Security</h3>
+                <form th:action="@{/settings/password}" method="post" th:object="${password}">
+
+                    <div class="form-group">
+                        <label class="form-label">Current Password</label>
+                        <input type="password"
+                               class="form-input"
+                               th:field="*{currentPassword}"
+                               th:classappend="${#fields.hasErrors('currentPassword')} ? 'field-error' : ''"
+                               required>
+                        <div class="field-error-text" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">New Password</label>
+                        <input type="password"
+                               class="form-input"
+                               th:field="*{newPassword}"
+                               th:classappend="${#fields.hasErrors('newPassword')} ? 'field-error' : ''"
+                               required>
+                        <div class="field-error-text" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Change Password</button>
+                </form>
+            </div>
+
+            <div class="card danger-zone full-width-card">
+                <h3 class="card-title text-danger">Danger Zone</h3>
+                <p class="text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                <form th:action="@{/settings/delete}" method="post">
+                    <button type="submit" class="btn-danger" onclick="return confirm('Are you sure you want to delete your account?');">
+                        Delete Account
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+
+</body>
+</html>

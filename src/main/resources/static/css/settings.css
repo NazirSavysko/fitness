@@ -1,0 +1,118 @@
+.settings-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.settings-grid .card {
+    flex: 1 1 350px;
+
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(112, 144, 176, 0.12);
+}
+
+.full-width-card {
+    flex: 1 1 100%;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #2b3674;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e0e5f2;
+    border-radius: 10px;
+    outline: none;
+    transition: 0.3s;
+    background: #fff;
+    font-size: 14px;
+}
+
+.form-input:focus {
+    border-color: #4318FF;
+    box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1);
+}
+
+.card-title {
+    margin-bottom: 20px;
+    color: #2b3674;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background: #4318FF;
+    color: white;
+    width: 100%;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+    margin-top: 10px;
+}
+.btn-primary:hover {
+    background: #2c09ba;
+}
+
+.danger-zone {
+    border: 1px solid #ffeaea;
+}
+
+.text-danger {
+    color: #e74c3c !important;
+}
+
+.text-muted {
+    color: #a3aed0;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.btn-danger {
+    background: #ffeaea;
+    color: #e74c3c;
+    width: 100%;
+    border: 1px solid #ffcdcd;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-danger:hover {
+    background: #e74c3c;
+    color: white;
+}
+.field-error-text {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.form-input.field-error {
+    border-color: #e74c3c;
+    background-color: #fff5f5;
+}
+
+@media (max-width: 768px) {
+    .settings-grid .card {
+        flex: 1 1 100%; /
+    }
+}

@@ -26,6 +26,7 @@ public final class VerificationProcessorFactory {
         if (processor == null) {
             throw new IllegalArgumentException(format(PROCESSOR_NOT_FOUND_MESSAGE, type));
         }
+
         processor.process(email);
     }
 }
