@@ -31,10 +31,10 @@ public class VerificationController {
     }
 
     @PostMapping
-    public String verifyCode(@RequestParam("email") String email,
-                             @RequestParam("code") String code,
-                             @RequestParam("type") VerificationType type,
-                             Model model) {
+    public String verifyCode(final @RequestParam("email") String email,
+                             final @RequestParam("code") String code,
+                             final @RequestParam("type") VerificationType type,
+                             final Model model) {
         try {
             this.mailFacade.verifyEmail(email, code, type);
 
