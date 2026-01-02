@@ -1,0 +1,198 @@
+.create-form-grid {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-bottom: 50px;
+}
+
+.breadcrumbs {
+    display: flex;
+    flex-direction: column;
+}
+
+.back-link {
+    font-size: 13px;
+    color: #A3AED0;
+    text-decoration: none;
+    margin-bottom: 5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: 0.2s;
+}
+
+.back-link:hover {
+    color: #4318FF;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(112, 144, 176, 0.12);
+}
+
+.card-title {
+    margin-bottom: 20px;
+    color: #2b3674;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.text-muted {
+    color: #A3AED0;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* === СТРОКИ С УПРАЖНЕНИЯМИ === */
+#exercises-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.exercise-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Простая анимация появления */
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.drag-handle {
+    color: #A3AED0;
+    cursor: grab;
+    font-size: 14px;
+    padding: 5px;
+}
+
+.flex-grow {
+    flex-grow: 1;
+}
+
+.mb-0 {
+    margin-bottom: 0 !important;
+}
+
+.exercise-select {
+    width: 100%;
+    height: 45px;
+    padding: 0 15px;
+    border: 1px solid #e0e5f2;
+    border-radius: 10px;
+    outline: none;
+    background: #fff;
+    font-size: 14px;
+    color: #2b3674;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.exercise-select:focus {
+    border-color: #4318FF;
+    box-shadow: 0 0 0 3px rgba(67, 24, 255, 0.1);
+}
+
+.btn-remove-exercise {
+    background: #ffeaea;
+    color: #e74c3c;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-remove-exercise:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-add-exercise {
+    width: 100%;
+    background: #F9FAFC;
+    border: 2px dashed #E0E5F2;
+    color: #4318FF;
+    padding: 15px;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.btn-add-exercise:hover {
+    background: #F4F7FE;
+    border-color: #4318FF;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    align-items: center;
+}
+
+.btn-cancel {
+    color: #A3AED0;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 20px;
+    transition: 0.2s;
+}
+
+.btn-cancel:hover {
+    color: #2b3674;
+}
+
+.btn-save {
+    background: #4318FF;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 10px rgba(67, 24, 255, 0.3);
+}
+
+.btn-save:hover {
+    background: #2c09ba;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+    .create-form-grid {
+        padding-bottom: 80px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 15px;
+    }
+
+    .btn-save, .btn-cancel {
+        width: 100%;
+        text-align: center;
+    }
+}

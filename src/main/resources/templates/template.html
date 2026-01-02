@@ -41,20 +41,10 @@
                 <button class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
                 <h1 class="page-title">My Templates</h1>
             </div>
-            <a href="/templates/create" class="btn-create-header">
+            <a th:action="@{/templates/create}" class="btn-create-header" methods="post">
                 <i class="fa-solid fa-plus"></i> Create Template
             </a>
         </header>
-
-        <div class="templates-grid">
-
-            <a href="/templates/create" class="template-card create-new-card">
-                <div class="create-icon">
-                    <i class="fa-solid fa-plus"></i>
-                </div>
-                <h3>Create New Template</h3>
-            </a>
-        </div>
     </main>
 </div>
 
