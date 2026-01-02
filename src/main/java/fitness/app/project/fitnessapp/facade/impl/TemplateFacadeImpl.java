@@ -25,4 +25,9 @@ public final class TemplateFacadeImpl implements TemplateFacade {
 
         return mapList(templates, this.getTemplateWorkoutMapper);
     }
+
+    @Override
+    public void deleteTemplateByIdAndUserEmail(final Integer templateId, final String name) {
+        this.workoutTemplateService.deleteTemplateByIdAndUserEmail(templateId, name);
+    }
 }

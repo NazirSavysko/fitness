@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface WorkoutTemplateRepository extends JpaRepository<WorkoutTemplate, Integer> {
     List<WorkoutTemplate> findAllByUser_UserDetails_Email(String userUserDetailsEmail);
+
+    boolean existsByUser_UserDetails_Email(String userUserDetailsEmail);
 }

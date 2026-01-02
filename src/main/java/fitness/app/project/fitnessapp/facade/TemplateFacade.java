@@ -8,4 +8,7 @@ import java.util.List;
 public interface TemplateFacade {
     @Transactional(readOnly = true)
     List<GetTemplateDTO> getTemplatesByEmail(String email);
+
+    @Transactional
+    void deleteTemplateByIdAndUserEmail(Integer templateId, String name);
 }

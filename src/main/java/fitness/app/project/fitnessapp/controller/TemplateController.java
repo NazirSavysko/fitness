@@ -63,7 +63,8 @@ public final class TemplateController {
     @DeleteMapping("/delete/{id}")
     public String deleteTemplate(final @PathVariable("id") Integer templateId,final Principal principal) {
 
-        System.out.println("Видаляємо шаблон з ID: " + templateId);
+        this.templateFacade.deleteTemplateByIdAndUserEmail(templateId, principal.getName());
+
         return "redirect:/templates";
     }
 
