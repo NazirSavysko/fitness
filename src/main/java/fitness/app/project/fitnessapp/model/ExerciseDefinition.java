@@ -23,5 +23,4 @@ public final class ExerciseDefinition {
 
     @Column
     private String name;
-
 }

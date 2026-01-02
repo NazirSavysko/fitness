@@ -27,6 +27,13 @@
     color: #4318FF;
 }
 
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2b3674;
+    margin: 0;
+}
+
 .card {
     background: white;
     padding: 30px;
@@ -47,7 +54,59 @@
     margin-bottom: 20px;
 }
 
-/* === СТРОКИ С УПРАЖНЕНИЯМИ === */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2b3674;
+    margin-left: 2px;
+}
+
+.form-input {
+    width: 100%;
+    height: 50px;
+    padding: 0 20px;
+    border: 1px solid #e0e5f2;
+    border-radius: 16px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #2b3674;
+    transition: all 0.2s ease-in-out;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-input::placeholder {
+    color: #a3aed0;
+    font-weight: 400;
+}
+
+.form-input:hover {
+    border-color: #b0bbd5;
+}
+
+.form-input:focus {
+    border-color: #4318FF;
+    box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.08);
+}
+
+.field-error {
+    border-color: #e74c3c !important;
+}
+
+.field-error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
 #exercises-container {
     display: flex;
     flex-direction: column;
@@ -59,13 +118,18 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    /* Простая анимация появления */
     animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .drag-handle {
@@ -73,6 +137,8 @@
     cursor: grab;
     font-size: 14px;
     padding: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .flex-grow {
@@ -85,16 +151,17 @@
 
 .exercise-select {
     width: 100%;
-    height: 45px;
+    height: 48px;
     padding: 0 15px;
     border: 1px solid #e0e5f2;
-    border-radius: 10px;
+    border-radius: 12px;
     outline: none;
     background: #fff;
     font-size: 14px;
     color: #2b3674;
     cursor: pointer;
     transition: 0.3s;
+    box-sizing: border-box;
 }
 
 .exercise-select:focus {
@@ -103,12 +170,12 @@
 }
 
 .btn-remove-exercise {
-    background: #ffeaea;
+    background: #fff0f0;
     color: #e74c3c;
     border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -118,8 +185,8 @@
 }
 
 .btn-remove-exercise:hover {
-    background: #e74c3c;
-    color: white;
+    background: #ffe2e2;
+    transform: scale(1.05);
 }
 
 .btn-add-exercise {
@@ -127,8 +194,8 @@
     background: #F9FAFC;
     border: 2px dashed #E0E5F2;
     color: #4318FF;
-    padding: 15px;
-    border-radius: 15px;
+    padding: 16px;
+    border-radius: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
@@ -149,6 +216,7 @@
     justify-content: flex-end;
     gap: 15px;
     align-items: center;
+    margin-top: 10px;
 }
 
 .btn-cancel {
@@ -156,11 +224,13 @@
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
-    padding: 10px 20px;
+    padding: 12px 24px;
+    border-radius: 12px;
     transition: 0.2s;
 }
 
 .btn-cancel:hover {
+    background: #f4f7fe;
     color: #2b3674;
 }
 
@@ -168,17 +238,18 @@
     background: #4318FF;
     color: white;
     border: none;
-    padding: 12px 30px;
-    border-radius: 10px;
+    padding: 14px 32px;
+    border-radius: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 4px 10px rgba(67, 24, 255, 0.3);
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(67, 24, 255, 0.2);
 }
 
 .btn-save:hover {
-    background: #2c09ba;
+    background: #3311db;
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(67, 24, 255, 0.3);
 }
 
 @media (max-width: 600px) {
