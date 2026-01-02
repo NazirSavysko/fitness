@@ -1,11 +1,63 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Templates</title>
+
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/templates.css}"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
 
+<div class="page-container">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item active"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/settings" class="menu-item"> <i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+                <h1 class="page-title">My Templates</h1>
+            </div>
+            <a href="/templates/create" class="btn-create-header">
+                <i class="fa-solid fa-plus"></i> Create Template
+            </a>
+        </header>
+
+        <div class="templates-grid">
+
+            <a href="/templates/create" class="template-card create-new-card">
+                <div class="create-icon">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+                <h3>Create New Template</h3>
+            </a>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
 </body>
 </html>
