@@ -14,6 +14,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 @AllArgsConstructor
 public final class SettingsFacadeImpl implements SettingsFacade {
@@ -34,6 +36,14 @@ public final class SettingsFacadeImpl implements SettingsFacade {
     @Override
     public void updateProfile(final @NonNull UpdateProfileDTO profileDto, final String email) {
         final FitnessUser fitnessUser = this.fitnessUserService.getFitnessUserByEmail(email);
+
+        final boolean nameChanged = !Objects.equals(fitnessUser.getName(), profileDto.name());
+        final boolean surnameChanged = !Objects.equals(fitnessUser.getSurname(), profileDto.surname());
+
+        if (!nameChanged && !surnameChanged) {
+            return;
+        }
+
         fitnessUser.setName(profileDto.name());
         fitnessUser.setSurname(profileDto.surname());
 
@@ -48,6 +58,7 @@ public final class SettingsFacadeImpl implements SettingsFacade {
             throw new PasswordInvalidException(PASSWORD_MISMATCH_ERROR);
         }
 
+
         user.setPasswordHash(this.passwordEncoder.encode(passwordDto.newPassword()));
 
         this.userService.saveUser(user);
@@ -58,6 +69,4 @@ public final class SettingsFacadeImpl implements SettingsFacade {
         final User user = this.userService.getUserByEmail(email);
         this.userService.deleteUser(user);
     }
-
-
 }
