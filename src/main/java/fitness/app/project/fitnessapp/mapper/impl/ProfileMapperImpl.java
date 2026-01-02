@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class UpdateProfileMapperImpl implements UpdateProfileMapper {
+public final class ProfileMapperImpl implements UpdateProfileMapper {
 
     @Contract("_ -> new")
     @Override

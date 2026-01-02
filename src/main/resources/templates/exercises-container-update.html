@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Template</title>
+    <title>Update Template</title>
 
     <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/create-template.css}"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/create-template.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
@@ -41,16 +42,20 @@
                 <button class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
                 <div class="breadcrumbs">
                     <a href="/templates" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back</a>
-                    <h1 class="page-title">Create Template</h1>
+                    <h1 class="page-title">Update Template</h1>
                 </div>
             </div>
         </header>
 
-        <form class="create-form-grid" th:action="@{/templates/create}" method="post" th:object="${templateDto}">
+        <form class="create-form-grid"
+              th:action="@{/templates/edit/{id}(id=${UpdateTemplateDto.id})}"
+              method="post"
+              th:object="${UpdateTemplateDto}">
+
+            <input type="hidden" th:field="*{id}"/>
 
             <div class="card">
                 <h3 class="card-title">Basic Information</h3>
-
                 <div class="form-group">
                     <label class="form-label">Template Name</label>
                     <input type="text"
@@ -60,14 +65,31 @@
                            placeholder="e.g., Upper Body Power">
                     <div class="field-error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                 </div>
-
             </div>
 
             <div class="card">
                 <h3 class="card-title">Exercises</h3>
-                <p class="text-muted">Add exercises to your workout template.</p>
+                <p class="text-muted">Modify exercises in your workout template.</p>
 
                 <div id="exercises-container">
+                    <div class="exercise-row" th:each="ex, stat : *{exercises}">
+                        <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
+
+                        <div class="form-group mb-0 flex-grow">
+                            <select class="form-input exercise-select" th:field="*{exercises[__${stat.index}__].id}">
+                                <option value="" disabled>Select Exercise</option>
+                                <option th:each="opt : ${availableExercises}"
+                                        th:value="${opt.id}"
+                                        th:text="${opt.exerciseName}">
+                                    Option
+                                </option>
+                            </select>
+                        </div>
+
+                        <button type="button" class="btn-remove-exercise" onclick="removeExerciseRow(this)">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="field-error-text" th:if="${#fields.hasErrors('exercises')}" th:errors="*{exercises}"></div>
@@ -92,10 +114,9 @@
         <div class="form-group mb-0 flex-grow">
             <select class="form-input exercise-select" name="exercises[INDEX].id">
                 <option value="" disabled selected>Select Exercise</option>
-
-                <option th:each="exercise : ${exercises}"
-                        th:value="${exercise.id}"
-                        th:text="${exercise.exerciseName}">
+                <option th:each="exercise : ${availableExercises}"
+                        th:value="${exercise?.id}"
+                        th:text="${exercise?.exerciseName}">
                     Exercise Name
                 </option>
             </select>
@@ -109,14 +130,16 @@
 
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script>
-    let exerciseIndex = 0;
+    let exerciseIndex = document.querySelectorAll('#exercises-container .exercise-row').length;
 
     function addExerciseRow() {
         const container = document.getElementById('exercises-container');
         const template = document.getElementById('exercise-row-template');
 
+        // Клонируем шаблон
         const clone = template.content.cloneNode(true);
 
+        // Находим select и обновляем его имя
         const select = clone.querySelector('select');
         select.name = select.name.replace('INDEX', exerciseIndex);
 
@@ -127,10 +150,6 @@
     function removeExerciseRow(btn) {
         btn.closest('.exercise-row').remove();
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        addExerciseRow();
-    });
 </script>
 
 </body>

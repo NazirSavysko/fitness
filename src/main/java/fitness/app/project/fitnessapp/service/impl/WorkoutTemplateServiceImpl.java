@@ -31,4 +31,16 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
 
         this.workoutTemplateRepository.deleteById(templateId);
     }
+
+    @Override
+    @PreAuthorize("@workoutTemplateRepository.existsByUser_UserDetails_Email(#email)")
+    public WorkoutTemplate getWorkoutTemplateById(final Integer templateId, final String email) {
+        return this.workoutTemplateRepository.findById(templateId)
+                .orElseThrow(() -> new WorkoutTemplateNotFoundException(WORKOUT_TEMPLATE_NOT_FOUND_MESSAGE));
+    }
+
+    @Override
+    public void saveWorkout(final WorkoutTemplate workoutTemplate) {
+        this.workoutTemplateRepository.save(workoutTemplate);
+    }
 }

@@ -2,7 +2,7 @@ package fitness.app.project.fitnessapp.mapper.impl;
 
 import fitness.app.project.fitnessapp.dto.GetTemplateDTO;
 import fitness.app.project.fitnessapp.mapper.GetTemplateExerciseMapper;
-import fitness.app.project.fitnessapp.mapper.GetTemplateWorkoutMapper;
+import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -12,7 +12,7 @@ import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
 
 @Component
 @AllArgsConstructor
-public class GetTemplateWorkoutMapperImpl implements GetTemplateWorkoutMapper {
+public class TemplateMapperImpl implements TemplateWorkoutMapper {
     private final GetTemplateExerciseMapper getTemplateExerciseMapper;
 
     @Override
