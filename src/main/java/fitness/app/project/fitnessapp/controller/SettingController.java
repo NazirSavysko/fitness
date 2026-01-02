@@ -63,7 +63,7 @@ class SettingController {
     public String deleteAccount(final Principal principal) {
         this.settingsFacade.deleteAccount(principal.getName());
 
-        return "redirect:/auth/logout";
+        return "redirect:/auth/login";
     }
 
 
