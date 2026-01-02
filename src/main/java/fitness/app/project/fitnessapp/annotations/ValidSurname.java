@@ -16,7 +16,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Documented
 @Constraint(validatedBy = {})
-@Size(min = 5, max = 30, message = "{jakarta.validation.constraints.Surname.size}")
+@Size(min = 3, max = 30, message = "{jakarta.validation.constraints.Surname.size}")
 @Pattern(regexp = "^[A-Z][a-zA-Z0-9]*$",
         message = "{jakarta.validation.constraints.Surname.pattern}")
 public @interface ValidSurname {

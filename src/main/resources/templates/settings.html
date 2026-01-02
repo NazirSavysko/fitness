@@ -59,10 +59,15 @@
                     <div class="form-group">
                         <label class="form-label">Last Name</label>
                         <input type="text"
+                               id="surname"
                                class="form-input"
                                th:field="*{surname}"
-                               th:classappend="${#fields.hasErrors('surname')} ? 'field-error' : ''"
+                               th:errorclass="input-error"
                                placeholder="Your surname">
+<!--                        <input type="text"-->
+<!--                               th:field="*{surname}"-->
+<!--                               class="form-input"-->
+<!--                               th:errorclass="input-error">-->
                         <div class="field-error-text" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
                     </div>
 
