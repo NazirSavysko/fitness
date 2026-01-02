@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public final class SettingsFacadeImpl implements SettingsFacade {
-    private static final String PASSWORD_MISMATCH_ERROR = "New password and confirm password do not match";
+    private static final String PASSWORD_MISMATCH_ERROR = "New password is invalid or does not match current password.";
 
     private final FitnessUserService fitnessUserService;
     private final UserService userService;
@@ -42,11 +42,12 @@ public final class SettingsFacadeImpl implements SettingsFacade {
 
     @Override
     public void changePassword(final @NonNull ChangePasswordDTO passwordDto, final String name) {
-        if(!passwordDto.newPassword().equals(passwordDto.currentPassword())) {
+        final User user = this.userService.getUserByEmail(name);
+
+        if(!this.passwordEncoder.matches(passwordDto.currentPassword(), user.getPasswordHash())) {
             throw new PasswordInvalidException(PASSWORD_MISMATCH_ERROR);
         }
 
-        final User user = this.userService.getUserByEmail(name);
         user.setPasswordHash(this.passwordEncoder.encode(passwordDto.newPassword()));
 
         this.userService.saveUser(user);
@@ -57,4 +58,6 @@ public final class SettingsFacadeImpl implements SettingsFacade {
         final User user = this.userService.getUserByEmail(email);
         this.userService.deleteUser(user);
     }
+
+
 }

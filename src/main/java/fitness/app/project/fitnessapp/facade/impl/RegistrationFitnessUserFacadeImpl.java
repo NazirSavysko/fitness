@@ -12,12 +12,10 @@ import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
-import static java.lang.String.format;
-
 @Component
 @AllArgsConstructor
 public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitnessUserFacade {
-    private final static String USER_FOUND_ERROR = "User with email %s already exists";
+    private final static String USER_FOUND_ERROR = "User with email already exists";
 
     private final FitnessUserService fitnessUserService;
     private final EmailVerificationService emailVerificationService;
@@ -27,7 +25,7 @@ public final class RegistrationFitnessUserFacadeImpl implements RegistrationFitn
     @Override
     public void register(final @NonNull RegistrationDTO registrationPayload) {
         if (this.userService.isExistingEmailAndEnableTrue(registrationPayload.email())) {
-            throw new UserExistsException(format(USER_FOUND_ERROR, registrationPayload.email()));
+            throw new UserExistsException(USER_FOUND_ERROR);
         }
 
         final boolean isExist = this.userService.isUserExist(registrationPayload.email());

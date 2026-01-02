@@ -1,14 +1,13 @@
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const toggleButton = document.querySelector('.material-symbols-outlined');
+function togglePassword(inputId, btn) {
+    const passwordInput = document.getElementById(inputId);
 
     if (passwordInput) {
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            if (toggleButton) toggleButton.textContent = 'visibility_off';
+            btn.textContent = 'visibility_off';
         } else {
             passwordInput.type = 'password';
-            if (toggleButton) toggleButton.textContent = 'visibility';
+            btn.textContent = 'visibility';
         }
     }
 }

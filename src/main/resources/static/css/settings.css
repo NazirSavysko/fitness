@@ -7,7 +7,6 @@
 
 .settings-grid .card {
     flex: 1 1 350px;
-
     background: white;
     padding: 25px;
     border-radius: 20px;
@@ -19,6 +18,7 @@
 }
 
 .form-group {
+    position: relative;
     margin-bottom: 20px;
 }
 
@@ -33,6 +33,7 @@
 .form-input {
     width: 100%;
     padding: 12px 15px;
+    padding-right: 45px;
     border: 1px solid #e0e5f2;
     border-radius: 10px;
     outline: none;
@@ -65,6 +66,7 @@
     transition: 0.2s;
     margin-top: 10px;
 }
+
 .btn-primary:hover {
     background: #2c09ba;
 }
@@ -99,6 +101,7 @@
     background: #e74c3c;
     color: white;
 }
+
 .field-error-text {
     color: #e74c3c;
     font-size: 13px;
@@ -111,8 +114,30 @@
     background-color: #fff5f5;
 }
 
+.material-symbols-outlined {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    height: 45px;
+    width: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #a3aed0;
+    cursor: pointer;
+    font-size: 20px;
+    user-select: none;
+    z-index: 5;
+}
+
+.material-symbols-outlined:hover {
+    color: #4318FF;
+}
+
 @media (max-width: 768px) {
     .settings-grid .card {
-        flex: 1 1 100%; /
+        flex: 1 1 100%;
     }
 }

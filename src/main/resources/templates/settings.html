@@ -7,6 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/settings.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
 <body>
 
@@ -64,10 +65,6 @@
                                th:field="*{surname}"
                                th:errorclass="input-error"
                                placeholder="Your surname">
-<!--                        <input type="text"-->
-<!--                               th:field="*{surname}"-->
-<!--                               class="form-input"-->
-<!--                               th:errorclass="input-error">-->
                         <div class="field-error-text" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}"></div>
                     </div>
 
@@ -83,19 +80,23 @@
                         <label class="form-label">Current Password</label>
                         <input type="password"
                                class="form-input"
+                               id="currentPassword"
                                th:field="*{currentPassword}"
                                th:classappend="${#fields.hasErrors('currentPassword')} ? 'field-error' : ''"
                                required>
+                        <button type="button" class="material-symbols-outlined" onclick="togglePassword('currentPassword', this)">visibility</button>
                         <div class="field-error-text" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">New Password</label>
                         <input type="password"
+                               id="newPassword"
                                class="form-input"
                                th:field="*{newPassword}"
                                th:classappend="${#fields.hasErrors('newPassword')} ? 'field-error' : ''"
                                required>
+                        <button type="button" class="material-symbols-outlined" onclick="togglePassword('newPassword', this)">visibility</button>
                         <div class="field-error-text" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
                     </div>
 
@@ -117,7 +118,7 @@
     </main>
 </div>
 
-<script th:src="@{/js/menu-toggle.js}"></script>
-
+<script th:src="@{/js/menu-toggle.js}" ></script>
+<script th:src="@{/js/password-toggle.js}"></script>
 </body>
 </html>

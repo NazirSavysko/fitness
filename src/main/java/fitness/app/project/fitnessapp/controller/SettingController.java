@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.ChangePasswordDTO;
 import fitness.app.project.fitnessapp.dto.UpdateProfileDTO;
+import fitness.app.project.fitnessapp.exception.PasswordInvalidException;
 import fitness.app.project.fitnessapp.facade.SettingsFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -49,9 +50,13 @@ class SettingController {
         if (bindingResult.hasErrors()) {
             return this.handleValidationErrors(model, principal.getName(), bindingResult);
         }
-        this.settingsFacade.changePassword(passwordDto, principal.getName());
-
-        return "redirect:/settings";
+        try {
+            this.settingsFacade.changePassword(passwordDto, principal.getName());
+            return "redirect:/settings";
+        } catch (final PasswordInvalidException e) {
+            bindingResult.rejectValue("currentPassword", "error.invalid.current.password", e.getMessage());
+            return this.handleValidationErrors(model, principal.getName(), bindingResult);
+        }
     }
 
     @DeleteMapping("/delete")

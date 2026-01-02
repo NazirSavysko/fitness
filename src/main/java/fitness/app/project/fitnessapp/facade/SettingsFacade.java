@@ -16,5 +16,6 @@ public interface SettingsFacade {
     @Transactional
     void changePassword(@Valid ChangePasswordDTO passwordDto, String name);
 
+    @Transactional
     void deleteAccount(String email);
 }

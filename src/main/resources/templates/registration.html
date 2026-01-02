@@ -32,7 +32,7 @@
                        class="form-input"
                        th:errorclass="input-error"
                        placeholder="••••••••">
-                <button type="button" class="material-symbols-outlined" onclick="togglePassword()">visibility</button>
+                <button type="button" class="material-symbols-outlined" onclick="togglePassword('password', this)">visibility</button>
             </div>
             <div class="field-error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
         </div>
