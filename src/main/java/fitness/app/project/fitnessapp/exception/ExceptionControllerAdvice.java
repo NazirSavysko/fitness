@@ -25,7 +25,7 @@ class ExceptionControllerAdvice {
         LOGGER.error("Security/Parsing error: {}", ex.getMessage(), ex);
         response.setStatus(SC_INTERNAL_SERVER_ERROR);
 
-        return "error/500"; // Общая страница ошибки
+        return "error/500";
     }
 
     @ExceptionHandler({UsernameNotFoundException.class, FitnessUserNotFoundException.class})

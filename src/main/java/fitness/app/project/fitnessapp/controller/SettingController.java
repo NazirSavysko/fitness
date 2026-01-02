@@ -55,6 +55,7 @@ class SettingController {
             return "redirect:/settings";
         } catch (final PasswordInvalidException e) {
             bindingResult.rejectValue("currentPassword", "error.invalid.current.password", e.getMessage());
+
             return this.handleValidationErrors(model, principal.getName(), bindingResult);
         }
     }
