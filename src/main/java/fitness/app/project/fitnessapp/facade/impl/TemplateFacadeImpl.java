@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.facade.impl;
 
+import fitness.app.project.fitnessapp.dto.CreateTemplateDTO;
 import fitness.app.project.fitnessapp.dto.GetTemplateDTO;
 import fitness.app.project.fitnessapp.dto.TemplateExerciseDTO;
 import fitness.app.project.fitnessapp.dto.UpdateTemplateDTO;
@@ -7,8 +8,10 @@ import fitness.app.project.fitnessapp.facade.TemplateFacade;
 import fitness.app.project.fitnessapp.mapper.ExerciseDefinitionMapper;
 import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
+import fitness.app.project.fitnessapp.model.FitnessUser;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 import fitness.app.project.fitnessapp.service.ExerciseDefinitionService;
+import fitness.app.project.fitnessapp.service.FitnessUserService;
 import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Unmodifiable;
@@ -18,10 +21,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
+import static java.util.stream.Collectors.toList;
 
 @Component
 @AllArgsConstructor
 public final class TemplateFacadeImpl implements TemplateFacade {
+    private final FitnessUserService fitnessUserService;
     private final ExerciseDefinitionMapper exerciseDefinitionMapper;
     private final TemplateWorkoutMapper updateTemplateExerciseMapper;
     private final WorkoutTemplateService workoutTemplateService;
@@ -40,15 +45,11 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     }
 
     @Override
-    public void updateTemplate(final UpdateTemplateDTO templateDTO, final String email) {
+    public void updateTemplate(final @NonNull UpdateTemplateDTO templateDTO, final String email) {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
 
         workoutTemplate.setName(templateDTO.name());
-        final List<ExerciseDefinition> realExercises = templateDTO.exercises().stream()
-                .map(dto -> exerciseDefinitionService.getReferenceById(dto.id()))
-                .toList();
-
-        workoutTemplate.setExercises(realExercises);
+        workoutTemplate.setExercises(this.createTemplateDTO(templateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -65,5 +66,22 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final List<ExerciseDefinition> exerciseDefinitions = this.exerciseDefinitionService.getAllExerciseDefinitions();
 
         return mapList(exerciseDefinitions, exerciseDefinitionMapper);
+    }
+
+    @Override
+    public void createTemplate(final CreateTemplateDTO createTemplateDTO, final String email) {
+        final FitnessUser user = this.fitnessUserService.getFitnessUserByEmail(email);
+        final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
+        workoutTemplate.setName(createTemplateDTO.name());
+        workoutTemplate.setUser(user);
+        workoutTemplate.setExercises(this.createTemplateDTO(createTemplateDTO.exercises()));
+
+        this.workoutTemplateService.saveWorkout(workoutTemplate);
+    }
+
+    private @NonNull List<ExerciseDefinition> createTemplateDTO(final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {
+        return exerciseDTOs.stream()
+                .map(dto -> this.exerciseDefinitionService.getReferenceById(dto.id()))
+                .collect(toList());
     }
 }

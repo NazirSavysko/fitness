@@ -48,7 +48,7 @@
         </header>
 
         <form class="create-form-grid"
-              th:action="@{/templates/edit/{id}(id=${UpdateTemplateDto.id})}"
+              th:action="@{/templates/edit}"
               method="post"
               th:object="${UpdateTemplateDto}">
 
@@ -78,7 +78,7 @@
                         <div class="form-group mb-0 flex-grow">
                             <select class="form-input exercise-select" th:field="*{exercises[__${stat.index}__].id}">
                                 <option value="" disabled>Select Exercise</option>
-                                <option th:each="opt : ${availableExercises}"
+                                <option th:each="opt : ${exercises}"
                                         th:value="${opt.id}"
                                         th:text="${opt.exerciseName}">
                                     Option
@@ -114,7 +114,8 @@
         <div class="form-group mb-0 flex-grow">
             <select class="form-input exercise-select" name="exercises[INDEX].id">
                 <option value="" disabled selected>Select Exercise</option>
-                <option th:each="exercise : ${availableExercises}"
+
+                <option th:each="exercise : ${exercises}"
                         th:value="${exercise?.id}"
                         th:text="${exercise?.exerciseName}">
                     Exercise Name

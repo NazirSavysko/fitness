@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="card-body">
-                    <p class="text-muted">Custom Workout Routine</p>
+                    <a th:href="@{/templates/{id}(id=${template.id})}"class="text-muted">Custom Workout Routine</a>
                 </div>
 
                 <div class="card-footer">
@@ -124,13 +124,8 @@
 <script>
     function openDeleteModal(button) {
         const deleteUrl = button.getAttribute('data-url');
-
-
         const form = document.getElementById('deleteForm');
-
         form.action = deleteUrl;
-
-
         document.getElementById('deleteModal').classList.add('active');
     }
 

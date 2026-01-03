@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.facade;
 
+import fitness.app.project.fitnessapp.dto.CreateTemplateDTO;
 import fitness.app.project.fitnessapp.dto.GetTemplateDTO;
 import fitness.app.project.fitnessapp.dto.TemplateExerciseDTO;
 import fitness.app.project.fitnessapp.dto.UpdateTemplateDTO;
@@ -26,4 +27,7 @@ public interface TemplateFacade {
     @Unmodifiable
     @NonNull
     List<TemplateExerciseDTO> getExerciseDefinitions();
+
+    @Transactional
+    void createTemplate(CreateTemplateDTO createTemplateDTO, String name);
 }

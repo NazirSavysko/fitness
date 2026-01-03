@@ -22,12 +22,22 @@ import java.util.List;
 public final class TemplateController {
     private final TemplateFacade templateFacade;
 
+
     @GetMapping
     public String getTemplatesPage(final Model model, final Principal principal) {
         final List<GetTemplateDTO> templates = this.templateFacade.getTemplatesByEmail(principal.getName());
         model.addAttribute("templates", templates);
 
         return "template";
+    }
+
+    @GetMapping("/{id}")
+    public String getTemplateDetailsPage(final @PathVariable("id") Integer templateId, final Model model, final Principal principal) {
+        final GetTemplateDTO templateDTO = this.templateFacade.getTemplateForUpdateById(templateId, principal.getName());
+        model.addAttribute("template", templateDTO);
+        model.addAttribute("exercises", templateDTO.exercises());
+
+        return "template-details";
     }
 
     @GetMapping("/create")
@@ -43,6 +53,7 @@ public final class TemplateController {
     @PostMapping("/create")
     public String createTemplate(final @Valid @ModelAttribute("templateDto") CreateTemplateDTO createTemplateDTO,
                                  final BindingResult result,
+                                 final Principal principal,
                                  final Model model) {
 
         if (result.hasErrors()) {
@@ -53,27 +64,33 @@ public final class TemplateController {
             return "exercises-container";
         }
 
+        this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
+
 
         return "redirect:/templates";
     }
 
     @GetMapping("edit/{id}")
-    public String editTemplate(final @PathVariable("id") Integer templateId, final Model model, final Principal principal) { // <-- Тут было RequestParam
-
+    public String editTemplate(final @PathVariable("id") Integer templateId, final Model model, final Principal principal) {
         final GetTemplateDTO templateDTO = this.templateFacade.getTemplateForUpdateById(templateId, principal.getName());
+        final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
+
+        model.addAttribute("UpdateTemplateDto", templateDTO);
+        model.addAttribute("exercises", exercises);
 
         return "exercises-container-update";
     }
-
     @PostMapping("/edit")
     public String editTemplate(final @Valid @ModelAttribute("UpdateTemplateDto") UpdateTemplateDTO templateDTO,
                                final BindingResult result,
                                final Principal principal,
                                final Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("errors", result.getAllErrors());
+            final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
+            model.addAttribute("exercises", exercises);
 
-            return "exercises-container";
+
+            return "exercises-container-update";
         }
 
         this.templateFacade.updateTemplate(templateDTO, principal.getName());

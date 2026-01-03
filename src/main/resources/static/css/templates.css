@@ -328,11 +328,18 @@
 }
 
 @media (max-width: 600px) {
-    .btn-create-header {
-        display: none;
-    }
-
     .templates-grid {
         grid-template-columns: 1fr;
+        padding-bottom: 80px;
+    }
+
+    .btn-create-header {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        z-index: 999;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(67, 24, 255, 0.5);
     }
 }
