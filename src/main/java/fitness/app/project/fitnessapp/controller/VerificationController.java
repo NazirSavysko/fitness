@@ -3,7 +3,7 @@ package fitness.app.project.fitnessapp.controller;
 import fitness.app.project.fitnessapp.exception.InvalidVerificationCodeException;
 import fitness.app.project.fitnessapp.facade.MailFacade;
 import fitness.app.project.fitnessapp.model.VerificationType;
-import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectService;
+import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class VerificationController {
 
     private final MailFacade mailFacade;
-    private final VerificationRedirectService redirectService;
+    private final VerificationRedirectFactory redirectService;
 
     @GetMapping
     public String getVerifyPage(final @RequestParam("email") String email,
-                                final @RequestParam(value = "type") VerificationType type,
+                                final @RequestParam("type") VerificationType type,
                                 Model model) {
         model.addAttribute("email", email);
         model.addAttribute("type", type);

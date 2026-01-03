@@ -35,7 +35,7 @@
         <button type="submit" class="submit-button">Confirm</button>
 
         <div class="auth-footer">
-            <a th:href="@{/auth/register}">Back to registration</a>
+            <a th:if="${type.name() == 'REGISTRATION'}" th:href="@{/auth/register}">Back to registration</a>
         </div>
     </form>
 </div>

@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Component
-public final class VerificationRedirectService {
+public final class VerificationRedirectFactory {
     private static final String STRATEGY_NOT_FOUND_MESSAGE = "No strategy found for verification type: %s";
 
     private final Map<VerificationType, VerificationRedirectStrategy> strategyMap;
 
-    public VerificationRedirectService(final List<VerificationRedirectStrategy> strategies) {
+    public VerificationRedirectFactory(final List<VerificationRedirectStrategy> strategies) {
         this.strategyMap = strategies.stream()
                 .collect(Collectors.toMap(VerificationRedirectStrategy::getType, Function.identity()));
     }

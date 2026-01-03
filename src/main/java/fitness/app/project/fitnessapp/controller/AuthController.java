@@ -1,10 +1,13 @@
 package fitness.app.project.fitnessapp.controller;
 
+import fitness.app.project.fitnessapp.dto.ForgotPasswordDTO;
 import fitness.app.project.fitnessapp.dto.RegistrationDTO;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
+import fitness.app.project.fitnessapp.facade.ForgotPasswordFacade;
 import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("auth")
 public final class AuthController {
 
-    private final RegistrationFitnessUserFacade fitnessUserFacade;
+    private final RegistrationFitnessUserFacade registrationFacade;
+    private final ForgotPasswordFacade forgotPasswordFacade;
 
     @GetMapping("/login")
     public String login() {
@@ -44,7 +48,7 @@ public final class AuthController {
         }
 
         try {
-            this.fitnessUserFacade.register(registrationPayload);
+            this.registrationFacade.register(registrationPayload);
 
             return "redirect:/verification?email=" + registrationPayload.email() + "&type=REGISTRATION";
 
@@ -54,4 +58,32 @@ public final class AuthController {
             return "registration";
         }
     }
+
+    @GetMapping("/forgot-password")
+    public String showForgotPasswordPage(final Model model) {
+        model.addAttribute("forgotPasswordDto", new ForgotPasswordDTO(""));
+
+        return "forgot-password";
+    }
+
+    @PostMapping("/forgot-password")
+    public String processForgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordDTO dto,
+                                        BindingResult result,
+                                        Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+
+            return "forgot-password";
+        }
+
+        try {
+            this.forgotPasswordFacade.forgotPassword(dto.email());
+
+            return "redirect:/verification?email=" + dto.email() + "&type=PASSWORD_RESET";
+
+        } catch (UsernameNotFoundException e) {
+            return "redirect:/auth/forgot-password?error";
+        }
+    }
+
 }
