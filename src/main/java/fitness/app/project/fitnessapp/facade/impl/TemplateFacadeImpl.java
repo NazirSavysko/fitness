@@ -1,11 +1,9 @@
 package fitness.app.project.fitnessapp.facade.impl;
 
-import fitness.app.project.fitnessapp.dto.CreateTemplateDTO;
-import fitness.app.project.fitnessapp.dto.GetTemplateDTO;
-import fitness.app.project.fitnessapp.dto.TemplateExerciseDTO;
-import fitness.app.project.fitnessapp.dto.UpdateTemplateDTO;
+import fitness.app.project.fitnessapp.dto.*;
 import fitness.app.project.fitnessapp.facade.TemplateFacade;
 import fitness.app.project.fitnessapp.mapper.ExerciseDefinitionMapper;
+import fitness.app.project.fitnessapp.mapper.GetTemplateForDashboardMapper;
 import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
 import fitness.app.project.fitnessapp.model.FitnessUser;
@@ -32,6 +30,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     private final WorkoutTemplateService workoutTemplateService;
     private final TemplateWorkoutMapper getTemplateWorkoutMapper;
     private final ExerciseDefinitionService exerciseDefinitionService;
+    private final GetTemplateForDashboardMapper getTemplateForDashboardMapper;
 
     public @NonNull @Unmodifiable List<GetTemplateDTO> getTemplatesByEmail(final String email) {
         final List<WorkoutTemplate> templates = this.workoutTemplateService.getTemplatesByUserEmail(email);
@@ -69,7 +68,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     }
 
     @Override
-    public void createTemplate(final CreateTemplateDTO createTemplateDTO, final String email) {
+    public void createTemplate(final @NonNull CreateTemplateDTO createTemplateDTO, final String email) {
         final FitnessUser user = this.fitnessUserService.getFitnessUserByEmail(email);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
@@ -77,6 +76,13 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         workoutTemplate.setExercises(this.createTemplateDTO(createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
+    }
+
+    @Override
+    public @NonNull @Unmodifiable List<GetDashboardTemplateDTO> getDashboardTemplates(final String email) {
+        final List<WorkoutTemplate> templates = this.workoutTemplateService.getTemplatesByUserEmail(email);
+
+        return mapList(templates, this.getTemplateForDashboardMapper);
     }
 
     private @NonNull List<ExerciseDefinition> createTemplateDTO(final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {

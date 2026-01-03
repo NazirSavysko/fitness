@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Workout</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/workout-active.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="page-container">
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item active"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/settings" class="menu-item"> <i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+            </nav>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="workout-header">
+            <div class="header-left">
+                <h1 class="workout-title" th:text="${session.name}">Workout Name</h1>
+
+                <div class="timer-badge">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="workoutTimer">00:00</span>
+                </div>
+            </div>
+            <form th:action="@{/workout/finish}" method="post" style="margin: 0;">
+                <input type="hidden" name="sessionId" th:value="${session.id}">
+                <button type="submit" class="btn-finish">Finish</button>
+            </form>
+        </header>
+
+        <div class="workout-container">
+
+            <div th:if="${#lists.isEmpty(session.exercises)}" class="empty-workout-state">
+                <i class="fa-solid fa-dumbbell" style="font-size: 48px; color: #E0E5F2; margin-bottom: 15px;"></i>
+                <p style="color: #A3AED0; font-size: 1.1rem;">No exercises added yet.</p>
+                <p style="color: #A3AED0; font-size: 0.9rem;">Tap "Add Exercise" to start.</p>
+            </div>
+
+            <div class="exercise-card" th:each="exercise : ${session.exercises}">
+                <div class="exercise-header">
+                    <h3 class="exercise-name" th:text="${exercise.exerciseName}">Exercise Name</h3>
+                    <button class="btn-options"><i class="fa-solid fa-ellipsis"></i></button>
+                </div>
+
+                <div class="sets-table-wrapper">
+                    <table class="sets-table">
+                        <thead>
+                        <tr>
+                            <th class="col-set">Set</th>
+                            <th class="col-prev">Prev</th>
+                            <th class="col-kg">kg</th>
+                            <th class="col-reps">Reps</th>
+                            <th class="col-check"><i class="fa-solid fa-check"></i></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="set : ${exercise.sets}" th:classappend="${set.completed} ? 'completed-row' : ''">
+                            <td class="col-set">
+                                <span class="set-badge" th:text="${set.setNumber}">1</span>
+                            </td>
+                            <td class="col-prev">-</td>
+                            <td class="col-kg">
+                                <input type="number" class="input-stat" placeholder="0" th:value="${set.weight}">
+                            </td>
+                            <td class="col-reps">
+                                <input type="number" class="input-stat" placeholder="0" th:value="${set.reps}">
+                            </td>
+                            <td class="col-check">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" th:checked="${set.completed}">
+                                    <span class="checkmark"><i class="fa-solid fa-check"></i></span>
+                                </label>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button class="btn-add-set">
+                    <i class="fa-solid fa-plus"></i> Add Set
+                </button>
+            </div>
+
+            <div class="bottom-actions">
+                <button class="btn-add-exercise">
+                    Add Exercise
+                </button>
+                <button class="btn-cancel-workout">
+                    Cancel Workout
+                </button>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const timerElement = document.getElementById('workoutTimer');
+        let seconds = 0;
+
+        function formatTime(totalSeconds) {
+            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const s = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        setInterval(() => {
+            seconds++;
+            timerElement.textContent = formatTime(seconds);
+        }, 1000);
+    });
+</script>
+
+</body>
+</html>

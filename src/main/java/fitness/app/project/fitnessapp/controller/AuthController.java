@@ -38,7 +38,7 @@ public final class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @ModelAttribute("registrationPayload") final RegistrationDTO registrationPayload,
+    public String register(final @Valid @ModelAttribute("registrationPayload") RegistrationDTO registrationPayload,
                            final BindingResult bindingResult,
                            final Model model) {
 
@@ -68,9 +68,9 @@ public final class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public String processForgotPassword(@Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordDTO dto,
-                                        BindingResult result,
-                                        Model model) {
+    public String processForgotPassword(final @Valid @ModelAttribute("forgotPasswordDto") ForgotPasswordDTO dto,
+                                        final BindingResult result,
+                                        final Model model) {
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
 
@@ -88,7 +88,7 @@ public final class AuthController {
     }
 
     @GetMapping("/reset-password")
-    public String showResetPasswordPage(final @RequestParam("email") String email,final Model model) {
+    public String showResetPasswordPage(final @RequestParam("email") String email, final Model model) {
         model.addAttribute("resetPasswordDto", new ResetPasswordDTO(email, "", ""));
 
         return "reset-password";
@@ -106,7 +106,7 @@ public final class AuthController {
         try {
             this.userService.resetPassword(dto.email(), dto.newPassword(), dto.confirmPassword());
 
-        }catch (final PasswordInvalidException e){
+        } catch (final PasswordInvalidException e) {
             result.rejectValue("newPassword", "error.invalid.new.password", e.getMessage());
 
             return "reset-password";

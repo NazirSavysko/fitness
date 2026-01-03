@@ -67,13 +67,36 @@
                         </button>
                     </form>
 
-                    <a href="/templates" class="workout-btn template-btn">
-                        <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
-                        <div class="text-box">
-                            <span class="main-text">From Template</span>
-                            <span class="sub-text">My routines</span>
+                    <div class="template-select-wrapper">
+                        <button type="button" class="workout-btn template-btn" onclick="toggleTemplateDropdown()">
+                            <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
+                            <div class="text-box">
+                                <span class="main-text">From Template</span>
+                                <span class="sub-text">Select & Start</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </button>
+
+                        <div id="templateDropdown" class="template-dropdown-menu">
+                            <div th:if="${#lists.isEmpty(templates)}" class="dropdown-item empty">
+                                <span>No templates yet.</span>
+                                <a href="/templates/create" class="create-link">Create one?</a>
+                            </div>
+
+                            <div th:each="tpl : ${templates}">
+                                <form th:action="@{/workout/start}" method="post">
+                                    <input type="hidden" name="templateId" th:value="${tpl.id}">
+
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="tpl-name" th:text="${tpl.name}">Template Name</span>
+                                        <i class="fa-solid fa-play play-icon"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <a href="/templates" class="dropdown-footer-link">Manage Templates</a>
                         </div>
-                    </a>
+                    </div>
                 </div>
             </div>
 
@@ -89,6 +112,23 @@
 </div>
 
 <script th:src="@{/js/menu-toggle.js}"></script>
+<script>
+    function toggleTemplateDropdown() {
+        const dropdown = document.getElementById('templateDropdown');
+        const btn = document.querySelector('.template-btn');
+
+        dropdown.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
+
+    window.addEventListener('click', function(e) {
+        const wrapper = document.querySelector('.template-select-wrapper');
+        if (!wrapper.contains(e.target)) {
+            document.getElementById('templateDropdown').classList.remove('show');
+            document.querySelector('.template-btn').classList.remove('active');
+        }
+    });
+</script>
 
 </body>
 </html>
