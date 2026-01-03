@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.service.impl;
 
+import fitness.app.project.fitnessapp.exception.PasswordInvalidException;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.model.User;
 import fitness.app.project.fitnessapp.repository.UserRepository;
@@ -18,6 +19,7 @@ import static java.time.LocalDateTime.now;
 @AllArgsConstructor
 public final class UserServiceImpl implements UserService {
     private static final String USER_NOT_FOUND_ERROR = "User with email %s not found";
+    private static final String PASSWORD_INVALID_ERROR = "Password is invalid.";
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -59,5 +61,18 @@ public final class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(final User user) {
         this.userRepository.delete(user);
+    }
+
+    @Override
+    public void resetPassword(final String email, final String newPassword, final String confirmPassword) {
+        final User user = this.getUserByEmail(email);
+
+        if (passwordEncoder.matches(newPassword, user.getPasswordHash()) || !newPassword.equals(confirmPassword)) {
+            throw new PasswordInvalidException(PASSWORD_INVALID_ERROR);
+        }
+
+        user.setPasswordHash(this.passwordEncoder.encode(newPassword));
+
+        this.saveUser(user);
     }
 }
