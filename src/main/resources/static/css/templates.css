@@ -327,6 +327,18 @@
     background: #c0392b;
 }
 
+.text-muted {
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.text-muted:hover {
+    background-color: transparent;
+    box-shadow: none;
+    color: #4318FF;
+    text-shadow: 0 0 8px rgba(67, 24, 255, 0.4);
+    text-decoration: none;
+}
+
 @media (max-width: 600px) {
     .templates-grid {
         grid-template-columns: 1fr;
