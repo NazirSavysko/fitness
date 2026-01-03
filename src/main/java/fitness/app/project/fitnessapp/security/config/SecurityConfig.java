@@ -61,7 +61,7 @@ public class SecurityConfig {
     }
 
     @Bean("tokenAuthProvider")
-    public AuthenticationProvider preAuthenticatedAuthenticationProvider(){
+    public AuthenticationProvider preAuthenticatedAuthenticationProvider() {
         final PreAuthenticatedAuthenticationProvider authenticationProvider = new PreAuthenticatedAuthenticationProvider();
         authenticationProvider.setPreAuthenticatedUserDetailsService(
                 new TokenAuthenticationUserDetailsService(this.deactivatedTokenRepository)
@@ -73,14 +73,14 @@ public class SecurityConfig {
 
     @Bean
     public TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer(
-            final @Value("${jwt.cookie-token-key}")String cookieTokenKey,
+            final @Value("${jwt.cookie-token-key}") String cookieTokenKey,
             final @Qualifier("tokenAuthProvider") AuthenticationProvider preAuthenticatedAuthenticationProvider) throws Exception {
         return new TokenCookieAuthenticationConfigurer(
                 new TokenCookieJweStringDeserializer(
                         new DirectDecrypter(
                                 OctetSequenceKey.parse(cookieTokenKey)
                         )
-                ), this.deactivatedTokenRepository,preAuthenticatedAuthenticationProvider);
+                ), this.deactivatedTokenRepository, preAuthenticatedAuthenticationProvider);
     }
 
     @Bean
@@ -94,7 +94,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(final HttpSecurity httpSecurity,
                                            final SessionAuthenticationStrategy sessionAuthenticationStrategy,
                                            final TokenCookieAuthenticationConfigurer tokenCookieAuthenticationConfigurer,
-                                          final AuthenticationManager authenticationManager) throws Exception {
+                                           final @Value("${my.super.secret.key}") String secretKey,
+                                           final AuthenticationManager authenticationManager) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(auth ->
                         auth
@@ -102,6 +103,12 @@ public class SecurityConfig {
                                 .requestMatchers("/verification/**").permitAll()
                                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
+                )
+                .rememberMe(remember -> remember
+                        .key(secretKey)
+                        .tokenValiditySeconds(60 * 60 * 24 * 7)
+                        .userDetailsService(userDetailsService)
+                        .rememberMeParameter("remember-me")
                 )
                 .authenticationManager(authenticationManager)
                 .addFilterAfter(new GetCsrfTokenFilter(), ExceptionTranslationFilter.class)
