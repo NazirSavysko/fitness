@@ -1,14 +1,14 @@
 package fitness.app.project.fitnessapp.strategy.processing.impl;
 
 import fitness.app.project.fitnessapp.model.User;
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import fitness.app.project.fitnessapp.service.UserService;
 import fitness.app.project.fitnessapp.strategy.processing.VerificationProcessor;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static fitness.app.project.fitnessapp.model.VerificationType.*;
+import static fitness.app.project.fitnessapp.model.enums.VerificationType.*;
 
 @Component
 @AllArgsConstructor

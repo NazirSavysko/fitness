@@ -1,12 +1,12 @@
 package fitness.app.project.fitnessapp.strategy.verification.impl;
 
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectStrategy;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
-import static fitness.app.project.fitnessapp.model.VerificationType.PASSWORD_RESET;
+import static fitness.app.project.fitnessapp.model.enums.VerificationType.PASSWORD_RESET;
 import static java.lang.String.format;
 
 @Component

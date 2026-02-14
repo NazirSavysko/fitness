@@ -1,6 +1,6 @@
 package fitness.app.project.fitnessapp.facade;
 
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import org.springframework.transaction.annotation.Transactional;
 
 @FunctionalInterface

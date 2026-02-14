@@ -1,10 +1,10 @@
 package fitness.app.project.fitnessapp.strategy.verification.impl;
 
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectStrategy;
 import org.springframework.stereotype.Component;
 
-import static fitness.app.project.fitnessapp.model.VerificationType.REGISTRATION;
+import static fitness.app.project.fitnessapp.model.enums.VerificationType.REGISTRATION;
 
 @Component
 public class RegistrationRedirectStrategy implements VerificationRedirectStrategy {

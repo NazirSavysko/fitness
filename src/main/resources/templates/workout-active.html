@@ -47,67 +47,63 @@
         </header>
 
         <div class="workout-container">
-
-            <div th:if="${#lists.isEmpty(session.exercises)}" class="empty-workout-state">
-                <i class="fa-solid fa-dumbbell" style="font-size: 48px; color: #E0E5F2; margin-bottom: 15px;"></i>
-                <p style="color: #A3AED0; font-size: 1.1rem;">No exercises added yet.</p>
-                <p style="color: #A3AED0; font-size: 0.9rem;">Tap "Add Exercise" to start.</p>
-            </div>
-
-            <div class="exercise-card" th:each="exercise : ${session.exercises}">
-                <div class="exercise-header">
-                    <h3 class="exercise-name" th:text="${exercise.exerciseName}">Exercise Name</h3>
-                    <button class="btn-options"><i class="fa-solid fa-ellipsis"></i></button>
+            <!-- Sidebar: Exercise List -->
+            <aside class="exercise-list-panel">
+                <div class="list-header">
+                    <h3>Exercises</h3>
                 </div>
+                <ul class="exercise-list">
+                    <li th:each="ex : ${session.exercises}"
+                        class="exercise-item"
+                        th:id="'list-item-' + ${ex.exerciseId}"
+                        th:onclick="'selectExercise(' + ${ex.exerciseId} + ')'">
+                        <span class="exercise-name" th:text="${ex.exerciseName}">Exercise</span>
+                        <span class="set-count" th:id="'count-' + ${ex.exerciseId}" th:text="${ex.sets.size()} + ' sets'">0 sets</span>
+                    </li>
+                    <li th:if="${#lists.isEmpty(session.exercises)}" class="exercise-item placeholder">
+                        <span class="exercise-name">No exercises yet</span>
+                    </li>
+                </ul>
+            </aside>
 
-                <div class="sets-table-wrapper">
-                    <table class="sets-table">
-                        <thead>
-                        <tr>
-                            <th class="col-set">Set</th>
-                            <th class="col-prev">Prev</th>
-                            <th class="col-kg">kg</th>
-                            <th class="col-reps">Reps</th>
-                            <th class="col-check"><i class="fa-solid fa-check"></i></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="set : ${exercise.sets}" th:classappend="${set.completed} ? 'completed-row' : ''">
-                            <td class="col-set">
-                                <span class="set-badge" th:text="${set.setNumber}">1</span>
-                            </td>
-                            <td class="col-prev">-</td>
-                            <td class="col-kg">
-                                <input type="number" class="input-stat" placeholder="0" th:value="${set.weight}">
-                            </td>
-                            <td class="col-reps">
-                                <input type="number" class="input-stat" placeholder="0" th:value="${set.reps}">
-                            </td>
-                            <td class="col-check">
-                                <label class="custom-checkbox">
-                                    <input type="checkbox" th:checked="${set.completed}">
-                                    <span class="checkmark"><i class="fa-solid fa-check"></i></span>
-                                </label>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+            <!-- Detail panel -->
+            <section class="exercise-detail-panel">
+                <div class="detail-shell">
+                    <div id="empty-state" class="empty-state" th:if="${#lists.isEmpty(session.exercises)}">
+                        <i class="fa-solid fa-dumbbell"></i>
+                        <p>No exercises in this workout yet</p>
+                    </div>
+                    <div id="empty-state-select" class="empty-state" th:if="${!#lists.isEmpty(session.exercises)}">
+                        <i class="fa-solid fa-dumbbell"></i>
+                        <p>Select an exercise to start logging sets</p>
+                    </div>
+
+                    <div th:each="ex : ${session.exercises}"
+                         th:id="'detail-' + ${ex.exerciseId}"
+                         class="detail-content"
+                         style="display: none;">
+                        <div class="detail-header">
+                            <h2 th:text="${ex.exerciseName}">Exercise</h2>
+                        </div>
+                        <table class="sets-table" th:id="'table-' + ${ex.exerciseId}">
+                            <thead>
+                            <tr>
+                                <th>Set</th>
+                                <th>Weight (kg)</th>
+                                <th>Reps</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="set : ${ex.sets}">
+                                <td th:text="${set.setNumber}">1</td>
+                                <td th:text="${set.weight}">0</td>
+                                <td th:text="${set.reps}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-                <button class="btn-add-set">
-                    <i class="fa-solid fa-plus"></i> Add Set
-                </button>
-            </div>
-
-            <div class="bottom-actions">
-                <button class="btn-add-exercise">
-                    Add Exercise
-                </button>
-                <button class="btn-cancel-workout">
-                    Cancel Workout
-                </button>
-            </div>
-
+            </section>
         </div>
     </main>
 </div>
@@ -118,18 +114,33 @@
     document.addEventListener('DOMContentLoaded', function () {
         const timerElement = document.getElementById('workoutTimer');
         let seconds = 0;
-
-        function formatTime(totalSeconds) {
-            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-            const s = (totalSeconds % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
-        }
-
         setInterval(() => {
             seconds++;
-            timerElement.textContent = formatTime(seconds);
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            timerElement.textContent = `${m}:${s}`;
         }, 1000);
+
+        const firstItem = document.querySelector('.exercise-item:not(.placeholder)');
+        if (firstItem) {
+            firstItem.click();
+            const selectMsg = document.getElementById('empty-state-select');
+            if (selectMsg) selectMsg.style.display = 'none';
+        }
     });
+
+    function selectExercise(exerciseId) {
+        const selectState = document.getElementById('empty-state-select');
+        if (selectState) selectState.style.display = 'none';
+
+        document.querySelectorAll('.detail-content').forEach(el => el.style.display = 'none');
+        const detail = document.getElementById('detail-' + exerciseId);
+        if (detail) detail.style.display = 'block';
+
+        document.querySelectorAll('.exercise-item').forEach(el => el.classList.remove('active'));
+        const item = document.getElementById('list-item-' + exerciseId);
+        if (item) item.classList.add('active');
+    }
 </script>
 
 </body>

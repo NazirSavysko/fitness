@@ -3,9 +3,8 @@ package fitness.app.project.fitnessapp.dto;
 import java.math.BigDecimal;
 
 public record WorkoutSetDTO(
-        Long id,
-        Integer setNumber,
-        BigDecimal weight,
-        Integer reps,
-        boolean completed
-) {}
+ Integer logId,
+ Integer setNumber,
+ Double weight,
+ Integer reps,
+ Integer restSeconds) {}

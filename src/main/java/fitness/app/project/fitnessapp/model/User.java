@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.model;
 
+import fitness.app.project.fitnessapp.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

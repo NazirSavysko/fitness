@@ -1,6 +1,6 @@
 package fitness.app.project.fitnessapp.strategy.processing;
 
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 
 public interface VerificationProcessor {
     VerificationType getType();

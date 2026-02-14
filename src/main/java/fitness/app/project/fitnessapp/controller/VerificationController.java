@@ -2,7 +2,7 @@ package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.exception.InvalidVerificationCodeException;
 import fitness.app.project.fitnessapp.facade.MailFacade;
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import fitness.app.project.fitnessapp.strategy.verification.VerificationRedirectFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

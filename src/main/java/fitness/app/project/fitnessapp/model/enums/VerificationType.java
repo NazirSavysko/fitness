@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.model;
+package fitness.app.project.fitnessapp.model.enums;
 
 public enum VerificationType {
     REGISTRATION,

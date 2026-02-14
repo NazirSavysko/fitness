@@ -37,8 +37,7 @@ public final class WorkoutSession {
     @JoinColumn(name = "template_id")
     private WorkoutTemplate template;
 
-    // Обратная связь: список всех подходов в этой тренировке
-    // cascade = CascadeType.ALL означает, что если удалить сессию, удалятся и логи
+
     @OneToMany(mappedBy = "workoutSession", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ExerciseLog> logs;
 }

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record WorkoutSessionDTO(
-        Long id,
-        String name,
-        LocalDateTime startTime,
-        List<WorkoutExerciseDTO> exercises
-) {}
+ Integer sessionId,
+ Integer templateId,
+ LocalDateTime sessionDate,
+ LocalDateTime endTime,
+ List<WorkoutExerciseDTO> exercises) {}

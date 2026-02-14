@@ -1,4 +1,4 @@
-package fitness.app.project.fitnessapp.model;
+package fitness.app.project.fitnessapp.model.enums;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.GrantedAuthority;

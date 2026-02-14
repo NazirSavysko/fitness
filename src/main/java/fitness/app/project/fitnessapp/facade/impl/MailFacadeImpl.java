@@ -1,7 +1,7 @@
 package fitness.app.project.fitnessapp.facade.impl;
 
 import fitness.app.project.fitnessapp.facade.MailFacade;
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import fitness.app.project.fitnessapp.strategy.processing.VerificationProcessorFactory;
 import lombok.AllArgsConstructor;

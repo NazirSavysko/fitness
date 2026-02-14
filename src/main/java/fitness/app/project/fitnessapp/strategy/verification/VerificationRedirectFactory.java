@@ -1,6 +1,6 @@
 package fitness.app.project.fitnessapp.strategy.verification;
 
-import fitness.app.project.fitnessapp.model.VerificationType;
+import fitness.app.project.fitnessapp.model.enums.VerificationType;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

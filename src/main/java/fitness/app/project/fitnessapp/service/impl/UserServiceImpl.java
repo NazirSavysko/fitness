@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static fitness.app.project.fitnessapp.model.Role.ROLE_USER;
+import static fitness.app.project.fitnessapp.model.enums.Role.ROLE_USER;
 import static java.lang.String.format;
 import static java.time.LocalDateTime.now;
 
