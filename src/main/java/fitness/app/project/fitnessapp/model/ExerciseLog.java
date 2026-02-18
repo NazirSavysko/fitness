@@ -40,7 +40,7 @@ public final class ExerciseLog {
     @JoinColumn(name = "session_id")
     private WorkoutSession workoutSession;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "exercise_def_id")
     private ExerciseDefinition exerciseDefinition;
 }

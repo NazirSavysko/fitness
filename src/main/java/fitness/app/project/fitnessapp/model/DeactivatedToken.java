@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "deactivated_tokens", schema = "fitness_app")
-public class DeactivatedToken {
+public final  class DeactivatedToken {
 
     @Id
     private UUID id;

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -15,23 +16,25 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @Setter
 @Getter
-
 @Entity
-@Table(name = "auth", schema = "fitness_app")
+@Table(name = "users", schema = "fitness_app")
 public final class User {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer authId;
+    private Integer id;
 
     private String email;
+
+    private String passwordHash;
+
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String passwordHash;
-
-    private LocalDateTime createdAt;
-
     private Boolean enabled;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 }

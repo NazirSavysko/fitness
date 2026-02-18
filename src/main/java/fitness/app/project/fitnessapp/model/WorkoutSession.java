@@ -20,24 +20,21 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public final class WorkoutSession {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "session_id")
-    private Integer sessionId;
+    @GeneratedValue(strategy = IDENTITY)
+    private Integer id;
 
-    @Column(name = "session_date")
-    private LocalDateTime sessionDate;
-
-    // Связь с пользователем (Кто тренировался?)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private FitnessUser user;
+    private User user;
 
-    // Связь с шаблоном (По какой программе?)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_id")
-    private WorkoutTemplate template;
+    @JoinColumn(name = "source_template_id")
+    private WorkoutTemplate sourceTemplate;
 
+    private LocalDateTime startedAt;
 
-    @OneToMany(mappedBy = "workoutSession", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ExerciseLog> logs;
+    private LocalDateTime endedAt;
+
+    @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    private List<SessionExercise> exercises;
 }

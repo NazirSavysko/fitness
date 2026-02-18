@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -19,23 +21,19 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 public final class WorkoutTemplate {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "template_id")
-    private Integer templateId;
-
-    @Column
-    private String name;
+    @GeneratedValue(strategy = IDENTITY)
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private FitnessUser user;
+    private User user;
 
-     @ManyToMany
-     @JoinTable(
-         name = "template_exercise",
-         schema = "fitness_app",
-         joinColumns = @JoinColumn(name = "template_id"),
-         inverseJoinColumns = @JoinColumn(name = "exercise_def_id")
-     )
-     private List<ExerciseDefinition> exercises;
+    @Column(nullable = false)
+    private String name;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL)
+    private List<TemplateExercise> exercises;
 }
