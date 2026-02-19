@@ -13,7 +13,8 @@ public class ExerciseDefinitionMapperImpl implements ExerciseDefinitionMapper {
         return new TemplateExerciseDTO(
                 exerciseDefinition.getId(),
                 exerciseDefinition.getName(),
-                0
+                exerciseDefinition.getMuscleGroup(),
+                null
         );
     }
 }

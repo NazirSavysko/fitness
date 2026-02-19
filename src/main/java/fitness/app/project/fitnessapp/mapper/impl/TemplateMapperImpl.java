@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
+
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
 
 @Component
@@ -20,7 +22,10 @@ public class TemplateMapperImpl implements TemplateWorkoutMapper {
         return new GetTemplateDTO(
                 workoutTemplate.getId(),
                 workoutTemplate.getName(),
-                mapList(workoutTemplate.getExercises(), this.getTemplateExerciseMapper)
+                mapList(workoutTemplate.getExercises().stream()
+                                .sorted(Comparator.comparing(templateExercise -> templateExercise.getOrderIndex(), Comparator.nullsLast(Integer::compareTo)))
+                                .toList(),
+                        this.getTemplateExerciseMapper)
         );
     }
 }
