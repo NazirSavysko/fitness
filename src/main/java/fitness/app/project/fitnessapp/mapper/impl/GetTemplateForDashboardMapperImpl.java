@@ -11,7 +11,7 @@ public class GetTemplateForDashboardMapperImpl implements GetTemplateForDashboar
     @Override
     public GetDashboardTemplateDTO mapEntityToDto(final @NonNull WorkoutTemplate workoutTemplate) {
         return new GetDashboardTemplateDTO(
-            workoutTemplate.getTemplateId(),
+            workoutTemplate.getId(),
             workoutTemplate.getName()
         );
     }

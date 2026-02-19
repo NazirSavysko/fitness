@@ -18,7 +18,7 @@ public class TemplateMapperImpl implements TemplateWorkoutMapper {
     @Override
     public GetTemplateDTO mapEntityToDto(final @NonNull WorkoutTemplate workoutTemplate) {
         return new GetTemplateDTO(
-                workoutTemplate.getTemplateId(),
+                workoutTemplate.getId(),
                 workoutTemplate.getName(),
                 mapList(workoutTemplate.getExercises(), this.getTemplateExerciseMapper)
         );
