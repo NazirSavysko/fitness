@@ -29,7 +29,8 @@ class TemplateFacadeImplTest {
 
     private final FitnessUserService fitnessUserService = mock(FitnessUserService.class);
     private final ExerciseDefinitionMapper exerciseDefinitionMapper = mock(ExerciseDefinitionMapper.class);
-    private final TemplateWorkoutMapper templateWorkoutMapper = mock(TemplateWorkoutMapper.class);
+    private final TemplateWorkoutMapper updateTemplateWorkoutMapper = mock(TemplateWorkoutMapper.class);
+    private final TemplateWorkoutMapper getTemplateWorkoutMapper = mock(TemplateWorkoutMapper.class);
     private final WorkoutTemplateService workoutTemplateService = mock(WorkoutTemplateService.class);
     private final ExerciseDefinitionService exerciseDefinitionService = mock(ExerciseDefinitionService.class);
     private final GetTemplateForDashboardMapper getTemplateForDashboardMapper = mock(GetTemplateForDashboardMapper.class);
@@ -37,9 +38,9 @@ class TemplateFacadeImplTest {
     private final TemplateFacadeImpl templateFacade = new TemplateFacadeImpl(
             fitnessUserService,
             exerciseDefinitionMapper,
-            templateWorkoutMapper,
+            updateTemplateWorkoutMapper,
             workoutTemplateService,
-            templateWorkoutMapper,
+            getTemplateWorkoutMapper,
             exerciseDefinitionService,
             getTemplateForDashboardMapper
     );
