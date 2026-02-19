@@ -17,6 +17,6 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
     public WorkoutSessionDTO startWorkout(final Integer templateId, final String email) {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateId, email);
 
-
+        return null;
     }
 }

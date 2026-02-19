@@ -8,7 +8,11 @@ public class GetWorkoutSessionDTOImpl implements GetWorkoutSessionDTO {
     @Override
     public WorkoutSessionDTO mapEntityToDto(final WorkoutSession workoutSession) {
         return new WorkoutSessionDTO(
-
+                workoutSession.getId(),
+                workoutSession.getSourceTemplate() != null ? workoutSession.getSourceTemplate().getId() : null,
+                workoutSession.getStartedAt(),
+                workoutSession.getEndedAt(),
+                null
         );
     }
 }

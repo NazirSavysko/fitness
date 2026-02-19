@@ -11,8 +11,9 @@ public class ExerciseDefinitionMapperImpl implements ExerciseDefinitionMapper {
     @Override
     public TemplateExerciseDTO mapEntityToDto(final @NonNull ExerciseDefinition exerciseDefinition) {
         return new TemplateExerciseDTO(
-                exerciseDefinition.getExerciseDefId(),
-                exerciseDefinition.getName()
+                exerciseDefinition.getId(),
+                exerciseDefinition.getName(),
+                null
         );
     }
 }

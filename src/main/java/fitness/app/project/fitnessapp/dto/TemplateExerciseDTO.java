@@ -2,5 +2,6 @@ package fitness.app.project.fitnessapp.dto;
 
 public record TemplateExerciseDTO(
         Integer id,
-        String exerciseName
+        String exerciseName,
+        Integer orderIndex
 ) {}

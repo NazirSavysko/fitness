@@ -6,25 +6,26 @@ import fitness.app.project.fitnessapp.mapper.ExerciseDefinitionMapper;
 import fitness.app.project.fitnessapp.mapper.GetTemplateForDashboardMapper;
 import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
-import fitness.app.project.fitnessapp.model.FitnessUser;
+import fitness.app.project.fitnessapp.model.TemplateExercise;
+import fitness.app.project.fitnessapp.model.User;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 import fitness.app.project.fitnessapp.service.ExerciseDefinitionService;
-import fitness.app.project.fitnessapp.service.FitnessUserService;
+import fitness.app.project.fitnessapp.service.UserService;
 import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
-import static java.util.stream.Collectors.toList;
 
 @Component
 @AllArgsConstructor
 public final class TemplateFacadeImpl implements TemplateFacade {
-    private final FitnessUserService fitnessUserService;
+    private final UserService userService;
     private final ExerciseDefinitionMapper exerciseDefinitionMapper;
     private final TemplateWorkoutMapper updateTemplateExerciseMapper;
     private final WorkoutTemplateService workoutTemplateService;
@@ -48,7 +49,9 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
 
         workoutTemplate.setName(templateDTO.name());
-       workoutTemplate.setExercises(this.createTemplateDTO(templateDTO.exercises()));
+        final List<TemplateExercise> exercises = this.createTemplateExercises(templateDTO.exercises());
+        exercises.forEach(ex -> ex.setTemplate(workoutTemplate));
+        workoutTemplate.setExercises(exercises);
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -69,11 +72,13 @@ public final class TemplateFacadeImpl implements TemplateFacade {
 
     @Override
     public void createTemplate(final @NonNull CreateTemplateDTO createTemplateDTO, final String email) {
-        final FitnessUser user = this.fitnessUserService.getFitnessUserByEmail(email);
+        final User user = this.userService.getUserByEmail(email);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
         workoutTemplate.setUser(user);
-        workoutTemplate.setExercises(this.createTemplateDTO(createTemplateDTO.exercises()));
+        final List<TemplateExercise> exercises = this.createTemplateExercises(createTemplateDTO.exercises());
+        exercises.forEach(ex -> ex.setTemplate(workoutTemplate));
+        workoutTemplate.setExercises(exercises);
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -85,9 +90,14 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         return mapList(templates, this.getTemplateForDashboardMapper);
     }
 
-    private @NonNull List<ExerciseDefinition> createTemplateDTO(final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {
-        return exerciseDTOs.stream()
-                .map(dto -> this.exerciseDefinitionService.getReferenceById(dto.id()))
-                .collect(toList());
+    private @NonNull List<TemplateExercise> createTemplateExercises(final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {
+        final List<TemplateExercise> exercises = new ArrayList<>();
+        for (int i = 0; i < exerciseDTOs.size(); i++) {
+            final TemplateExercise templateExercise = new TemplateExercise();
+            templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseDTOs.get(i).id()));
+            templateExercise.setOrderIndex(i);
+            exercises.add(templateExercise);
+        }
+        return exercises;
     }
 }
