@@ -19,11 +19,11 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
 
     @Override
     public List<WorkoutTemplate> getTemplatesByUserEmail(final String email) {
-        return this.workoutTemplateRepository.findAllByUser_UserDetails_Email(email);
+        return this.workoutTemplateRepository.findAllByUser_Email(email);
     }
 
     @Override
-    @PreAuthorize("@workoutTemplateRepository.existsByUser_UserDetails_Email(#email)")
+    @PreAuthorize("@workoutTemplateRepository.existsByUser_Email(#email)")
     public void deleteTemplateByIdAndUserEmail(final Integer templateId, final String email) {
         if (this.workoutTemplateRepository.findById(templateId).isEmpty()) {
             throw new WorkoutTemplateNotFoundException(WORKOUT_TEMPLATE_NOT_FOUND_MESSAGE);
@@ -33,7 +33,7 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
     }
 
     @Override
-    @PreAuthorize("@workoutTemplateRepository.existsByUser_UserDetails_Email(#email)")
+    @PreAuthorize("@workoutTemplateRepository.existsByUser_Email(#email)")
     public WorkoutTemplate getWorkoutTemplateById(final Integer templateId, final String email) {
         return this.workoutTemplateRepository.findById(templateId)
                 .orElseThrow(() -> new WorkoutTemplateNotFoundException(WORKOUT_TEMPLATE_NOT_FOUND_MESSAGE));

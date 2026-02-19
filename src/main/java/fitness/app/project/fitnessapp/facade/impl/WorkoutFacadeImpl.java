@@ -7,6 +7,8 @@ import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public final class WorkoutFacadeImpl implements WorkoutFacade {
@@ -17,6 +19,12 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
     public WorkoutSessionDTO startWorkout(final Integer templateId, final String email) {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateId, email);
 
-
+        return new WorkoutSessionDTO(
+                null,
+                workoutTemplate.getId(),
+                null,
+                null,
+                List.of()
+        );
     }
 }
