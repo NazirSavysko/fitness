@@ -7,6 +7,7 @@ import fitness.app.project.fitnessapp.mapper.GetTemplateForDashboardMapper;
 import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
 import fitness.app.project.fitnessapp.model.FitnessUser;
+import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 import fitness.app.project.fitnessapp.service.ExerciseDefinitionService;
 import fitness.app.project.fitnessapp.service.FitnessUserService;
@@ -17,6 +18,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
 import static java.util.stream.Collectors.toList;
@@ -48,7 +50,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
 
         workoutTemplate.setName(templateDTO.name());
-       workoutTemplate.setExercises(this.createTemplateDTO(templateDTO.exercises()));
+        workoutTemplate.setExercises(this.createTemplateExercises(workoutTemplate, templateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -72,8 +74,8 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final FitnessUser user = this.fitnessUserService.getFitnessUserByEmail(email);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
-        workoutTemplate.setUser(user);
-        workoutTemplate.setExercises(this.createTemplateDTO(createTemplateDTO.exercises()));
+        workoutTemplate.setUser(user.getUserDetails());
+        workoutTemplate.setExercises(this.createTemplateExercises(workoutTemplate, createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -85,9 +87,17 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         return mapList(templates, this.getTemplateForDashboardMapper);
     }
 
-    private @NonNull List<ExerciseDefinition> createTemplateDTO(final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {
-        return exerciseDTOs.stream()
-                .map(dto -> this.exerciseDefinitionService.getReferenceById(dto.id()))
+    private @NonNull List<TemplateExercise> createTemplateExercises(final WorkoutTemplate workoutTemplate,
+                                                                     final @NonNull List<TemplateExerciseDTO> exerciseDTOs) {
+        return IntStream.range(0, exerciseDTOs.size())
+                .mapToObj(index -> {
+                    final TemplateExercise templateExercise = new TemplateExercise();
+                    templateExercise.setTemplate(workoutTemplate);
+                    templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseDTOs.get(index).id()));
+                    templateExercise.setOrderIndex(index);
+
+                    return templateExercise;
+                })
                 .collect(toList());
     }
 }
