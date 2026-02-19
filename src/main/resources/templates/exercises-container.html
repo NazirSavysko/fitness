@@ -70,7 +70,7 @@
                 <div id="exercises-container">
                 </div>
 
-                <div class="field-error-text" th:if="${#fields.hasErrors('exercises')}" th:errors="*{exercises}"></div>
+                <div class="field-error-text" th:if="${#fields.hasErrors('exerciseIds')}" th:errors="*{exerciseIds}"></div>
 
                 <button type="button" class="btn-add-exercise" onclick="addExerciseRow()">
                     <i class="fa-solid fa-plus"></i> Add Exercise
@@ -90,12 +90,12 @@
         <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
 
         <div class="form-group mb-0 flex-grow">
-            <select class="form-input exercise-select" name="exercises[INDEX].exerciseId">
+            <select class="form-input exercise-select" name="exerciseIds[INDEX]">
                 <option value="" disabled selected>Select Exercise</option>
 
                 <option th:each="exercise : ${exercises}"
                         th:value="${exercise.exerciseId}"
-                        th:text="${exercise.exerciseName}">
+                        th:text="${exercise.exerciseName + ' (' + exercise.muscleGroup + ')'}">
                     Exercise Name
                 </option>
             </select>

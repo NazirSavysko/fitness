@@ -12,6 +12,7 @@ public class TemplateExerciseMapperImpl implements GetTemplateExerciseMapper {
         return new TemplateExerciseDTO(
                 templateExercise.getExercise().getId(),
                 templateExercise.getExercise().getName(),
+                templateExercise.getExercise().getMuscleGroup(),
                 templateExercise.getOrderIndex()
         );
     }

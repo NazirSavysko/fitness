@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
 @AllArgsConstructor
 @RequestMapping("templates")
 public final class TemplateController {
+    private static final Comparator<TemplateExerciseDTO> ORDER_INDEX_COMPARATOR =
+            Comparator.comparing(TemplateExerciseDTO::orderIndex, Comparator.nullsLast(Integer::compareTo));
+
     private final TemplateFacade templateFacade;
 
 
@@ -35,7 +39,9 @@ public final class TemplateController {
     public String getTemplateDetailsPage(final @PathVariable("id") Integer templateId, final Model model, final Principal principal) {
         final GetTemplateDTO templateDTO = this.templateFacade.getTemplateForUpdateById(templateId, principal.getName());
         model.addAttribute("template", templateDTO);
-        model.addAttribute("exercises", templateDTO.exercises());
+        model.addAttribute("exercises", templateDTO.exercises().stream()
+                .sorted(ORDER_INDEX_COMPARATOR)
+                .toList());
 
         return "template-details";
     }
@@ -43,7 +49,7 @@ public final class TemplateController {
     @GetMapping("/create")
     public String getCreatePage(final Model model) {
         final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
-        final CreateTemplateDTO formDto = new CreateTemplateDTO("",new ArrayList<>());
+        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>());
         model.addAttribute("templateDto", formDto);
         model.addAttribute("exercises", exercises);
 
@@ -74,8 +80,16 @@ public final class TemplateController {
     public String editTemplate(final @PathVariable("id") Integer templateId, final Model model, final Principal principal) {
         final GetTemplateDTO templateDTO = this.templateFacade.getTemplateForUpdateById(templateId, principal.getName());
         final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
+        final UpdateTemplateDTO updateTemplateDTO = new UpdateTemplateDTO(
+                templateDTO.id(),
+                templateDTO.name(),
+                templateDTO.exercises().stream()
+                        .sorted(ORDER_INDEX_COMPARATOR)
+                        .map(TemplateExerciseDTO::exerciseId)
+                        .toList()
+        );
 
-        model.addAttribute("UpdateTemplateDto", templateDTO);
+        model.addAttribute("UpdateTemplateDto", updateTemplateDTO);
         model.addAttribute("exercises", exercises);
 
         return "exercises-container-update";
