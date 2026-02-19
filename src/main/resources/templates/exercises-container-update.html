@@ -76,10 +76,10 @@
                         <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
 
                         <div class="form-group mb-0 flex-grow">
-                            <select class="form-input exercise-select" th:field="*{exercises[__${stat.index}__].id}">
+                            <select class="form-input exercise-select" th:field="*{exercises[__${stat.index}__].exerciseId}">
                                 <option value="" disabled>Select Exercise</option>
                                 <option th:each="opt : ${exercises}"
-                                        th:value="${opt.id}"
+                                        th:value="${opt.exerciseId}"
                                         th:text="${opt.exerciseName}">
                                     Option
                                 </option>
@@ -112,11 +112,11 @@
         <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
 
         <div class="form-group mb-0 flex-grow">
-            <select class="form-input exercise-select" name="exercises[INDEX].id">
+            <select class="form-input exercise-select" name="exercises[INDEX].exerciseId">
                 <option value="" disabled selected>Select Exercise</option>
 
                 <option th:each="exercise : ${exercises}"
-                        th:value="${exercise?.id}"
+                        th:value="${exercise?.exerciseId}"
                         th:text="${exercise?.exerciseName}">
                     Exercise Name
                 </option>

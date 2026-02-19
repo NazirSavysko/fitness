@@ -11,7 +11,8 @@ public class TemplateExerciseMapperImpl implements GetTemplateExerciseMapper {
     public TemplateExerciseDTO mapEntityToDto(final TemplateExercise templateExercise) {
         return new TemplateExerciseDTO(
                 templateExercise.getExercise().getId(),
-                templateExercise.getExercise().getName()
+                templateExercise.getExercise().getName(),
+                templateExercise.getOrderIndex()
         );
     }
 }

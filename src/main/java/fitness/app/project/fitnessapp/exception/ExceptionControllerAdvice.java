@@ -28,7 +28,7 @@ class ExceptionControllerAdvice {
         return "error/500";
     }
 
-    @ExceptionHandler({UsernameNotFoundException.class, FitnessUserNotFoundException.class})
+    @ExceptionHandler({UsernameNotFoundException.class})
     public String handleUsernameNotFoundException(final @NonNull UsernameNotFoundException ex,final HttpServletResponse response) {
         LOGGER.error("User not found: {}", ex.getMessage());
         response.setStatus(SC_NOT_FOUND);

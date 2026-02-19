@@ -6,11 +6,11 @@ import fitness.app.project.fitnessapp.mapper.ExerciseDefinitionMapper;
 import fitness.app.project.fitnessapp.mapper.GetTemplateForDashboardMapper;
 import fitness.app.project.fitnessapp.mapper.TemplateWorkoutMapper;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
-import fitness.app.project.fitnessapp.model.FitnessUser;
 import fitness.app.project.fitnessapp.model.TemplateExercise;
+import fitness.app.project.fitnessapp.model.User;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 import fitness.app.project.fitnessapp.service.ExerciseDefinitionService;
-import fitness.app.project.fitnessapp.service.FitnessUserService;
+import fitness.app.project.fitnessapp.service.UserService;
 import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Unmodifiable;
@@ -26,7 +26,7 @@ import static java.util.stream.Collectors.toList;
 @Component
 @AllArgsConstructor
 public final class TemplateFacadeImpl implements TemplateFacade {
-    private final FitnessUserService fitnessUserService;
+    private final UserService userService;
     private final ExerciseDefinitionMapper exerciseDefinitionMapper;
     private final TemplateWorkoutMapper updateTemplateExerciseMapper;
     private final WorkoutTemplateService workoutTemplateService;
@@ -71,10 +71,10 @@ public final class TemplateFacadeImpl implements TemplateFacade {
 
     @Override
     public void createTemplate(final @NonNull CreateTemplateDTO createTemplateDTO, final String email) {
-        final FitnessUser user = this.fitnessUserService.getFitnessUserByEmail(email);
+        final User user = this.userService.getUserByEmail(email);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
-        workoutTemplate.setUser(user.getUserDetails());
+        workoutTemplate.setUser(user);
         workoutTemplate.setExercises(this.createTemplateExercises(workoutTemplate, createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
@@ -93,7 +93,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
                 .mapToObj(index -> {
                     final TemplateExercise templateExercise = new TemplateExercise();
                     templateExercise.setTemplate(workoutTemplate);
-                    templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseDTOs.get(index).id()));
+                    templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseDTOs.get(index).exerciseId()));
                     templateExercise.setOrderIndex(index);
 
                     return templateExercise;

@@ -14,7 +14,6 @@ CREATE TABLE fitness_app.users
 CREATE TABLE fitness_app.email_verification
 (
     id                SERIAL PRIMARY KEY,
-    user_id           INTEGER NOT NULL REFERENCES fitness_app.users (id) ON DELETE CASCADE,
     verification_code VARCHAR(10),
     email             VARCHAR(255),
     expiry_date       TIMESTAMP
@@ -70,14 +69,6 @@ CREATE TABLE fitness_app.exercise_set
     reps                INTEGER,
     rest_seconds        INTEGER,
     set_type            VARCHAR(20) DEFAULT 'NORMAL'
-);
-
-CREATE TABLE fitness_app.email_verification (
-                                                auth_id SERIAL PRIMARY KEY,
-                                                verification_code VARCHAR(10),
-                                                email VARCHAR(255) UNIQUE ,
-                                                expiry_date TIMESTAMP
-
 );
 
 CREATE TABLE fitness_app.deactivated_tokens

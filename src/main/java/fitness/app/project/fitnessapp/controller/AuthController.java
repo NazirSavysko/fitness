@@ -6,7 +6,7 @@ import fitness.app.project.fitnessapp.dto.ResetPasswordDTO;
 import fitness.app.project.fitnessapp.exception.PasswordInvalidException;
 import fitness.app.project.fitnessapp.exception.UserExistsException;
 import fitness.app.project.fitnessapp.facade.ForgotPasswordFacade;
-import fitness.app.project.fitnessapp.facade.RegistrationFitnessUserFacade;
+import fitness.app.project.fitnessapp.facade.RegistrationUserFacade;
 import fitness.app.project.fitnessapp.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -21,10 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("auth")
 public final class AuthController {
-
-    private final RegistrationFitnessUserFacade registrationFacade;
-    private final ForgotPasswordFacade forgotPasswordFacade;
+    private final RegistrationUserFacade registrationFacade;
     private final UserService userService;
+    private final ForgotPasswordFacade forgotPasswordFacade;
 
     @GetMapping("/login")
     public String login() {

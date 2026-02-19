@@ -20,7 +20,7 @@ public final class EmailVerification {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private Integer authId;
+    private Integer id;
 
     private String verificationCode;
 
