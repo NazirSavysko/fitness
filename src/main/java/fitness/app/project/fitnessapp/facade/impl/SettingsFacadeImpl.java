@@ -67,6 +67,7 @@ public final class SettingsFacadeImpl implements SettingsFacade {
     @Override
     public void deleteAccount(final String email) {
         final User user = this.userService.getUserByEmail(email);
+
         this.userService.deleteUser(user);
     }
 }

@@ -48,7 +48,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
 
         workoutTemplate.setName(templateDTO.name());
-        workoutTemplate.setExercises(this.createTemplateDTO(templateDTO.exercises()));
+       workoutTemplate.setExercises(this.createTemplateDTO(templateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
