@@ -6,6 +6,7 @@
     <title>Workout History</title>
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/template-details.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -50,19 +51,36 @@
                 </div>
             </div>
 
-            <div class="history-list" th:if="${!historyPage.content.isEmpty()}">
-                <a class="card history-card" th:each="workout : ${historyPage.content}"
-                   th:href="@{/history/{id}(id=${workout.sessionId})}">
-                    <h3 class="card-title" th:text="${workout.name}">Workout Name</h3>
-                    <div class="history-meta">
-                        <span><i class="fa-regular fa-calendar"></i> <span th:text="${workout.date}">Date</span></span>
-                        <span><i class="fa-regular fa-clock"></i> <span th:text="${workout.durationMinutes} + ' min'">0 min</span></span>
-                    </div>
-                    <div class="history-badges">
-                        <span class="summary-badge" th:text="|Total Sets: ${workout.totalSets}|">Total Sets: 0</span>
-                        <span class="summary-badge" th:text="|Muscle Groups: ${workout.muscleGroups}|">Muscle Groups: -</span>
-                    </div>
-                </a>
+            <div class="details-card full-width-card" th:if="${!historyPage.content.isEmpty()}" style="padding: 0; overflow: hidden;">
+                <div class="card-header">
+                     <h3 class="section-title"><i class="fa-solid fa-clock-rotate-left section-icon"></i> Recent Workouts</h3>
+                </div>
+                <div class="styled-exercise-list">
+                    <a class="exercise-item" th:each="workout, iterStat : ${historyPage.content}"
+                       th:href="@{/history/{id}(id=${workout.sessionId})}"
+                       style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+
+                        <div class="exercise-info" style="flex: 1;">
+                             <div class="exercise-number" th:text="${iterStat.count}">1</div>
+                             <div style="display: flex; flex-direction: column; gap: 4px;">
+                                 <span class="exercise-name" th:text="${workout.name}">Workout Name</span>
+                                 <span style="font-size: 0.85rem; color: #7f8c8d;">
+                                     <i class="fa-regular fa-calendar" style="margin-right: 4px;"></i><span th:text="${workout.date}">Date</span>
+                                     <span style="margin: 0 6px;">•</span>
+                                     <i class="fa-regular fa-clock" style="margin-right: 4px;"></i><span th:text="${workout.durationMinutes} + ' min'">0 min</span>
+                                 </span>
+                             </div>
+                        </div>
+
+                         <div class="history-badges" style="margin-right: 15px; display: flex; gap: 8px;">
+                            <span class="badge" style="background: #eaf2f8; color: #3498db; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem;" th:text="${workout.totalSets} + ' Sets'">0 Sets</span>
+                        </div>
+
+                        <div class="exercise-actions">
+                            <i class="fa-solid fa-chevron-right icon-chevron"></i>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
 
