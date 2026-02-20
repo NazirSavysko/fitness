@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="page-container">
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item active">
+                    <i class="fa-solid fa-house menu-icon"></i> Dashboard
+                </a>
+                <a href="/templates" class="menu-item">
+                    <i class="fa-solid fa-dumbbell menu-icon"></i> Templates
+                </a>
+                <a href="/settings" class="menu-item">
+                    <i class="fa-solid fa-gear menu-icon"></i> Settings
+                </a>
+                <a href="/history" class="menu-item">
+                    <i class="fa-solid fa-gear menu-icon"></i> History
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </header>
+
+        <div class="dashboard-grid">
+
+            <div class="card">
+                <h3 class="card-title">Quick Start</h3>
+                <div class="workout-actions">
+                    <form th:action="@{/workouts/start}" method="post" class="action-form">
+                        <button class="workout-btn empty-btn">
+                            <div class="icon-box"><i class="fa-solid fa-play"></i></div>
+                            <div class="text-box">
+                                <span class="main-text">Start Empty</span>
+                                <span class="sub-text">No template</span>
+                            </div>
+                        </button>
+                    </form>
+
+                    <div class="template-select-wrapper">
+                        <button type="button" class="workout-btn template-btn" onclick="toggleTemplateDropdown()">
+                            <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
+                            <div class="text-box">
+                                <span class="main-text">From Template</span>
+                                <span class="sub-text">Select & Start</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        </button>
+
+                        <div id="templateDropdown" class="template-dropdown-menu">
+                            <div th:if="${#lists.isEmpty(templates)}" class="dropdown-item empty">
+                                <span>No templates yet.</span>
+                                <a href="/templates/create" class="create-link">Create one?</a>
+                            </div>
+
+                            <div th:each="tpl : ${templates}">
+                                <form th:action="@{/workouts/start}" method="post">
+                                    <input type="hidden" name="templateId" th:value="${tpl.id}">
+
+                                    <button type="submit" class="dropdown-item">
+                                        <span class="tpl-name" th:text="${tpl.name}">Template Name</span>
+                                        <i class="fa-solid fa-play play-icon"></i>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <a href="/templates" class="dropdown-footer-link">Manage Templates</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card full-width-card">
+                <h3 class="card-title">Last Workout</h3>
+                <div class="empty-state">
+                    <p>No activity recorded yet.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+<script>
+    function toggleTemplateDropdown() {
+        const dropdown = document.getElementById('templateDropdown');
+        const btn = document.querySelector('.template-btn');
+
+        dropdown.classList.toggle('show');
+        btn.classList.toggle('active');
+    }
+
+    window.addEventListener('click', function(e) {
+        const wrapper = document.querySelector('.template-select-wrapper');
+        if (!wrapper.contains(e.target)) {
+            document.getElementById('templateDropdown').classList.remove('show');
+            document.querySelector('.template-btn').classList.remove('active');
+        }
+    });
+</script>
+
+</body>
+</html>

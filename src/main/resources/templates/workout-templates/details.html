@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${template.name} + ' - Details'">Template Details</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/template-details.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="page-container">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item active"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/settings" class="menu-item"> <i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+                <a href="/history" class="menu-item"><i class="fa-solid fa-gear menu-icon"></i> History</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+                <div class="breadcrumbs">
+                    <a href="/templates" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Templates</a>
+                    <h1 class="page-title" th:text="${template.name}">Template Name</h1>
+                </div>
+            </div>
+        </header>
+
+        <div class="details-content-wrapper">
+            <div class="details-card">
+                <div class="card-header">
+                    <h2 class="section-title">
+                        <i class="fa-solid fa-list-check section-icon"></i> Exercises List
+                    </h2>
+                    <span class="exercise-count" th:text="${exercises.size()} + ' exercises'">0 exercises</span>
+                </div>
+
+                <div class="empty-state" th:if="${exercises.isEmpty()}">
+                    <i class="fa-regular fa-folder-open empty-icon"></i>
+                    <p>No exercises in this template yet.</p>
+                    <a th:href="@{/templates/edit/{id}(id=${template.id})}" class="btn-add-first">Add Exercises</a>
+                </div>
+
+                <ul class="styled-exercise-list" th:unless="${exercises.isEmpty()}">
+                    <li class="exercise-item" th:each="ex, iterStat : ${exercises}">
+                        <div class="exercise-info">
+                            <span class="exercise-number" th:text="${iterStat.count}">1</span>
+                            <span class="exercise-name" th:text="${ex.exerciseName}">Bench Press</span>
+                            <span class="badge bg-secondary" th:text="${ex.muscleGroup}">Chest</span>
+                        </div>
+                        <div class="exercise-actions">
+                            <i class="fa-solid fa-chevron-right icon-chevron"></i>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="card-footer">
+                    <a th:href="@{/templates/edit/{id}(id=${template.id})}" class="btn-edit-footer">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Template
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+
+</body>
+</html>
