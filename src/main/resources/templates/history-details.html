@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Details</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/workout-active.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="page-container">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/history" class="menu-item active"><i class="fa-solid fa-clock-rotate-left menu-icon"></i> History</a>
+                <a href="/settings" class="menu-item"><i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </header>
+
+        <div class="workout-header">
+            <div class="header-left">
+                <h1 class="workout-title" th:text="${activeWorkout.templateName}">Workout</h1>
+                <div class="timer-badge">
+                    <i class="fa-regular fa-clock"></i>
+                    <span th:text="${#temporals.format(activeWorkout.startedAt, 'dd MMM yyyy HH:mm')}">Started</span>
+                </div>
+            </div>
+            <a href="/history" class="btn-finish" style="text-decoration: none;">
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <div th:each="exercise : ${activeWorkout.exercises}" class="exercise-card">
+            <div class="exercise-header">
+                <h2 class="exercise-name" th:text="${exercise.exerciseName}">Exercise</h2>
+                <span class="timer-badge" th:text="${exercise.muscleGroup}">Muscle group</span>
+            </div>
+            <div class="sets-table-wrapper">
+                <table class="sets-table">
+                    <thead>
+                    <tr>
+                        <th>Set</th>
+                        <th>Weight</th>
+                        <th>Reps</th>
+                        <th>Rest</th>
+                        <th>Type</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="set : ${exercise.sets}">
+                        <td th:text="${set.setNumber}">1</td>
+                        <td th:text="${set.weight}">0</td>
+                        <td th:text="${set.reps}">0</td>
+                        <td th:text="${set.restSeconds}">0</td>
+                        <td>
+                            <span class="set-badge"
+                                  th:classappend="${set.setType.name().toLowerCase()} + '-badge'"
+                                  th:text="${set.setType}">NORMAL</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(exercise.sets)}">
+                        <td colspan="5">No sets logged.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+</body>
+</html>

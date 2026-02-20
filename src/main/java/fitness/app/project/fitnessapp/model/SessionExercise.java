@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -33,5 +35,6 @@ public final class SessionExercise {
     private Integer orderIndex;
 
     @OneToMany(mappedBy = "sessionExercise", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private List<ExerciseSet> sets;
 }

@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Active Workout</title>
     <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" th:href="@{/css/workout-active.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
 <div class="page-container">
-
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
     <aside class="sidebar" id="sidebar">
@@ -25,82 +24,114 @@
             <nav class="menu">
                 <a href="/dashboard" class="menu-item active"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
                 <a href="/templates" class="menu-item"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
-                <a href="/settings" class="menu-item"> <i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+                <a href="/history" class="menu-item"><i class="fa-solid fa-clock-rotate-left menu-icon"></i> History</a>
+                <a href="/settings" class="menu-item"><i class="fa-solid fa-gear menu-icon"></i> Settings</a>
             </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
         </div>
     </aside>
 
     <main class="main-content">
-        <header class="workout-header">
-            <div class="header-left">
-                <h1 class="workout-title" th:text="${session.name}">Workout Name</h1>
-
-                <div class="timer-badge">
-                    <i class="fa-regular fa-clock"></i>
-                    <span id="workoutTimer">00:00</span>
-                </div>
-            </div>
-            <form th:action="@{/workout/finish}" method="post" style="margin: 0;">
-                <input type="hidden" name="sessionId" th:value="${session.id}">
-                <button type="submit" class="btn-finish">Finish</button>
-            </form>
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </header>
 
-        <div class="workout-container">
-            <!-- Sidebar: Exercise List -->
-            <aside class="exercise-list-panel">
-                <div class="list-header">
-                    <h3>Exercises</h3>
+        <div class="workout-header">
+            <div class="header-left">
+                <h1 class="workout-title" th:text="${activeWorkout.templateName}">Workout</h1>
+                <div class="timer-badge">
+                    <i class="fa-regular fa-clock"></i>
+                    <span th:text="${#temporals.format(activeWorkout.startedAt, 'dd MMM yyyy HH:mm')}">Start Time</span>
                 </div>
-                <ul class="exercise-list">
-                    <li th:each="ex : ${session.exercises}"
-                        class="exercise-item"
-                        th:id="'list-item-' + ${ex.exerciseId}"
-                        th:onclick="'selectExercise(' + ${ex.exerciseId} + ')'">
-                        <span class="exercise-name" th:text="${ex.exerciseName}">Exercise</span>
-                        <span class="set-count" th:id="'count-' + ${ex.exerciseId}" th:text="${ex.sets.size()} + ' sets'">0 sets</span>
-                    </li>
-                    <li th:if="${#lists.isEmpty(session.exercises)}" class="exercise-item placeholder">
-                        <span class="exercise-name">No exercises yet</span>
-                    </li>
-                </ul>
+            </div>
+            <form th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}" method="post">
+                <button type="submit" class="btn-finish">
+                    <i class="fa-solid fa-flag-checkered"></i> Finish Workout
+                </button>
+            </form>
+        </div>
+
+        <div th:if="${#lists.isEmpty(activeWorkout.exercises)}" class="empty-workout-state">
+            <p>No exercises in this session.</p>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(activeWorkout.exercises)}" class="dashboard-grid">
+            <aside class="card" style="flex: 0 0 260px;">
+                <h2 class="card-title">Exercises</h2>
+                <nav class="menu">
+                    <button type="button"
+                            class="menu-item"
+                            th:classappend="${exerciseStat.index == 0} ? ' active' : ''"
+                            th:each="exercise, exerciseStat : ${activeWorkout.exercises}"
+                            th:text="${exercise.exerciseName}"
+                            th:attr="onclick=|selectExercise(${exercise.id})|,data-exercise-id=${exercise.id}">
+                        Exercise name
+                    </button>
+                </nav>
             </aside>
 
-            <!-- Detail panel -->
-            <section class="exercise-detail-panel">
-                <div class="detail-shell">
-                    <div id="empty-state" class="empty-state" th:if="${#lists.isEmpty(session.exercises)}">
-                        <i class="fa-solid fa-dumbbell"></i>
-                        <p>No exercises in this workout yet</p>
-                    </div>
-                    <div id="empty-state-select" class="empty-state" th:if="${!#lists.isEmpty(session.exercises)}">
-                        <i class="fa-solid fa-dumbbell"></i>
-                        <p>Select an exercise to start logging sets</p>
-                    </div>
-
-                    <div th:each="ex : ${session.exercises}"
-                         th:id="'detail-' + ${ex.exerciseId}"
-                         class="detail-content"
-                         style="display: none;">
-                        <div class="detail-header">
-                            <h2 th:text="${ex.exerciseName}">Exercise</h2>
+            <section class="card" style="flex: 1 1 680px;">
+                <div th:each="exercise, exerciseStat : ${activeWorkout.exercises}"
+                     class="exercise-detail"
+                     th:attr="data-exercise-id=${exercise.id}"
+                     th:style="${exerciseStat.index == 0} ? 'display: block;' : 'display: none;'">
+                    <div class="exercise-card">
+                        <div class="exercise-header">
+                            <h2 class="exercise-name" th:text="${exercise.exerciseName}">Exercise name</h2>
+                            <span class="timer-badge" th:text="${exercise.muscleGroup}">Muscle group</span>
                         </div>
-                        <table class="sets-table" th:id="'table-' + ${ex.exerciseId}">
-                            <thead>
-                            <tr>
-                                <th>Set</th>
-                                <th>Weight (kg)</th>
-                                <th>Reps</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="set : ${ex.sets}">
-                                <td th:text="${set.setNumber}">1</td>
-                                <td th:text="${set.weight}">0</td>
-                                <td th:text="${set.reps}">0</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                        <div class="sets-table-wrapper">
+                            <table class="sets-table">
+                                <thead>
+                                <tr>
+                                    <th>Set #</th>
+                                    <th>Weight</th>
+                                    <th>Reps</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="set : ${exercise.sets}">
+                                    <td th:text="${set.setNumber}">1</td>
+                                    <td th:text="${set.weight}">0</td>
+                                    <td th:text="${set.reps}">0</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(exercise.sets)}">
+                                    <td colspan="3">No sets logged yet.</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <form th:action="@{/workouts/set/add}" method="post">
+                            <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
+                            <input type="hidden" name="sessionExerciseId" th:value="${exercise.id}">
+                            <table class="sets-table">
+                                <tbody>
+                                <tr>
+                                    <td><span class="set-badge">New</span></td>
+                                    <td><input class="input-stat" type="number" step="any" min="0" name="weight" placeholder="kg" required></td>
+                                    <td><input class="input-stat" type="number" min="0" name="reps" placeholder="reps" required></td>
+                                    <td><input class="input-stat" type="number" min="0" name="restSeconds" placeholder="sec" required></td>
+                                    <td>
+                                        <select class="input-stat" name="setType">
+                                            <option th:each="setType : ${setTypes}" th:value="${setType}" th:text="${setType}">NORMAL</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button type="submit" class="btn-add-set">
+                                <i class="fa-solid fa-plus"></i> Add Set
+                            </button>
+                        </form>
                     </div>
                 </div>
             </section>
@@ -109,39 +140,23 @@
 </div>
 
 <script th:src="@{/js/menu-toggle.js}"></script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const timerElement = document.getElementById('workoutTimer');
-        let seconds = 0;
-        setInterval(() => {
-            seconds++;
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            timerElement.textContent = `${m}:${s}`;
-        }, 1000);
+    function selectExercise(exerciseId) {
+        document.querySelectorAll('.exercise-detail').forEach(function (detail) {
+            detail.style.display = detail.dataset.exerciseId === String(exerciseId) ? 'block' : 'none';
+        });
 
-        const firstItem = document.querySelector('.exercise-item:not(.placeholder)');
-        if (firstItem) {
-            firstItem.click();
-            const selectMsg = document.getElementById('empty-state-select');
-            if (selectMsg) selectMsg.style.display = 'none';
+        document.querySelectorAll('[data-exercise-id].menu-item').forEach(function (item) {
+            item.classList.toggle('active', item.dataset.exerciseId === String(exerciseId));
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const firstExercise = document.querySelector('[data-exercise-id].menu-item');
+        if (firstExercise) {
+            selectExercise(firstExercise.dataset.exerciseId);
         }
     });
-
-    function selectExercise(exerciseId) {
-        const selectState = document.getElementById('empty-state-select');
-        if (selectState) selectState.style.display = 'none';
-
-        document.querySelectorAll('.detail-content').forEach(el => el.style.display = 'none');
-        const detail = document.getElementById('detail-' + exerciseId);
-        if (detail) detail.style.display = 'block';
-
-        document.querySelectorAll('.exercise-item').forEach(el => el.classList.remove('active'));
-        const item = document.getElementById('list-item-' + exerciseId);
-        if (item) item.classList.add('active');
-    }
 </script>
-
 </body>
 </html>

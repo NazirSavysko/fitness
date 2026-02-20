@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,5 +38,6 @@ public final class WorkoutSession {
     private LocalDateTime endedAt;
 
     @OneToMany(mappedBy = "session", cascade = CascadeType.ALL)
+    @Fetch(FetchMode.SUBSELECT)
     private List<SessionExercise> exercises;
 }
