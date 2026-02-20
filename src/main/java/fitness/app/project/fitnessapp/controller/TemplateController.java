@@ -32,7 +32,7 @@ public final class TemplateController {
         final List<GetTemplateDTO> templates = this.templateFacade.getTemplatesByEmail(principal.getName());
         model.addAttribute("templates", templates);
 
-        return "template";
+        return "workout-templates/list";
     }
 
     @GetMapping("/{id}")
@@ -43,7 +43,7 @@ public final class TemplateController {
                 .sorted(ORDER_INDEX_COMPARATOR)
                 .toList());
 
-        return "template-details";
+        return "workout-templates/details";
     }
 
     @GetMapping("/create")
@@ -53,7 +53,7 @@ public final class TemplateController {
         model.addAttribute("templateDto", formDto);
         model.addAttribute("exercises", exercises);
 
-        return "exercises-container";
+        return "workout-templates/create";
     }
 
     @PostMapping("/create")
@@ -67,7 +67,7 @@ public final class TemplateController {
             model.addAttribute("exercises", exercises);
             model.addAttribute("errors", result.getAllErrors());
 
-            return "exercises-container";
+            return "workout-templates/create";
         }
 
         this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
@@ -92,7 +92,7 @@ public final class TemplateController {
         model.addAttribute("UpdateTemplateDto", updateTemplateDTO);
         model.addAttribute("exercises", exercises);
 
-        return "exercises-container-update";
+        return "workout-templates/update";
     }
     @PostMapping("/edit")
     public String editTemplate(final @Valid @ModelAttribute("UpdateTemplateDto") UpdateTemplateDTO templateDTO,
@@ -104,7 +104,7 @@ public final class TemplateController {
             model.addAttribute("exercises", exercises);
 
 
-            return "exercises-container-update";
+            return "workout-templates/update";
         }
 
         this.templateFacade.updateTemplate(templateDTO, principal.getName());

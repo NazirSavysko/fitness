@@ -25,12 +25,12 @@ public final class HistoryController {
     public String getHistoryPage(@RequestParam(defaultValue = "0") final int page, final Model model, final Principal principal) {
         final Page<WorkoutHistoryCardDTO> historyPage = this.workoutFacade.getHistory(principal.getName(), PageRequest.of(page, 10));
         model.addAttribute("historyPage", historyPage);
-        return "history-list";
+        return "history/list";
     }
 
     @GetMapping("/{id}")
     public String getHistoryDetailsPage(@PathVariable("id") final Integer sessionId, final Model model, final Principal principal) {
         model.addAttribute("activeWorkout", this.workoutFacade.getWorkoutDetails(sessionId, principal.getName()));
-        return "history-details";
+        return "history/details";
     }
 }

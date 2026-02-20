@@ -27,14 +27,14 @@ public final class AuthController {
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "auth/login";
     }
 
     @GetMapping("/register")
     public String getRegistrationForm(final Model model) {
         model.addAttribute("registrationPayload", new RegistrationDTO(null, null, null, null));
 
-        return "registration";
+        return "auth/registration";
     }
 
     @PostMapping("/register")
@@ -45,7 +45,7 @@ public final class AuthController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
 
-            return "registration";
+            return "auth/registration";
         }
 
         try {
@@ -56,7 +56,7 @@ public final class AuthController {
         } catch (final UserExistsException e) {
             bindingResult.rejectValue("email", "error.exist.user", e.getMessage());
 
-            return "registration";
+            return "auth/registration";
         }
     }
 
@@ -64,7 +64,7 @@ public final class AuthController {
     public String showForgotPasswordPage(final Model model) {
         model.addAttribute("forgotPasswordDto", new ForgotPasswordDTO(""));
 
-        return "forgot-password";
+        return "auth/forgot-password";
     }
 
     @PostMapping("/forgot-password")
@@ -74,7 +74,7 @@ public final class AuthController {
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
 
-            return "forgot-password";
+            return "auth/forgot-password";
         }
 
         try {
@@ -91,7 +91,7 @@ public final class AuthController {
     public String showResetPasswordPage(final @RequestParam("email") String email, final Model model) {
         model.addAttribute("resetPasswordDto", new ResetPasswordDTO(email, "", ""));
 
-        return "reset-password";
+        return "auth/reset-password";
     }
 
     @PostMapping("/reset-password")
@@ -101,7 +101,7 @@ public final class AuthController {
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
 
-            return "reset-password";
+            return "auth/reset-password";
         }
         try {
             this.userService.resetPassword(dto.email(), dto.newPassword(), dto.confirmPassword());
@@ -109,7 +109,7 @@ public final class AuthController {
         } catch (final PasswordInvalidException e) {
             result.rejectValue("newPassword", "error.invalid.new.password", e.getMessage());
 
-            return "reset-password";
+            return "auth/reset-password";
         }
 
         return "redirect:/auth/login?resetSuccess";

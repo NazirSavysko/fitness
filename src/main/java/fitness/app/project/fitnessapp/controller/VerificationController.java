@@ -27,7 +27,7 @@ public class VerificationController {
         model.addAttribute("email", email);
         model.addAttribute("type", type);
 
-        return "verify";
+        return "auth/verify";
     }
 
     @PostMapping
@@ -45,7 +45,7 @@ public class VerificationController {
             model.addAttribute("email", email);
             model.addAttribute("type", type);
 
-            return "verify";
+            return "auth/verify";
         }
     }
 }

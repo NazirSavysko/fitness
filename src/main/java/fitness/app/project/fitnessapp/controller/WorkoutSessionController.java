@@ -37,7 +37,7 @@ public final class WorkoutSessionController {
             model.addAttribute("addSetDto", new AddSetDTO(null, null, null, SetType.NORMAL, null));
         }
         model.addAttribute("setTypes", SetType.values());
-        return "workout-active";
+        return "workout/active";
     }
 
     @PostMapping("/set/add")
@@ -49,7 +49,7 @@ public final class WorkoutSessionController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("activeWorkout", this.workoutFacade.getWorkoutDetails(sessionId, principal.getName()));
             model.addAttribute("setTypes", SetType.values());
-            return "workout-active";
+            return "workout/active";
         }
         final Integer activeSessionId = this.workoutFacade.addSetToExercise(addSetDTO, principal.getName());
         return "redirect:/workouts/" + activeSessionId + "/active";

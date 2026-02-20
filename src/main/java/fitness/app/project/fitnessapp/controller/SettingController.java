@@ -26,7 +26,7 @@ class SettingController {
     public String getSettingsPage(final Principal principal, final Model model) {
         this.prepareModelForPage(model, principal.getName());
 
-        return "settings";
+        return "settings/settings";
     }
 
     @PostMapping("/profile")
@@ -72,7 +72,7 @@ class SettingController {
         model.addAttribute("errors", bindingResult.getAllErrors());
         this.prepareModelForPage(model, email);
 
-        return "settings";
+        return "settings/settings";
     }
 
     private void prepareModelForPage(Model model, String email) {

@@ -23,6 +23,6 @@ public final class DashboardController {
         final List<GetDashboardTemplateDTO> templates = this.templateFacade.getDashboardTemplates(principal.getName());
         model.addAttribute("templates", templates);
 
-        return "dashboard";
+        return "dashboard/dashboard";
     }
 }
