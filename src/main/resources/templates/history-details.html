@@ -7,16 +7,6 @@
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/workout-active.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .history-details-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .history-details-card {
-            margin: 0;
-        }
-    </style>
 </head>
 <body>
 <div class="page-container">
@@ -60,7 +50,7 @@
                     <span th:text="${#temporals.format(activeWorkout.startedAt, 'dd MMM yyyy HH:mm')}">Started</span>
                 </div>
             </div>
-            <a href="/history" class="btn-finish" style="text-decoration: none;">
+            <a href="/history" class="btn-secondary-light">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </a>
         </div>

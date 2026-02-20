@@ -50,6 +50,25 @@
     background: #3311db;
 }
 
+.btn-secondary-light {
+    background: #e9f0ff;
+    color: #4318FF;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-secondary-light:hover {
+    background: #d0e1fd;
+}
+
 /* Карточка упражнения */
 .exercise-card {
     background: white;
@@ -64,6 +83,8 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
+    padding-bottom: 15px; /* Added spacing */
+    border-bottom: 1px solid #f2f7ff; /* Subtle separator */
 }
 
 .exercise-name {
@@ -99,39 +120,76 @@
     text-transform: uppercase;
     font-weight: 600;
     padding-bottom: 5px;
+    letter-spacing: 0.5px; /* Added letter spacing */
 }
 
 .sets-table td {
     text-align: center;
     vertical-align: middle;
+    padding: 12px 5px; /* Added padding */
+    color: #2b3674; /* Darker text */
+    font-weight: 500;
 }
 
-.col-set { width: 10%; }
+/* Add row background for better readability */
+.sets-table tbody tr {
+    background: #F4F7FE; /* Very light grey/blue */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sets-table tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+    background: white;
+    border: 1px solid #e0e5f2; /* Requires collapse separate */
+}
+
+/* Ensure first and last cells have rounded corners if we use background on TR */
+.sets-table tbody tr td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.sets-table tbody tr td:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.col-set { width: 10%; color: #A3AED0; font-weight: 600; }
 .col-prev { width: 20%; font-size: 0.9rem; color: #A3AED0; }
 .col-kg { width: 25%; }
 .col-reps { width: 25%; }
 .col-check { width: 20%; }
 
 .set-badge {
-    display: inline-block;
-    color: #A3AED0;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    min-width: 70px;
 }
 
 .failure-badge {
     color: #e74c3c;
+    background: #fde8e7;
 }
 
 .warmup-badge {
-    color: #A3AED0;
+    color: #f39c12;
+    background: #fef5e6;
 }
 
 .drop-badge {
     color: #4318FF;
+    background: #e9f0ff;
 }
 
 .normal-badge {
     color: #01b574;
+    background: #e6fffa;
 }
 
 .input-stat {
@@ -151,6 +209,101 @@
 .input-stat:focus {
     border-color: #4318FF;
     background: white;
+}
+
+/* --- NEW FORM DESIGN (Mobile First) --- */
+.add-set-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 16px;
+    margin-top: 15px;
+    border: 1px dashed #e0e5f2;
+}
+
+.add-set-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.add-set-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #a3aed0;
+    margin-left: 4px;
+}
+
+.input-large {
+    width: 100%;
+    height: 50px; /* Touch target size */
+    padding: 0 16px;
+    border: 1px solid #e0e5f2;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2b3674;
+    background: white;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.input-large:focus {
+    border-color: #4318FF;
+    box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.1);
+}
+
+.input-select-large {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234318FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+}
+
+.btn-add-set-large {
+    grid-column: 1 / -1;
+    background: #4318FF;
+    color: white;
+    border: none;
+    height: 54px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+    transition: transform 0.1s;
+    box-shadow: 0 4px 10px rgba(67, 24, 255, 0.2);
+}
+
+.btn-add-set-large:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+    .add-set-grid {
+        grid-template-columns: 1fr 1fr;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    /* Make Weight and Reps span 1 col each, Rest span full width or stay 1 col */
+    .add-set-group:nth-child(3) {
+        grid-column: 1 / -1; /* Rest takes full width */
+    }
+    .add-set-group:nth-child(4) {
+        grid-column: 1 / -1; /* Type takes full width */
+    }
+
+    .exercise-card {
+        padding: 15px;
+    }
 }
 
 /* Зеленая подсветка выполненного подхода */
@@ -345,4 +498,16 @@
         align-items: center;
         gap: 6px;
     }
+}
+
+/* History Details Specifics */
+.history-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.history-details-card {
+    margin: 0;
+    border-radius: 16px;
 }
