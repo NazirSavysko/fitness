@@ -16,12 +16,16 @@ import fitness.app.project.fitnessapp.service.UserService;
 import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -101,6 +105,33 @@ class WorkoutSessionServiceImplTest {
         assertEquals(90, savedSet.getRestSeconds());
         assertEquals(SetType.NORMAL, savedSet.getSetType());
         assertSame(sessionExercise, savedSet.getSessionExercise());
+    }
+
+    @Test
+    void getHistoryBuildsPageRequestWithDateDescByDefault() {
+        when(workoutSessionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of()));
+
+        workoutSessionService.getHistory("user@mail.com", null, "ALL", "DATE_DESC", PageRequest.of(1, 10));
+
+        final ArgumentCaptor<PageRequest> captor = ArgumentCaptor.forClass(PageRequest.class);
+        verify(workoutSessionRepository).findAll(any(Specification.class), captor.capture());
+        final PageRequest pageRequest = captor.getValue();
+        assertEquals(1, pageRequest.getPageNumber());
+        assertEquals(10, pageRequest.getPageSize());
+        assertEquals("startedAt: DESC", pageRequest.getSort().toString());
+    }
+
+    @Test
+    void getHistoryBuildsPageRequestWithDurationSort() {
+        when(workoutSessionRepository.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(new PageImpl<>(List.of()));
+
+        workoutSessionService.getHistory("user@mail.com", 3L, "LAST_30_DAYS", "DURATION_DESC", PageRequest.of(0, 10));
+
+        final ArgumentCaptor<Specification<WorkoutSession>> specificationCaptor = ArgumentCaptor.forClass(Specification.class);
+        final ArgumentCaptor<PageRequest> pageCaptor = ArgumentCaptor.forClass(PageRequest.class);
+        verify(workoutSessionRepository).findAll(specificationCaptor.capture(), pageCaptor.capture());
+        assertNotNull(specificationCaptor.getValue());
+        assertEquals("endedAt - startedAt: DESC", pageCaptor.getValue().getSort().toString());
     }
 
     private static TemplateExercise templateExercise(final int exerciseId, final int orderIndex) {

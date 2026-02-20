@@ -13,7 +13,7 @@ public interface WorkoutSessionService {
 
     void finishWorkout(Integer sessionId, String userEmail);
 
-    Page<WorkoutSession> getHistory(String userEmail, Pageable pageable);
+    Page<WorkoutSession> getHistory(String userEmail, Long templateId, String dateRange, String sortBy, Pageable pageable);
 
     WorkoutSession getWorkoutDetails(Integer sessionId, String userEmail);
 }

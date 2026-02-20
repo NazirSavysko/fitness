@@ -44,6 +44,42 @@
         </header>
 
         <div class="dashboard-grid">
+            <div class="card full-width-card" style="padding: 16px 20px;">
+                <form method="get" th:action="@{/history}" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: end;">
+                    <input type="hidden" name="page" value="0">
+                    <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 220px;">
+                        <label for="templateId" style="font-size: 0.8rem; color: #7f8c8d; font-weight: 600;">Template</label>
+                        <select id="templateId" name="templateId" style="padding: 10px 12px; border: 1px solid #e0e5f2; border-radius: 10px; color: #2b3674;">
+                            <option value="" th:selected="${selectedTemplateId == null}">All Workouts</option>
+                            <option value="-1" th:selected="${selectedTemplateId != null and selectedTemplateId == -1}">Free Workouts</option>
+                            <option th:each="template : ${templates}"
+                                    th:value="${template.id}"
+                                    th:selected="${selectedTemplateId != null and selectedTemplateId == template.id}"
+                                    th:text="${template.name}">Template</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 180px;">
+                        <label for="dateRange" style="font-size: 0.8rem; color: #7f8c8d; font-weight: 600;">Date Range</label>
+                        <select id="dateRange" name="dateRange" style="padding: 10px 12px; border: 1px solid #e0e5f2; border-radius: 10px; color: #2b3674;">
+                            <option value="ALL" th:selected="${selectedDateRange == 'ALL'}">All Time</option>
+                            <option value="LAST_7_DAYS" th:selected="${selectedDateRange == 'LAST_7_DAYS'}">Last 7 Days</option>
+                            <option value="LAST_30_DAYS" th:selected="${selectedDateRange == 'LAST_30_DAYS'}">Last 30 Days</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 6px; flex: 1 1 180px;">
+                        <label for="sortBy" style="font-size: 0.8rem; color: #7f8c8d; font-weight: 600;">Sort By</label>
+                        <select id="sortBy" name="sortBy" style="padding: 10px 12px; border: 1px solid #e0e5f2; border-radius: 10px; color: #2b3674;">
+                            <option value="DATE_DESC" th:selected="${selectedSortBy == 'DATE_DESC'}">Newest First</option>
+                            <option value="DATE_ASC" th:selected="${selectedSortBy == 'DATE_ASC'}">Oldest First</option>
+                            <option value="DURATION_DESC" th:selected="${selectedSortBy == 'DURATION_DESC'}">Longest Duration</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="workout-btn empty-btn" style="width: auto; min-width: 150px; justify-content: center; padding: 10px 16px;">
+                        <span class="main-text">Apply Filters</span>
+                    </button>
+                </form>
+            </div>
+
             <div class="card full-width-card" th:if="${historyPage.content.isEmpty()}">
                 <h3 class="card-title">Workout History</h3>
                 <div class="empty-state">
@@ -86,11 +122,11 @@
 
         <div class="workout-actions" th:if="${historyPage.totalPages > 1}" style="margin-top: 20px;">
             <a class="workout-btn template-btn" th:if="${historyPage.hasPrevious()}"
-               th:href="@{/history(page=${historyPage.number - 1})}">
+               th:href="@{/history(page=${historyPage.number - 1},templateId=${selectedTemplateId},dateRange=${selectedDateRange},sortBy=${selectedSortBy})}">
                 <span class="main-text"><i class="fa-solid fa-chevron-left"></i> Previous</span>
             </a>
             <a class="workout-btn template-btn" th:if="${historyPage.hasNext()}"
-               th:href="@{/history(page=${historyPage.number + 1})}">
+               th:href="@{/history(page=${historyPage.number + 1},templateId=${selectedTemplateId},dateRange=${selectedDateRange},sortBy=${selectedSortBy})}">
                 <span class="main-text">Next <i class="fa-solid fa-chevron-right"></i></span>
             </a>
         </div>
