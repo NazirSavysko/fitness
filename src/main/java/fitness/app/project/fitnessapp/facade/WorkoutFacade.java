@@ -14,7 +14,7 @@ public interface WorkoutFacade {
 
     void finishWorkout(Integer sessionId, String email);
 
-    Page<WorkoutHistoryCardDTO> getHistory(String email, Pageable pageable);
+    Page<WorkoutHistoryCardDTO> getHistory(String email, Long templateId, String dateRange, String sortBy, Pageable pageable);
 
     ActiveWorkoutDTO getWorkoutDetails(Integer sessionId, String email);
 }

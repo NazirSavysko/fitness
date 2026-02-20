@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.WorkoutHistoryCardDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
+import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +21,27 @@ import java.security.Principal;
 public final class HistoryController {
 
     private final WorkoutFacade workoutFacade;
+    private final WorkoutTemplateService workoutTemplateService;
 
     @GetMapping
-    public String getHistoryPage(@RequestParam(defaultValue = "0") final int page, final Model model, final Principal principal) {
-        final Page<WorkoutHistoryCardDTO> historyPage = this.workoutFacade.getHistory(principal.getName(), PageRequest.of(page, 10));
+    public String getHistoryPage(@RequestParam(defaultValue = "0") final int page,
+                                 @RequestParam(required = false) final Long templateId,
+                                 @RequestParam(defaultValue = "ALL") final String dateRange,
+                                 @RequestParam(defaultValue = "DATE_DESC") final String sortBy,
+                                 final Model model,
+                                 final Principal principal) {
+        final Page<WorkoutHistoryCardDTO> historyPage = this.workoutFacade.getHistory(
+                principal.getName(),
+                templateId,
+                dateRange,
+                sortBy,
+                PageRequest.of(page, 10)
+        );
         model.addAttribute("historyPage", historyPage);
+        model.addAttribute("templates", this.workoutTemplateService.getTemplatesByUserEmail(principal.getName()));
+        model.addAttribute("selectedTemplateId", templateId);
+        model.addAttribute("selectedDateRange", dateRange);
+        model.addAttribute("selectedSortBy", sortBy);
         return "history/list";
     }
 

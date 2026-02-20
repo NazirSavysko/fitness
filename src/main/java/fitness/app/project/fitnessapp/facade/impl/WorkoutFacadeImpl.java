@@ -45,8 +45,8 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
     }
 
     @Override
-    public Page<WorkoutHistoryCardDTO> getHistory(final String email, final Pageable pageable) {
-        return this.workoutSessionService.getHistory(email, pageable)
+    public Page<WorkoutHistoryCardDTO> getHistory(final String email, final Long templateId, final String dateRange, final String sortBy, final Pageable pageable) {
+        return this.workoutSessionService.getHistory(email, templateId, dateRange, sortBy, pageable)
                 .map(workoutSession -> new WorkoutHistoryCardDTO(
                         workoutSession.getId(),
                         workoutSession.getSourceTemplate() == null ? "Free Workout" : workoutSession.getSourceTemplate().getName(),

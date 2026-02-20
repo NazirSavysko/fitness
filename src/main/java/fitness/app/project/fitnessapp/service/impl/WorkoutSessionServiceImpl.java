@@ -15,7 +15,11 @@ import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.JpaSort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @AllArgsConstructor
@@ -100,8 +105,53 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<WorkoutSession> getHistory(final String userEmail, final Pageable pageable) {
-        return this.workoutSessionRepository.findAllByUser_EmailAndEndedAtIsNotNullOrderByStartedAtDesc(userEmail, pageable);
+    public Page<WorkoutSession> getHistory(final String userEmail, final Long templateId, final String dateRange, final String sortBy, final Pageable pageable) {
+        Specification<WorkoutSession> specification = (root, query, criteriaBuilder) -> criteriaBuilder.and(
+                criteriaBuilder.equal(root.get("user").get("email"), userEmail),
+                criteriaBuilder.isNotNull(root.get("endedAt"))
+        );
+
+        if (templateId != null) {
+            if (templateId <= 0) {
+                specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.isNull(root.get("sourceTemplate")));
+            } else {
+                specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("sourceTemplate").get("id"), templateId.intValue()));
+            }
+        }
+
+        final LocalDateTime fromDate = resolveFromDate(dateRange);
+        if (fromDate != null) {
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("startedAt"), fromDate));
+        }
+
+        final PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                resolveSort(sortBy)
+        );
+        return this.workoutSessionRepository.findAll(specification, pageRequest);
+    }
+
+    private static LocalDateTime resolveFromDate(final String dateRange) {
+        if (dateRange == null) {
+            return null;
+        }
+        return switch (dateRange.toUpperCase(Locale.ROOT)) {
+            case "LAST_7_DAYS" -> LocalDateTime.now().minusDays(7);
+            case "LAST_30_DAYS" -> LocalDateTime.now().minusDays(30);
+            default -> null;
+        };
+    }
+
+    private static Sort resolveSort(final String sortBy) {
+        if (sortBy == null) {
+            return Sort.by("startedAt").descending();
+        }
+        return switch (sortBy.toUpperCase(Locale.ROOT)) {
+            case "DATE_ASC" -> Sort.by("startedAt").ascending();
+            case "DURATION_DESC" -> JpaSort.unsafe(Sort.Direction.DESC, "endedAt - startedAt");
+            default -> Sort.by("startedAt").descending();
+        };
     }
 
     @Override
