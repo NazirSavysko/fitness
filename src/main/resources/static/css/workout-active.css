@@ -118,6 +118,22 @@
     font-weight: 600;
 }
 
+.failure-badge {
+    color: #e74c3c;
+}
+
+.warmup-badge {
+    color: #A3AED0;
+}
+
+.drop-badge {
+    color: #4318FF;
+}
+
+.normal-badge {
+    color: #01b574;
+}
+
 .input-stat {
     width: 100%;
     max-width: 70px;
