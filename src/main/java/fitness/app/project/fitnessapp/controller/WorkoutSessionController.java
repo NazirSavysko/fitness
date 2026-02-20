@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,9 +41,15 @@ public final class WorkoutSessionController {
     }
 
     @PostMapping("/set/add")
-    public String addSet(@Valid @ModelAttribute("addSetDto") final AddSetDTO addSetDTO, final Principal principal) {
-        final Integer sessionId = this.workoutFacade.addSetToExercise(addSetDTO, principal.getName());
-        return "redirect:/workouts/" + sessionId + "/active";
+    public String addSet(@Valid @ModelAttribute("addSetDto") final AddSetDTO addSetDTO,
+                         final BindingResult bindingResult,
+                         @RequestParam("sessionId") final Integer sessionId,
+                         final Principal principal) {
+        if (bindingResult.hasErrors()) {
+            return "redirect:/workouts/" + sessionId + "/active";
+        }
+        final Integer activeSessionId = this.workoutFacade.addSetToExercise(addSetDTO, principal.getName());
+        return "redirect:/workouts/" + activeSessionId + "/active";
     }
 
     @PostMapping("/{id}/finish")
