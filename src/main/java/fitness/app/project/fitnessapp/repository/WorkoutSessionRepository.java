@@ -12,6 +12,6 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
 
     Page<WorkoutSession> findAllByUser_EmailAndEndedAtIsNotNullOrderByStartedAtDesc(String userEmail, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"sourceTemplate", "exercises", "exercises.exercise", "exercises.sets"})
+    @EntityGraph(attributePaths = {"sourceTemplate", "exercises", "exercises.exercise"})
     Optional<WorkoutSession> findByIdAndUser_Email(Integer id, String userEmail);
 }
