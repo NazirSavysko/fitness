@@ -37,9 +37,8 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
     }
 
     @Override
-    @PreAuthorize("@workoutTemplateRepository.existsByUser_Email(#email)")
     public WorkoutTemplate getWorkoutTemplateById(final Integer templateId, final String email) {
-        return this.workoutTemplateRepository.findById(templateId)
+        return this.workoutTemplateRepository.findByIdAndUser_Email(templateId, email)
                 .orElseThrow(() -> new WorkoutTemplateNotFoundException(WORKOUT_TEMPLATE_NOT_FOUND_MESSAGE));
     }
 
