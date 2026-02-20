@@ -155,37 +155,11 @@
 
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script th:inline="javascript">
-    function selectExercise(exerciseId) {
-        document.getElementById('exerciseListPanel').classList.remove('hidden-mobile');
-        document.getElementById('exerciseDetailPanel').classList.remove('hidden-mobile');
-        document.querySelectorAll('.exercise-detail').forEach(function (detail) {
-            detail.style.display = detail.dataset.exerciseId === String(exerciseId) ? 'block' : 'none';
-        });
-
-        document.querySelectorAll('[data-exercise-id].exercise-item-card').forEach(function (item) {
-            item.classList.toggle('active', item.dataset.exerciseId === String(exerciseId));
-        });
-
-        if (window.matchMedia('(max-width: 768px)').matches) {
-            document.getElementById('exerciseListPanel').classList.add('hidden-mobile');
-        }
-    }
-
-    function showExerciseList() {
-        document.getElementById('exerciseListPanel').classList.remove('hidden-mobile');
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const selectedFromModel = /*[[${addSetDto.sessionExerciseId}]]*/ null;
-        if (selectedFromModel) {
-            selectExercise(selectedFromModel);
-            return;
-        }
-        const firstExercise = document.querySelector('[data-exercise-id].exercise-item-card');
-        if (firstExercise && firstExercise.dataset.exerciseId) {
-            selectExercise(firstExercise.dataset.exerciseId);
-        }
-    });
+    /*<![CDATA[*/
+    // Pass server-side variable to global scope for external JS file
+    var serverSelectedExerciseId = /*[[${addSetDto != null ? addSetDto.sessionExerciseId : null}]]*/ null;
+    /*]]>*/
 </script>
+<script th:src="@{/js/workout-active.js}"></script>
 </body>
 </html>
