@@ -107,13 +107,11 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
         if (workoutSession.getExercises() == null) {
             return "";
         }
-        return workoutSession.getExercises().stream()
+        return String.join(", ", workoutSession.getExercises().stream()
                 .map(SessionExercise::getExercise)
                 .filter(exerciseDefinition -> exerciseDefinition != null && exerciseDefinition.getMuscleGroup() != null)
                 .map(exerciseDefinition -> exerciseDefinition.getMuscleGroup().trim())
                 .filter(muscleGroup -> !muscleGroup.isEmpty())
-                .collect(Collectors.toCollection(LinkedHashSet::new))
-                .stream()
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
     }
 }
