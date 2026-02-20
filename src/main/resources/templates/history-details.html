@@ -7,6 +7,16 @@
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/workout-active.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .history-details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .history-details-card {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
 <div class="page-container">
@@ -55,39 +65,41 @@
             </a>
         </div>
 
-        <div th:each="exercise : ${activeWorkout.exercises}" class="exercise-card">
-            <div class="exercise-header">
-                <h2 class="exercise-name" th:text="${exercise.exerciseName}">Exercise</h2>
-                <span class="timer-badge" th:text="${exercise.muscleGroup}">Muscle group</span>
-            </div>
-            <div class="sets-table-wrapper">
-                <table class="sets-table">
-                    <thead>
-                    <tr>
-                        <th>Set</th>
-                        <th>Weight</th>
-                        <th>Reps</th>
-                        <th>Rest</th>
-                        <th>Type</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="set : ${exercise.sets}">
-                        <td th:text="${set.setNumber}">1</td>
-                        <td th:text="${set.weight}">0</td>
-                        <td th:text="${set.reps}">0</td>
-                        <td th:text="${set.restSeconds}">0</td>
-                        <td>
-                            <span class="set-badge"
-                                  th:classappend="${set.setType.name().toLowerCase()} + '-badge'"
-                                  th:text="${set.setType}">NORMAL</span>
-                        </td>
-                    </tr>
-                    <tr th:if="${#lists.isEmpty(exercise.sets)}">
-                        <td colspan="5">No sets logged.</td>
-                    </tr>
-                    </tbody>
-                </table>
+        <div class="history-details-list">
+            <div th:each="exercise : ${activeWorkout.exercises}" class="exercise-card history-details-card">
+                <div class="exercise-header">
+                    <h2 class="exercise-name" th:text="${exercise.exerciseName}">Exercise</h2>
+                    <span class="timer-badge" th:text="${exercise.muscleGroup}">Muscle group</span>
+                </div>
+                <div class="sets-table-wrapper">
+                    <table class="sets-table">
+                        <thead>
+                        <tr>
+                            <th>Set</th>
+                            <th>Weight</th>
+                            <th>Reps</th>
+                            <th>Rest</th>
+                            <th>Type</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="set : ${exercise.sets}">
+                            <td th:text="${set.setNumber}">1</td>
+                            <td th:text="${set.weight}">0</td>
+                            <td th:text="${set.reps}">0</td>
+                            <td th:text="${set.restSeconds}">0</td>
+                            <td>
+                                <span class="set-badge"
+                                      th:classappend="${set.setType.name().toLowerCase()} + '-badge'"
+                                      th:text="${set.setType}">NORMAL</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(exercise.sets)}">
+                            <td colspan="5">No sets logged.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

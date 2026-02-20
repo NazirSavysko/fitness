@@ -252,3 +252,97 @@
     border: 2px dashed #E0E5F2;
     margin-bottom: 20px;
 }
+
+.workout-master-detail {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.exercise-sidebar {
+    flex: 0 0 300px;
+}
+
+.exercise-main {
+    flex: 1 1 auto;
+}
+
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.exercise-item-card {
+    border: 1px solid #E0E5F2;
+    background: #F8FAFF;
+    border-radius: 14px;
+    padding: 12px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.exercise-item-card.active {
+    border-color: #4318FF;
+    background: #e9f0ff;
+}
+
+.exercise-item-name {
+    font-weight: 700;
+    color: #2b3674;
+}
+
+.exercise-item-muscle {
+    font-size: 0.85rem;
+    color: #A3AED0;
+}
+
+.btn-back-list {
+    display: none;
+    margin-bottom: 12px;
+    border: none;
+    background: transparent;
+    color: #4318FF;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+}
+
+.form-errors {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f3c7c7;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+}
+
+.form-errors p {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .workout-master-detail {
+        flex-direction: column;
+    }
+
+    .exercise-sidebar,
+    .exercise-main {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .exercise-sidebar.hidden-mobile {
+        display: none;
+    }
+
+    .btn-back-list {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+}
