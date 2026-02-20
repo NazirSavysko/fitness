@@ -1,7 +1,8 @@
 package fitness.app.project.fitnessapp.dto;
 
+import fitness.app.project.fitnessapp.annotations.ValidReps;
+import fitness.app.project.fitnessapp.annotations.ValidWeight;
 import fitness.app.project.fitnessapp.model.enums.SetType;
-import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -9,10 +10,10 @@ import java.math.BigDecimal;
 
 public record AddSetDTO(
         @NotNull(message = "Weight is required")
-        @DecimalMin(value = "0.0", inclusive = true, message = "Weight cannot be negative")
+        @ValidWeight
         BigDecimal weight,
         @NotNull(message = "Reps is required")
-        @PositiveOrZero(message = "Reps cannot be negative")
+        @ValidReps
         Integer reps,
         @NotNull(message = "Rest is required")
         @PositiveOrZero(message = "Rest cannot be negative")

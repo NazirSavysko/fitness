@@ -44,9 +44,12 @@ public final class WorkoutSessionController {
     public String addSet(@Valid @ModelAttribute("addSetDto") final AddSetDTO addSetDTO,
                          final BindingResult bindingResult,
                          @RequestParam("sessionId") final Integer sessionId,
+                         final Model model,
                          final Principal principal) {
         if (bindingResult.hasErrors()) {
-            return "redirect:/workouts/" + sessionId + "/active";
+            model.addAttribute("activeWorkout", this.workoutFacade.getWorkoutDetails(sessionId, principal.getName()));
+            model.addAttribute("setTypes", SetType.values());
+            return "workout-active";
         }
         final Integer activeSessionId = this.workoutFacade.addSetToExercise(addSetDTO, principal.getName());
         return "redirect:/workouts/" + activeSessionId + "/active";

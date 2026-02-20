@@ -17,13 +17,15 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public final class WorkoutFacadeImpl implements WorkoutFacade {
 
-    private static final DateTimeFormatter DATE_TIME_DISPLAY_FORMAT = DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm");
+    private static final DateTimeFormatter DATE_TIME_DISPLAY_FORMAT = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
     private final WorkoutSessionService workoutSessionService;
 
@@ -49,7 +51,9 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                         workoutSession.getId(),
                         workoutSession.getSourceTemplate() == null ? "Free Workout" : workoutSession.getSourceTemplate().getName(),
                         workoutSession.getStartedAt().format(DATE_TIME_DISPLAY_FORMAT),
-                        calculateDurationInMinutes(workoutSession)
+                        calculateDurationInMinutes(workoutSession),
+                        calculateTotalSets(workoutSession),
+                        calculateMuscleGroups(workoutSession)
                 ));
     }
 
@@ -88,5 +92,28 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
             return 0;
         }
         return Duration.between(workoutSession.getStartedAt(), workoutSession.getEndedAt()).toMinutes();
+    }
+
+    private static int calculateTotalSets(final WorkoutSession workoutSession) {
+        if (workoutSession.getExercises() == null) {
+            return 0;
+        }
+        return workoutSession.getExercises().stream()
+                .mapToInt(sessionExercise -> sessionExercise.getSets() == null ? 0 : sessionExercise.getSets().size())
+                .sum();
+    }
+
+    private static String calculateMuscleGroups(final WorkoutSession workoutSession) {
+        if (workoutSession.getExercises() == null) {
+            return "";
+        }
+        return workoutSession.getExercises().stream()
+                .map(SessionExercise::getExercise)
+                .filter(exerciseDefinition -> exerciseDefinition != null && exerciseDefinition.getMuscleGroup() != null)
+                .map(exerciseDefinition -> exerciseDefinition.getMuscleGroup().trim())
+                .filter(muscleGroup -> !muscleGroup.isEmpty())
+                .collect(Collectors.toCollection(LinkedHashSet::new))
+                .stream()
+                .collect(Collectors.joining(", "));
     }
 }
