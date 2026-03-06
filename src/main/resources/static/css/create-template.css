@@ -115,9 +115,14 @@
 }
 
 .exercise-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
+    background: #F9FAFC;
+    border: 1px solid #E0E5F2;
+    border-radius: 16px;
+    padding: 14px 16px;
     animation: fadeIn 0.3s ease;
 }
 
@@ -187,6 +192,12 @@
 .btn-remove-exercise:hover {
     background: #ffe2e2;
     transform: scale(1.05);
+}
+
+.menu-item.template-nav-locked {
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: default;
 }
 
 .btn-add-exercise {

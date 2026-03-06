@@ -52,7 +52,8 @@
         <form class="create-form-grid"
               th:action="@{/templates/edit}"
               method="post"
-              th:object="${UpdateTemplateDto}">
+              th:object="${UpdateTemplateDto}"
+              data-template-submit="true">
 
             <input type="hidden" th:field="*{id}"/>
 
@@ -133,6 +134,8 @@
 
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script>
+    const TEMPLATE_SCROLL_KEY = 'templateScrollPos';
+    let isSubmittingTemplate = false;
     let exerciseIndex = document.querySelectorAll('#exercises-container .exercise-row').length;
 
     function addExerciseRow() {
@@ -153,6 +156,49 @@
     function removeExerciseRow(btn) {
         btn.closest('.exercise-row').remove();
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const savedScrollPos = sessionStorage.getItem(TEMPLATE_SCROLL_KEY);
+        if (savedScrollPos !== null) {
+            window.scrollTo(0, parseInt(savedScrollPos, 10));
+            sessionStorage.removeItem(TEMPLATE_SCROLL_KEY);
+        }
+
+        document.querySelectorAll('a.menu-item').forEach(function (menuLink) {
+            menuLink.classList.add('template-nav-locked');
+            menuLink.setAttribute('aria-disabled', 'true');
+            menuLink.addEventListener('click', function (e) {
+                e.preventDefault();
+            });
+            menuLink.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        document.querySelectorAll('form').forEach(function (form) {
+            form.addEventListener('submit', function () {
+                if (form.dataset.templateSubmit === 'true') {
+                    isSubmittingTemplate = true;
+                }
+            });
+        });
+
+        document.querySelectorAll('.btn-add-exercise, .btn-remove-exercise').forEach(function (button) {
+            button.addEventListener('click', function () {
+                sessionStorage.setItem(TEMPLATE_SCROLL_KEY, String(window.scrollY));
+            });
+        });
+    });
+
+    window.addEventListener('beforeunload', function (e) {
+        if (isSubmittingTemplate) {
+            return;
+        }
+        e.preventDefault();
+        e.returnValue = '';
+    });
 </script>
 
 </body>
