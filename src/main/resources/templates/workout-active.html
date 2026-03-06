@@ -157,16 +157,16 @@
             selectExercise(firstExercise.dataset.exerciseId);
         }
 
-        let finishWorkoutTriggered = false;
+        let isFinishingWorkout = false;
         const finishWorkoutForm = document.getElementById('finish-workout-form');
         if (finishWorkoutForm) {
             finishWorkoutForm.addEventListener('submit', function () {
-                finishWorkoutTriggered = true;
+                isFinishingWorkout = true;
             });
         }
 
         window.addEventListener('beforeunload', function (e) {
-            if (finishWorkoutTriggered) {
+            if (isFinishingWorkout) {
                 return;
             }
             e.preventDefault();
@@ -175,7 +175,7 @@
 
         document.querySelectorAll('a.menu-item').forEach(function (menuLink) {
             menuLink.addEventListener('click', function (e) {
-                if (finishWorkoutTriggered) {
+                if (isFinishingWorkout) {
                     return;
                 }
                 e.preventDefault();
