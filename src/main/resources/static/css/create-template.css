@@ -116,8 +116,8 @@
 
 .exercise-row {
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
+    grid-template-columns: auto 4fr 1fr 1fr auto;
+    align-items: end;
     gap: 12px;
     background: #F9FAFC;
     border: 1px solid #E0E5F2;
@@ -144,6 +144,7 @@
     padding: 5px;
     display: flex;
     align-items: center;
+    align-self: center;
 }
 
 .flex-grow {
@@ -276,5 +277,29 @@
     .btn-save, .btn-cancel {
         width: 100%;
         text-align: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .create-form-grid {
+        padding: 0 15px;
+    }
+
+    .exercise-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .drag-handle {
+        justify-content: center;
+        padding: 10px;
+        border-bottom: 1px solid #E0E5F2;
+        margin-bottom: 5px;
+    }
+
+    .btn-remove-exercise {
+        width: 100%;
+        margin-top: 10px;
     }
 }
