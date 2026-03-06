@@ -1,9 +1,12 @@
 package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.ActiveWorkoutDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -58,5 +61,18 @@ class WorkoutSessionControllerTest {
 
         assertEquals("redirect:/workouts/21/active", result);
         verify(workoutFacade).updateExerciseSet(expectedDto, "user@mail.com");
+    }
+
+    @Test
+    void bulkUpdateSetsDelegatesToFacade() {
+        final List<BulkSetUpdateDTO> updates = List.of(
+                new BulkSetUpdateDTO(1, new BigDecimal("75.5"), 8, 90),
+                new BulkSetUpdateDTO(2, null, null, null)
+        );
+
+        final ResponseEntity<Void> response = workoutSessionController.bulkUpdateSets(updates, principal);
+
+        assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
+        verify(workoutFacade).bulkUpdateSets(updates, "user@mail.com");
     }
 }

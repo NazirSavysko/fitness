@@ -59,7 +59,10 @@
                     <span th:text="${#temporals.format(activeWorkout.startedAt, 'dd MMM yyyy HH:mm')}">Start Time</span>
                 </div>
             </div>
-            <form id="finish-workout-form" th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}" method="post">
+            <form id="finish-workout-form"
+                  th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}"
+                  th:attr="data-bulk-update-url=@{/workouts/bulk-update-sets}"
+                  method="post">
                 <button type="submit" class="btn-finish">
                     <i class="fa-solid fa-flag-checkered"></i> Finish Workout
                 </button>
@@ -102,31 +105,24 @@
                         <div>Set #</div>
                         <div>Weight (kg)</div>
                         <div>Reps</div>
+                        <div>Rest (s)</div>
                         <div>Type</div>
-                        <div>Action</div>
                     </div>
 
                     <div class="sets-list">
-                        <form th:each="set : ${exercise.sets}"
-                              class="set-row"
-                              data-scroll-save="true"
-                              th:action="@{/workouts/set/{setId}/update(setId=${set.id})}"
-                              method="post">
-                            <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
-                            <input type="hidden" name="setId" th:value="${set.id}">
-
+                        <div th:each="set : ${exercise.sets}"
+                             class="set-row"
+                             th:attr="data-set-id=${set.id}">
                             <div class="set-number" th:text="${set.setNumber}">1</div>
-                            <div><input type="number" step="any" min="0" name="weight" class="form-input" th:value="${set.weight}" placeholder="0.0" required></div>
-                            <div><input type="number" min="0" name="reps" class="form-input" th:value="${set.reps}" placeholder="0" required></div>
+                            <div><input type="number" step="any" min="0" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="0.0"></div>
+                            <div><input type="number" min="0" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="0"></div>
+                            <div><input type="number" min="0" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60"></div>
                             <div>
                                 <span class="set-badge"
                                       th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
                                       th:text="${set.setType}">NORMAL</span>
                             </div>
-                            <div>
-                                <button type="submit" class="btn-add-set-large">Save</button>
-                            </div>
-                        </form>
+                        </div>
                         <div th:if="${#lists.isEmpty(exercise.sets)}" style="padding: 20px; text-align: center; color: #A3AED0;">
                             No sets logged yet.
                         </div>
@@ -157,6 +153,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+        const finishWorkoutForm = document.getElementById('finish-workout-form');
         const activeIndex = sessionStorage.getItem('activeExerciseIndex');
         if (activeIndex) {
             switchTab(activeIndex);
@@ -170,12 +167,69 @@
 
         document.querySelectorAll('form').forEach(function (form) {
             form.addEventListener('submit', function () {
+                if (form.id === 'finish-workout-form') {
+                    return;
+                }
                 isSubmitting = true;
                 if (form.dataset.scrollSave === 'true') {
                     sessionStorage.setItem('workoutScrollPos', String(window.scrollY));
                 }
             });
         });
+
+        if (finishWorkoutForm) {
+            finishWorkoutForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                if (isSubmitting) {
+                    return;
+                }
+                isSubmitting = true;
+
+                const bulkUpdateUrl = finishWorkoutForm.dataset.bulkUpdateUrl;
+                const csrfTokenInput = finishWorkoutForm.querySelector('input[name="_csrf"]');
+                const headers = {'Content-Type': 'application/json'};
+                if (csrfTokenInput && csrfTokenInput.value) {
+                    headers['X-CSRF-TOKEN'] = csrfTokenInput.value;
+                }
+
+                const parseNumberOrNull = (value) => {
+                    if (value === '') {
+                        return null;
+                    }
+                    const parsed = Number(value);
+                    return Number.isFinite(parsed) ? parsed : null;
+                };
+                const payload = Array.from(document.querySelectorAll('.set-row[data-set-id]')).map(function (row) {
+                    const weightInput = row.querySelector('.set-weight-input');
+                    const repsInput = row.querySelector('.set-reps-input');
+                    const restInput = row.querySelector('.set-rest-input');
+                    return {
+                        setId: Number(row.dataset.setId),
+                        weight: parseNumberOrNull(weightInput ? weightInput.value : ''),
+                        reps: parseNumberOrNull(repsInput ? repsInput.value : ''),
+                        restSeconds: parseNumberOrNull(restInput ? restInput.value : '')
+                    };
+                });
+
+                try {
+                    const response = await fetch(bulkUpdateUrl, {
+                        method: 'POST',
+                        headers: headers,
+                        credentials: 'same-origin',
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Bulk update request failed');
+                    }
+
+                    HTMLFormElement.prototype.submit.call(finishWorkoutForm);
+                } catch (error) {
+                    isSubmitting = false;
+                    window.alert('Unable to save set values. Please check inputs and try again.');
+                }
+            });
+        }
 
         document.querySelectorAll('a.menu-item').forEach(function (menuLink) {
             menuLink.classList.add('workout-nav-locked');

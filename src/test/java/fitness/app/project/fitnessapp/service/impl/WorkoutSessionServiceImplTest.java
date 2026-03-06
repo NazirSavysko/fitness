@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.service.impl;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.model.ExerciseDefinition;
 import fitness.app.project.fitnessapp.model.ExerciseSet;
 import fitness.app.project.fitnessapp.model.SessionExercise;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -147,6 +149,35 @@ class WorkoutSessionServiceImplTest {
         assertEquals(new BigDecimal("82.5"), exerciseSet.getWeight());
         assertEquals(7, exerciseSet.getReps());
         verify(exerciseSetRepository).save(exerciseSet);
+    }
+
+    @Test
+    void bulkUpdateSetsUpdatesWeightRepsAndRestSeconds() {
+        final ExerciseSet firstSet = new ExerciseSet();
+        firstSet.setId(11);
+        final ExerciseSet secondSet = new ExerciseSet();
+        secondSet.setId(12);
+
+        when(exerciseSetRepository.findByIdAndSessionExercise_Session_User_Email(11, "user@mail.com"))
+                .thenReturn(Optional.of(firstSet));
+        when(exerciseSetRepository.findByIdAndSessionExercise_Session_User_Email(12, "user@mail.com"))
+                .thenReturn(Optional.of(secondSet));
+
+        workoutSessionService.bulkUpdateSets(
+                List.of(
+                        new BulkSetUpdateDTO(11, new BigDecimal("90.5"), 6, 120),
+                        new BulkSetUpdateDTO(12, new BigDecimal("82.5"), 10, 90)
+                ),
+                "user@mail.com"
+        );
+
+        assertEquals(new BigDecimal("90.5"), firstSet.getWeight());
+        assertEquals(6, firstSet.getReps());
+        assertEquals(120, firstSet.getRestSeconds());
+        assertEquals(new BigDecimal("82.5"), secondSet.getWeight());
+        assertEquals(10, secondSet.getReps());
+        assertEquals(90, secondSet.getRestSeconds());
+        verify(exerciseSetRepository, times(2)).save(any(ExerciseSet.class));
     }
 
     private static TemplateExercise templateExercise(final int exerciseId,

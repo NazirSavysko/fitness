@@ -1,10 +1,13 @@
 package fitness.app.project.fitnessapp.service;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.model.WorkoutSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface WorkoutSessionService {
 
@@ -13,6 +16,8 @@ public interface WorkoutSessionService {
     Integer addSetToExercise(AddSetDTO addSetDTO, String userEmail);
 
     Integer updateExerciseSet(UpdateExerciseSetDTO updateExerciseSetDTO, String userEmail);
+
+    void bulkUpdateSets(List<BulkSetUpdateDTO> bulkSetUpdateDTOs, String userEmail);
 
     void finishWorkout(Integer sessionId, String userEmail);
 

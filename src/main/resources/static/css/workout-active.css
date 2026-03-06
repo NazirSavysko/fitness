@@ -156,26 +156,34 @@
 /* Sets List */
 .sets-list-header {
     display: grid;
-    grid-template-columns: 60px 1fr 1fr 1fr 1fr;
-    padding: 10px 20px;
+    grid-template-columns: 50px 1fr 1fr 1fr 80px;
+    gap: 8px;
+    padding: 10px 12px;
     color: #A3AED0;
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
     text-align: center;
+    align-items: center;
 }
 
 .set-row {
     background: #F4F7FE;
     border-radius: 12px;
-    padding: 15px 20px;
+    padding: 12px;
     display: grid;
-    grid-template-columns: 60px 1fr 1fr 1fr 1fr;
+    grid-template-columns: 50px 1fr 1fr 1fr 80px;
+    gap: 8px;
     margin-bottom: 10px;
     align-items: center;
     color: #2b3674;
     font-weight: 600;
     text-align: center;
+}
+
+.set-value-input {
+    width: 100%;
+    min-width: 0;
 }
 
 .set-number {
@@ -276,6 +284,19 @@
 
     .exercise-detail-container {
         height: auto;
+    }
+
+    .sets-list-header,
+    .set-row {
+        grid-template-columns: 44px minmax(90px, 1fr) minmax(90px, 1fr) minmax(90px, 1fr) 70px;
+        gap: 6px;
+        padding: 10px 8px;
+        font-size: 0.75rem;
+    }
+
+    .set-row .form-input {
+        padding: 10px 8px;
+        font-size: 0.9rem;
     }
 }
 

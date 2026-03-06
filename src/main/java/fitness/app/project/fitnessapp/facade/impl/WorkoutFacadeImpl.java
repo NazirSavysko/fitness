@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.facade.impl;
 
 import fitness.app.project.fitnessapp.dto.ActiveWorkoutDTO;
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.ExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.SessionExerciseDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
@@ -43,6 +44,11 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
     @Override
     public Integer updateExerciseSet(final UpdateExerciseSetDTO updateExerciseSetDTO, final String email) {
         return this.workoutSessionService.updateExerciseSet(updateExerciseSetDTO, email);
+    }
+
+    @Override
+    public void bulkUpdateSets(final List<BulkSetUpdateDTO> bulkSetUpdateDTOs, final String email) {
+        this.workoutSessionService.bulkUpdateSets(bulkSetUpdateDTOs, email);
     }
 
     @Override

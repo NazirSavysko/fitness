@@ -1,9 +1,12 @@
 package fitness.app.project.fitnessapp.controller;
 
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,10 +14,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
@@ -52,6 +58,14 @@ public final class WorkoutSessionController {
         }
         final Integer activeSessionId = this.workoutFacade.updateExerciseSet(updateSetDTO, principal.getName());
         return "redirect:/workouts/" + activeSessionId + "/active";
+    }
+
+    @PostMapping(value = "/bulk-update-sets", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Void> bulkUpdateSets(@Valid @RequestBody final List<@Valid BulkSetUpdateDTO> bulkSetUpdateDTOs,
+                                               final Principal principal) {
+        this.workoutFacade.bulkUpdateSets(bulkSetUpdateDTOs, principal.getName());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id}/finish")

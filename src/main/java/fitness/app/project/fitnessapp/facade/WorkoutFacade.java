@@ -2,10 +2,13 @@ package fitness.app.project.fitnessapp.facade;
 
 import fitness.app.project.fitnessapp.dto.ActiveWorkoutDTO;
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.WorkoutHistoryCardDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface WorkoutFacade {
 
@@ -14,6 +17,8 @@ public interface WorkoutFacade {
     Integer addSetToExercise(AddSetDTO addSetDTO, String email);
 
     Integer updateExerciseSet(UpdateExerciseSetDTO updateExerciseSetDTO, String email);
+
+    void bulkUpdateSets(List<BulkSetUpdateDTO> bulkSetUpdateDTOs, String email);
 
     void finishWorkout(Integer sessionId, String email);
 

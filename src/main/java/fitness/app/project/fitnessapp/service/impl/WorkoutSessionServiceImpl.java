@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.service.impl;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.BulkSetUpdateDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.model.ExerciseSet;
 import fitness.app.project.fitnessapp.model.SessionExercise;
@@ -136,6 +137,21 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         this.exerciseSetRepository.save(exerciseSet);
 
         return exerciseSet.getSessionExercise().getSession().getId();
+    }
+
+    @Override
+    @Transactional
+    public void bulkUpdateSets(final List<BulkSetUpdateDTO> bulkSetUpdateDTOs, final String userEmail) {
+        for (BulkSetUpdateDTO setUpdateDTO : bulkSetUpdateDTOs) {
+            final ExerciseSet exerciseSet = this.exerciseSetRepository
+                    .findByIdAndSessionExercise_Session_User_Email(setUpdateDTO.setId(), userEmail)
+                    .orElseThrow(() -> new EntityNotFoundException("Exercise set not found"));
+
+            exerciseSet.setWeight(setUpdateDTO.weight());
+            exerciseSet.setReps(setUpdateDTO.reps());
+            exerciseSet.setRestSeconds(setUpdateDTO.restSeconds());
+            this.exerciseSetRepository.save(exerciseSet);
+        }
     }
 
     @Override
