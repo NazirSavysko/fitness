@@ -70,56 +70,91 @@
             <p>No exercises in this session.</p>
         </div>
 
-        <div th:if="${!#lists.isEmpty(activeWorkout.exercises)}">
-            <div th:each="exercise : ${activeWorkout.exercises}" class="exercise-card">
-                <div class="exercise-header">
-                    <h2 class="exercise-name" th:text="${exercise.exerciseName}">Exercise name</h2>
-                    <span class="timer-badge" th:text="${exercise.muscleGroup}">Muscle group</span>
+        <div class="active-workout-grid" th:if="${!#lists.isEmpty(activeWorkout.exercises)}">
+            <!-- Sidebar -->
+            <div class="exercises-sidebar">
+                <h3 class="sidebar-header">Exercises</h3>
+                <div class="exercise-nav-list">
+                    <div th:each="exercise, iterStat : ${activeWorkout.exercises}"
+                         class="exercise-nav-item"
+                         th:onclick="'switchTab(' + ${iterStat.index} + ')'"
+                         th:id="'nav-item-' + ${iterStat.index}"
+                         th:classappend="${iterStat.index == 0} ? 'active'">
+                        <div class="nav-item-title" th:text="${exercise.exerciseName}">Exercise Name</div>
+                        <div class="nav-item-muscle" th:text="${exercise.muscleGroup}">Muscle Group</div>
+                    </div>
                 </div>
-                <div class="sets-table-wrapper">
-                    <table class="sets-table">
-                        <thead>
-                        <tr>
-                            <th>Set #</th>
-                            <th>Weight</th>
-                            <th>Reps</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="set : ${exercise.sets}">
-                            <td th:text="${set.setNumber}">1</td>
-                            <td th:text="${set.weight}">0</td>
-                            <td th:text="${set.reps}">0</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(exercise.sets)}">
-                            <td colspan="3">No sets logged yet.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            </div>
 
-                <form class="add-set-form" data-scroll-save="true" th:action="@{/workouts/set/add}" method="post">
-                    <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
-                    <input type="hidden" name="sessionExerciseId" th:value="${exercise.id}">
-                    <table class="sets-table">
-                        <tbody>
-                        <tr>
-                            <td><span class="set-badge">New</span></td>
-                            <td><input class="input-stat" type="number" step="any" min="0" name="weight" placeholder="kg" required></td>
-                            <td><input class="input-stat" type="number" min="0" name="reps" placeholder="reps" required></td>
-                            <td><input class="input-stat" type="number" min="0" name="restSeconds" placeholder="sec" required></td>
-                            <td>
-                                <select class="input-stat" name="setType">
-                                    <option th:each="setType : ${setTypes}" th:value="${setType}" th:text="${setType}">NORMAL</option>
-                                </select>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <button type="submit" class="btn-add-set">
-                        <i class="fa-solid fa-plus"></i> Add Set
-                    </button>
-                </form>
+            <!-- Details Panel -->
+            <div class="exercise-detail-container">
+                <div th:each="exercise, iterStat : ${activeWorkout.exercises}"
+                     class="exercise-tab-content"
+                     th:id="'tab-content-' + ${iterStat.index}"
+                     th:style="${iterStat.index == 0} ? '' : 'display: none;'">
+
+                    <div class="detail-header">
+                        <h2 class="detail-title" th:text="${exercise.exerciseName}">Hammer Curl</h2>
+                        <span class="muscle-badge" th:text="${exercise.muscleGroup}">Biceps</span>
+                    </div>
+
+                    <div class="sets-list-header">
+                        <div>Set #</div>
+                        <div>Weight (kg)</div>
+                        <div>Reps</div>
+                        <div>Rest (s)</div>
+                        <div>Type</div>
+                    </div>
+
+                    <div class="sets-list">
+                        <div th:each="set : ${exercise.sets}" class="set-row">
+                            <div class="set-number" th:text="${set.setNumber}">1</div>
+                            <div th:text="${set.weight}">13.00</div>
+                            <div th:text="${set.reps}">123</div>
+                            <div th:text="${set.restSeconds}">60</div>
+                            <div>
+                                <span class="set-badge"
+                                      th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
+                                      th:text="${set.setType}">NORMAL</span>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(exercise.sets)}" style="padding: 20px; text-align: center; color: #A3AED0;">
+                            No sets logged yet.
+                        </div>
+                    </div>
+
+                    <div class="add-set-section">
+                        <form class="add-set-form" data-scroll-save="true" th:action="@{/workouts/set/add}" method="post">
+                            <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
+                            <input type="hidden" name="sessionExerciseId" th:value="${exercise.id}">
+
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Weight (kg)</label>
+                                    <input type="number" step="any" min="0" name="weight" class="form-input" placeholder="0.0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Reps</label>
+                                    <input type="number" min="0" name="reps" class="form-input" placeholder="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Rest (sec)</label>
+                                    <input type="number" min="0" name="restSeconds" class="form-input" value="60" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Type</label>
+                                    <select name="setType" class="form-select">
+                                        <option th:each="setType : ${setTypes}" th:value="${setType}" th:text="${setType}">NORMAL</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-add-set-large">
+                                <i class="fa-solid fa-plus"></i> Add Set
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -129,7 +164,27 @@
 <script>
     let isSubmitting = false;
 
+    function switchTab(index) {
+        // Update Sidebar
+        document.querySelectorAll('.exercise-nav-item').forEach(item => item.classList.remove('active'));
+        const navItem = document.getElementById('nav-item-' + index);
+        if (navItem) navItem.classList.add('active');
+
+        // Update Content
+        document.querySelectorAll('.exercise-tab-content').forEach(content => content.style.display = 'none');
+        const tabContent = document.getElementById('tab-content-' + index);
+        if (tabContent) tabContent.style.display = 'block';
+
+        // Save state
+        sessionStorage.setItem('activeExerciseIndex', index);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        const activeIndex = sessionStorage.getItem('activeExerciseIndex');
+        if (activeIndex) {
+            switchTab(activeIndex);
+        }
+
         const savedScrollPos = sessionStorage.getItem('workoutScrollPos');
         if (savedScrollPos !== null) {
             window.scrollTo(0, parseInt(savedScrollPos, 10));
