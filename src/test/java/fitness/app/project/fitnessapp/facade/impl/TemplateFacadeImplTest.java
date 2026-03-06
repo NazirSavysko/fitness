@@ -49,9 +49,9 @@ class TemplateFacadeImplTest {
     void createTemplateDelegatesExerciseIdsToService() {
         final User user = new User();
         final List<TemplateExerciseConfigDTO> exercises = List.of(
-                new TemplateExerciseConfigDTO(1, 3, 0, 60),
-                new TemplateExerciseConfigDTO(2, 2, 1, 90),
-                new TemplateExerciseConfigDTO(3, 1, 0, 120)
+                new TemplateExerciseConfigDTO(1, 3, 0),
+                new TemplateExerciseConfigDTO(2, 2, 1),
+                new TemplateExerciseConfigDTO(3, 1, 0)
         );
         when(userService.getUserByEmail("user@mail.com")).thenReturn(user);
         when(workoutTemplateService.buildTemplateExercises(any(WorkoutTemplate.class), eq(exercises)))
@@ -83,8 +83,8 @@ class TemplateFacadeImplTest {
         existingTemplate.setName("Old name");
         existingTemplate.setExercises(new java.util.ArrayList<>());
         final List<TemplateExerciseConfigDTO> exercises = List.of(
-                new TemplateExerciseConfigDTO(2, 3, 0, 90),
-                new TemplateExerciseConfigDTO(1, 2, 1, 75)
+                new TemplateExerciseConfigDTO(2, 3, 0),
+                new TemplateExerciseConfigDTO(1, 2, 1)
         );
 
         when(workoutTemplateService.getWorkoutTemplateById(55, "user@mail.com")).thenReturn(existingTemplate);

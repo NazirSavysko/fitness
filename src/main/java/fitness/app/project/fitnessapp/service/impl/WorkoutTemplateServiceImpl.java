@@ -60,7 +60,6 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
             templateExercise.setOrderIndex(i);
             templateExercise.setNormalSets(exerciseConfig.normalSets());
             templateExercise.setFailureSets(exerciseConfig.failureSets());
-            templateExercise.setRestSeconds(exerciseConfig.restSeconds());
             templateExercises.add(templateExercise);
         }
 

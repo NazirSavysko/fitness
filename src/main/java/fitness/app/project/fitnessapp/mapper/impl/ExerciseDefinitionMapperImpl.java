@@ -16,7 +16,6 @@ public class ExerciseDefinitionMapperImpl implements ExerciseDefinitionMapper {
                 exerciseDefinition.getMuscleGroup(),
                 null,
                 null,
-                null,
                 null
         );
     }

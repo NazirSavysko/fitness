@@ -24,7 +24,6 @@ class TemplateExerciseMapperImplTest {
         templateExercise.setOrderIndex(4);
         templateExercise.setNormalSets(3);
         templateExercise.setFailureSets(1);
-        templateExercise.setRestSeconds(75);
 
         final TemplateExerciseDTO dto = templateExerciseMapper.mapEntityToDto(templateExercise);
 
@@ -34,7 +33,6 @@ class TemplateExerciseMapperImplTest {
         assertEquals(4, dto.orderIndex());
         assertEquals(3, dto.normalSets());
         assertEquals(1, dto.failureSets());
-        assertEquals(75, dto.restSeconds());
     }
 
     @Test
@@ -52,6 +50,5 @@ class TemplateExerciseMapperImplTest {
         assertNull(dto.orderIndex());
         assertNull(dto.normalSets());
         assertNull(dto.failureSets());
-        assertNull(dto.restSeconds());
     }
 }

@@ -75,15 +75,14 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
                                                                  final TemplateExercise templateExercise) {
         final int normalSets = templateExercise.getNormalSets() == null ? 0 : templateExercise.getNormalSets();
         final int failureSets = templateExercise.getFailureSets() == null ? 0 : templateExercise.getFailureSets();
-        final int restSeconds = templateExercise.getRestSeconds() == null ? 60 : templateExercise.getRestSeconds();
         final List<ExerciseSet> sets = new ArrayList<>(normalSets + failureSets);
         int setNumber = 1;
 
         for (int i = 0; i < normalSets; i++) {
-            sets.add(createPresetSet(sessionExercise, setNumber++, restSeconds, SetType.NORMAL));
+            sets.add(createPresetSet(sessionExercise, setNumber++, SetType.NORMAL));
         }
         for (int i = 0; i < failureSets; i++) {
-            sets.add(createPresetSet(sessionExercise, setNumber++, restSeconds, SetType.FAILURE));
+            sets.add(createPresetSet(sessionExercise, setNumber++, SetType.FAILURE));
         }
 
         return sets;
@@ -91,14 +90,12 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     private static ExerciseSet createPresetSet(final SessionExercise sessionExercise,
                                                final int setNumber,
-                                               final int restSeconds,
                                                final SetType setType) {
         final ExerciseSet exerciseSet = new ExerciseSet();
         exerciseSet.setSessionExercise(sessionExercise);
         exerciseSet.setSetNumber(setNumber);
         exerciseSet.setWeight(null);
         exerciseSet.setReps(null);
-        exerciseSet.setRestSeconds(restSeconds);
         exerciseSet.setSetType(setType);
         return exerciseSet;
     }

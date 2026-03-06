@@ -33,6 +33,4 @@ public final class TemplateExercise {
     private Integer normalSets = 0;
 
     private Integer failureSets = 0;
-
-    private Integer restSeconds = 60;
 }

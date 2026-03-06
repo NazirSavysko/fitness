@@ -11,9 +11,6 @@ public record TemplateExerciseConfigDTO(
         Integer normalSets,
         @NotNull(message = "Failure sets are required")
         @PositiveOrZero(message = "Failure sets cannot be negative")
-        Integer failureSets,
-        @NotNull(message = "Rest time is required")
-        @PositiveOrZero(message = "Rest time cannot be negative")
-        Integer restSeconds
+        Integer failureSets
 ) {
 }

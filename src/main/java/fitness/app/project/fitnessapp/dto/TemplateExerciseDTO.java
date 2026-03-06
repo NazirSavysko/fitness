@@ -6,6 +6,5 @@ public record TemplateExerciseDTO(
         String muscleGroup,
         Integer orderIndex,
         Integer normalSets,
-        Integer failureSets,
-        Integer restSeconds
+        Integer failureSets
 ) {}

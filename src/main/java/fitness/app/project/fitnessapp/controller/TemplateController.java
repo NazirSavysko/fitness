@@ -89,8 +89,7 @@ public final class TemplateController {
                         .map(exercise -> new TemplateExerciseConfigDTO(
                                 exercise.exerciseId(),
                                 exercise.normalSets() == null ? 0 : exercise.normalSets(),
-                                exercise.failureSets() == null ? 0 : exercise.failureSets(),
-                                exercise.restSeconds() == null ? 60 : exercise.restSeconds()
+                                exercise.failureSets() == null ? 0 : exercise.failureSets()
                         ))
                         .toList()
         );

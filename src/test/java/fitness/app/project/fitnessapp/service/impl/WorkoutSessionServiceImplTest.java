@@ -49,8 +49,8 @@ class WorkoutSessionServiceImplTest {
     void startWorkoutCopiesTemplateExercisesWithOrderAndPreGeneratesSets() {
         final WorkoutTemplate template = new WorkoutTemplate();
         template.setExercises(List.of(
-                templateExercise(4, 0, 2, 1, 90),
-                templateExercise(7, 1, 1, 0, 60)
+                templateExercise(4, 0, 2, 1),
+                templateExercise(7, 1, 1, 0)
         ));
         final User user = new User();
         final WorkoutSession saved = new WorkoutSession();
@@ -76,7 +76,6 @@ class WorkoutSessionServiceImplTest {
         assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(0).getSetType());
         assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(1).getSetType());
         assertEquals(SetType.FAILURE, created.getExercises().get(0).getSets().get(2).getSetType());
-        assertEquals(90, created.getExercises().get(0).getSets().get(0).getRestSeconds());
         assertEquals(1, created.getExercises().get(1).getOrderIndex());
         assertEquals(7, created.getExercises().get(1).getExercise().getId());
         assertEquals(1, created.getExercises().get(1).getSets().size());
@@ -153,8 +152,7 @@ class WorkoutSessionServiceImplTest {
     private static TemplateExercise templateExercise(final int exerciseId,
                                                      final int orderIndex,
                                                      final int normalSets,
-                                                     final int failureSets,
-                                                     final int restSeconds) {
+                                                     final int failureSets) {
         final ExerciseDefinition exerciseDefinition = new ExerciseDefinition();
         exerciseDefinition.setId(exerciseId);
         final TemplateExercise templateExercise = new TemplateExercise();
@@ -162,7 +160,6 @@ class WorkoutSessionServiceImplTest {
         templateExercise.setOrderIndex(orderIndex);
         templateExercise.setNormalSets(normalSets);
         templateExercise.setFailureSets(failureSets);
-        templateExercise.setRestSeconds(restSeconds);
         return templateExercise;
     }
 }

@@ -34,9 +34,9 @@ class WorkoutTemplateServiceImplTest {
         final List<TemplateExercise> result = workoutTemplateService.buildTemplateExercises(
                 workoutTemplate,
                 List.of(
-                        new TemplateExerciseConfigDTO(3, 3, 1, 90),
-                        new TemplateExerciseConfigDTO(1, 2, 0, 60),
-                        new TemplateExerciseConfigDTO(2, 1, 2, 120)
+                        new TemplateExerciseConfigDTO(3, 3, 1),
+                        new TemplateExerciseConfigDTO(1, 2, 0),
+                        new TemplateExerciseConfigDTO(2, 1, 2)
                 )
         );
 
@@ -50,12 +50,10 @@ class WorkoutTemplateServiceImplTest {
         assertEquals(1, result.get(1).getOrderIndex());
         assertEquals(2, result.get(1).getNormalSets());
         assertEquals(0, result.get(1).getFailureSets());
-        assertEquals(60, result.get(1).getRestSeconds());
         assertEquals(2, result.get(2).getExercise().getId());
         assertEquals(2, result.get(2).getOrderIndex());
         assertEquals(1, result.get(2).getNormalSets());
         assertEquals(2, result.get(2).getFailureSets());
-        assertEquals(120, result.get(2).getRestSeconds());
     }
 
     private static ExerciseDefinition exercise(final int id) {

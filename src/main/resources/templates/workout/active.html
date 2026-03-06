@@ -102,7 +102,6 @@
                         <div>Set #</div>
                         <div>Weight (kg)</div>
                         <div>Reps</div>
-                        <div>Rest (s)</div>
                         <div>Type</div>
                         <div>Action</div>
                     </div>
@@ -111,57 +110,26 @@
                         <form th:each="set : ${exercise.sets}"
                               class="set-row"
                               data-scroll-save="true"
-                              data-rest-form="true"
-                              th:with="defaultRestSeconds=60"
-                              th:action="@{/workouts/set/update}"
+                              th:action="@{/workouts/set/{setId}/update(setId=${set.id})}"
                               method="post">
                             <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
                             <input type="hidden" name="setId" th:value="${set.id}">
-                            <input type="hidden" class="rest-seconds-value" th:value="${set.restSeconds == null ? defaultRestSeconds : set.restSeconds}">
 
                             <div class="set-number" th:text="${set.setNumber}">1</div>
                             <div><input type="number" step="any" min="0" name="weight" class="form-input" th:value="${set.weight}" placeholder="0.0" required></div>
                             <div><input type="number" min="0" name="reps" class="form-input" th:value="${set.reps}" placeholder="0" required></div>
-                            <div th:text="${set.restSeconds}">60</div>
                             <div>
                                 <span class="set-badge"
                                       th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
                                       th:text="${set.setType}">NORMAL</span>
                             </div>
                             <div>
-                                <button type="submit" class="btn-add-set-large">Log/Update</button>
+                                <button type="submit" class="btn-add-set-large">Save</button>
                             </div>
                         </form>
                         <div th:if="${#lists.isEmpty(exercise.sets)}" style="padding: 20px; text-align: center; color: #A3AED0;">
                             No sets logged yet.
                         </div>
-                    </div>
-
-                    <div class="add-set-section">
-                        <form class="add-set-form" data-scroll-save="true" th:action="@{/workouts/set/add}" method="post">
-                            <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
-                            <input type="hidden" name="sessionExerciseId" th:value="${exercise.id}">
-                            <input type="hidden" name="setType" value="NORMAL">
-
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="form-label">Weight (kg)</label>
-                                    <input type="number" step="any" min="0" name="weight" class="form-input" placeholder="0.0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Reps</label>
-                                    <input type="number" min="0" name="reps" class="form-input" placeholder="0" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Rest (sec)</label>
-                                    <input type="number" min="0" name="restSeconds" class="form-input" value="60" required>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn-add-set-large">
-                                <i class="fa-solid fa-plus"></i> Add Extra Set
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -169,19 +137,9 @@
     </main>
 </div>
 
-<div id="global-rest-timer" style="display:none;position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.25);">
-    <div style="font-size:12px;opacity:0.75;">Rest timer</div>
-    <div id="global-rest-timer-value" style="font-size:24px;font-weight:700;">00:00</div>
-</div>
-
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script>
-    const REST_BEEP_FREQUENCY_HZ = 880;
-    const REST_BEEP_DURATION_SECONDS = 0.2;
-    const REST_BEEP_GAIN = 0.1;
     let isSubmitting = false;
-    let restTimerInterval = null;
-    let hasBeeped = false;
 
     function switchTab(index) {
         // Update Sidebar
@@ -199,59 +157,6 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-        const restTimerWidget = document.getElementById('global-rest-timer');
-        const restTimerValue = document.getElementById('global-rest-timer-value');
-
-        function formatTime(totalSeconds) {
-            const mins = Math.floor(totalSeconds / 60);
-            const secs = totalSeconds % 60;
-            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        }
-
-        function playBeep() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                oscillator.type = 'sine';
-                oscillator.frequency.value = REST_BEEP_FREQUENCY_HZ;
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                gainNode.gain.value = REST_BEEP_GAIN;
-                oscillator.start();
-                oscillator.stop(audioContext.currentTime + REST_BEEP_DURATION_SECONDS);
-            } catch (e) {
-                // no-op for unsupported browsers
-            }
-        }
-
-        function refreshRestTimer() {
-            const restEndTimeRaw = localStorage.getItem('restEndTime');
-            if (!restEndTimeRaw) {
-                restTimerWidget.style.display = 'none';
-                return;
-            }
-            const restEndTime = Number(restEndTimeRaw);
-            const secondsRemaining = Math.ceil((restEndTime - Date.now()) / 1000);
-
-            if (secondsRemaining > 0) {
-                restTimerWidget.style.display = 'block';
-                restTimerValue.textContent = formatTime(secondsRemaining);
-                hasBeeped = false;
-                return;
-            }
-
-            localStorage.removeItem('restEndTime');
-            restTimerWidget.style.display = 'none';
-            if (!hasBeeped) {
-                playBeep();
-                hasBeeped = true;
-            }
-        }
-
-        refreshRestTimer();
-        restTimerInterval = window.setInterval(refreshRestTimer, 1000);
-
         const activeIndex = sessionStorage.getItem('activeExerciseIndex');
         if (activeIndex) {
             switchTab(activeIndex);
@@ -268,14 +173,6 @@
                 isSubmitting = true;
                 if (form.dataset.scrollSave === 'true') {
                     sessionStorage.setItem('workoutScrollPos', String(window.scrollY));
-                }
-                if (form.dataset.restForm === 'true') {
-                    const restSecondsInput = form.querySelector('.rest-seconds-value');
-                    const restSeconds = Number(restSecondsInput ? restSecondsInput.value : 0);
-                    if (Number.isFinite(restSeconds) && restSeconds >= 0) {
-                        localStorage.setItem('restEndTime', String(Date.now() + restSeconds * 1000));
-                        hasBeeped = false;
-                    }
                 }
             });
         });

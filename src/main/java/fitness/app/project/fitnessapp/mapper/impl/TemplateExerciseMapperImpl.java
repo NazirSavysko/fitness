@@ -15,8 +15,7 @@ public class TemplateExerciseMapperImpl implements GetTemplateExerciseMapper {
                 templateExercise.getExercise().getMuscleGroup(),
                 templateExercise.getOrderIndex(),
                 templateExercise.getNormalSets(),
-                templateExercise.getFailureSets(),
-                templateExercise.getRestSeconds()
+                templateExercise.getFailureSets()
         );
     }
 }
