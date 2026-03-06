@@ -42,20 +42,35 @@
             </button>
         </header>
 
-        <div class="dashboard-grid">
-            <div class="card full-width-card" th:if="${historyPage.content.isEmpty()}">
-                <h3 class="card-title">Workout History</h3>
-                <div class="empty-state">
-                    <p>No completed workouts yet.</p>
-                </div>
+        <div class="card history-list-card">
+            <div class="history-header">
+                <h3 class="history-title"><i class="fa-solid fa-clock-rotate-left"></i> Workout History</h3>
+                <span class="history-badge" th:text="${historyPage.totalElements} + ' workouts'">0 workouts</span>
             </div>
 
-            <a class="card" th:if="${!historyPage.content.isEmpty()}" th:each="workout : ${historyPage.content}"
-               th:href="@{/history/{id}(id=${workout.sessionId})}" style="text-decoration: none;">
-                <h3 class="card-title" th:text="${workout.name}">Workout Name</h3>
-                <p><i class="fa-regular fa-calendar"></i> <span th:text="${workout.date}">Date</span></p>
-                <p><i class="fa-regular fa-clock"></i> <span th:text="${workout.durationMinutes} + ' min'">0 min</span></p>
-            </a>
+            <div class="empty-state" th:if="${historyPage.content.isEmpty()}" style="padding: 40px; text-align: center;">
+                <p style="color: #A3AED0; margin: 0;">No completed workouts yet.</p>
+            </div>
+
+            <div class="history-list" th:if="${!historyPage.content.isEmpty()}">
+                <a class="history-item" th:each="workout, iterStat : ${historyPage.content}"
+                   th:href="@{/history/{id}(id=${workout.sessionId})}">
+                    <div class="item-left">
+                        <div class="item-number" th:text="${(historyPage.number * historyPage.size) + iterStat.count}">1</div>
+                        <div class="item-info">
+                            <h4 class="item-title" th:text="${workout.name}">Workout Name</h4>
+                            <div class="item-subtitle">
+                                <span th:text="${workout.date}">Date</span>
+                                <span style="font-weight: 900; font-size: 0.5rem; opacity: 0.5; margin: 0 5px;">&bull;</span>
+                                <span th:text="${workout.durationMinutes} + ' min'">0 min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
         </div>
 
         <div class="workout-actions" th:if="${historyPage.totalPages > 1}" style="margin-top: 20px;">
