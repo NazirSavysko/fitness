@@ -61,7 +61,7 @@
             </div>
             <form id="finish-workout-form"
                   th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}"
-                  th:attr="data-bulk-update-url=@{/workouts/bulk-update-sets}"
+                  th:attr="data-bulk-update-url=@{/workouts/bulk-update-sets},data-csrf-token=${_csrf.token},data-csrf-header=${_csrf.headerName}"
                   method="post">
                 <button type="submit" class="btn-finish">
                     <i class="fa-solid fa-flag-checkered"></i> Finish Workout
@@ -186,10 +186,16 @@
                 isSubmitting = true;
 
                 const bulkUpdateUrl = finishWorkoutForm.dataset.bulkUpdateUrl;
-                const csrfTokenInput = finishWorkoutForm.querySelector('input[name="_csrf"]');
                 const headers = {'Content-Type': 'application/json'};
-                if (csrfTokenInput && csrfTokenInput.value) {
-                    headers['X-CSRF-TOKEN'] = csrfTokenInput.value;
+                const csrfTokenFromData = finishWorkoutForm.dataset.csrfToken;
+                const csrfHeaderName = finishWorkoutForm.dataset.csrfHeader || 'X-XSRF-TOKEN';
+                const csrfTokenFromCookie = document.cookie
+                    .split('; ')
+                    .find(function (part) { return part.startsWith('XSRF-TOKEN='); })
+                    ?.split('=')[1];
+                const csrfToken = csrfTokenFromData || (csrfTokenFromCookie ? decodeURIComponent(csrfTokenFromCookie) : null);
+                if (csrfToken) {
+                    headers[csrfHeaderName] = csrfToken;
                 }
 
                 const parseInputValueToNumberOrNull = (value) => {
