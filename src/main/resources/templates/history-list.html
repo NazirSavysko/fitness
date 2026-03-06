@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout History</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="page-container">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="logo">
+                <h2>FitApp</h2>
+                <button class="close-menu-btn" onclick="toggleMenu()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="menu">
+                <a href="/dashboard" class="menu-item"><i class="fa-solid fa-house menu-icon"></i> Dashboard</a>
+                <a href="/templates" class="menu-item"><i class="fa-solid fa-dumbbell menu-icon"></i> Templates</a>
+                <a href="/history" class="menu-item active"><i class="fa-solid fa-clock-rotate-left menu-icon"></i> History</a>
+                <a href="/settings" class="menu-item"><i class="fa-solid fa-gear menu-icon"></i> Settings</a>
+            </nav>
+        </div>
+        <div class="sidebar-footer">
+            <form method="post" th:action="@{/auth/logout}">
+                <button type="submit" class="logout-link">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </header>
+
+        <div class="card history-list-card">
+            <div class="history-header">
+                <h3 class="history-title"><i class="fa-solid fa-list-ul"></i> Workout History</h3>
+                <span class="history-badge" th:text="${historyPage.totalElements} + ' workouts'">0 workouts</span>
+            </div>
+
+            <div class="empty-state" th:if="${historyPage.content.isEmpty()}" style="padding: 40px; text-align: center;">
+                <p style="color: #A3AED0; margin: 0;">No completed workouts yet.</p>
+            </div>
+
+            <div class="history-list" th:if="${!historyPage.content.isEmpty()}">
+                <a class="history-item" th:each="workout, iterStat : ${historyPage.content}"
+                   th:href="@{/history/{id}(id=${workout.sessionId})}">
+                    <div class="item-left">
+                        <div class="item-number" th:text="${(historyPage.number * historyPage.size) + iterStat.count}">1</div>
+                        <div class="item-info">
+                            <h4 class="item-title" th:text="${workout.name}">Workout Name</h4>
+                            <div class="item-subtitle">
+                                <span th:text="${workout.date}">Date</span>
+                                <span style="font-weight: 900; font-size: 0.5rem; opacity: 0.5; margin: 0 5px;">&bull;</span>
+                                <span th:text="${workout.durationMinutes} + ' min'">0 min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item-right">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="workout-actions" th:if="${historyPage.totalPages > 1}" style="margin-top: 20px;">
+            <a class="workout-btn template-btn" th:if="${historyPage.hasPrevious()}"
+               th:href="@{/history(page=${historyPage.number - 1})}">
+                <span class="main-text"><i class="fa-solid fa-chevron-left"></i> Previous</span>
+            </a>
+            <a class="workout-btn template-btn" th:if="${historyPage.hasNext()}"
+               th:href="@{/history(page=${historyPage.number + 1})}">
+                <span class="main-text">Next <i class="fa-solid fa-chevron-right"></i></span>
+            </a>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/menu-toggle.js}"></script>
+</body>
+</html>

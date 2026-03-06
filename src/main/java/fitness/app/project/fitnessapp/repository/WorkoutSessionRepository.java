@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, Integer>, JpaSpecificationExecutor<WorkoutSession> {
 
     Page<WorkoutSession> findAllByUser_EmailAndEndedAtIsNotNullOrderByStartedAtDesc(String userEmail, Pageable pageable);
+    Optional<WorkoutSession> findFirstByUser_EmailAndEndedAtIsNull(String email);
 
     @EntityGraph(attributePaths = {"sourceTemplate", "exercises", "exercises.exercise"})
     Optional<WorkoutSession> findByIdAndUser_Email(Integer id, String userEmail);
