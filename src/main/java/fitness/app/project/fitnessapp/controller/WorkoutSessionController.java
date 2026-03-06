@@ -36,13 +36,16 @@ public final class WorkoutSessionController {
     }
 
     @PostMapping("/set/{setId}/update")
-    public String updateSet(@Valid @ModelAttribute("updateSetDto") final UpdateExerciseSetDTO updateExerciseSetDTO,
+    public String updateSet(@Valid @ModelAttribute("updateSetDto") final UpdateExerciseSetDTO requestData,
                             @PathVariable("setId") final Integer setId,
                             final BindingResult bindingResult,
                             @RequestParam("sessionId") final Integer sessionId,
                             final Model model,
                             final Principal principal) {
-        final UpdateExerciseSetDTO updateSetDTO = new UpdateExerciseSetDTO(setId, updateExerciseSetDTO.weight(), updateExerciseSetDTO.reps());
+        if (requestData.setId() != null && !setId.equals(requestData.setId())) {
+            bindingResult.rejectValue("setId", "Mismatch", "The set ID in the request body does not match the set ID in the URL path");
+        }
+        final UpdateExerciseSetDTO updateSetDTO = new UpdateExerciseSetDTO(setId, requestData.weight(), requestData.reps());
         if (bindingResult.hasErrors()) {
             model.addAttribute("activeWorkout", this.workoutFacade.getWorkoutDetails(sessionId, principal.getName()));
             return "workout/active";

@@ -36,7 +36,19 @@ class WorkoutSessionControllerTest {
     }
 
     @Test
-    void updateSetRedirectsToReturnedSessionWhenValid() {
+    void updateSetReturnsActiveWorkoutPageWhenSetIdMismatch() {
+        final UpdateExerciseSetDTO updateSetDTO = new UpdateExerciseSetDTO(99, new BigDecimal("72.5"), 12);
+        final BindingResult bindingResult = new BeanPropertyBindingResult(updateSetDTO, "updateSetDto");
+        final UpdateExerciseSetDTO expectedDto = new UpdateExerciseSetDTO(4, new BigDecimal("72.5"), 12);
+        when(workoutFacade.updateExerciseSet(expectedDto, "user@mail.com")).thenReturn(21);
+
+        final String result = workoutSessionController.updateSet(updateSetDTO, 4, bindingResult, 7, model, principal);
+
+        assertEquals("workout/active", result);
+    }
+
+    @Test
+    void updateSetUsesPathVariableSetIdForFacadeCall() {
         final UpdateExerciseSetDTO updateSetDTO = new UpdateExerciseSetDTO(4, new BigDecimal("72.5"), 12);
         final BindingResult bindingResult = new BeanPropertyBindingResult(updateSetDTO, "updateSetDto");
         final UpdateExerciseSetDTO expectedDto = new UpdateExerciseSetDTO(4, new BigDecimal("72.5"), 12);
