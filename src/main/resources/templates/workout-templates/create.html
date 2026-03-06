@@ -115,6 +115,9 @@
     let exerciseIndex = 0;
 
     function addExerciseRow() {
+        const currentScrollPos = window.scrollY;
+        sessionStorage.setItem(TEMPLATE_SCROLL_KEY, String(currentScrollPos));
+
         const container = document.getElementById('exercises-container');
         const template = document.getElementById('exercise-row-template');
 
@@ -125,10 +128,14 @@
 
         container.appendChild(clone);
         exerciseIndex++;
+        window.scrollTo(0, currentScrollPos);
     }
 
     function removeExerciseRow(btn) {
+        const currentScrollPos = window.scrollY;
+        sessionStorage.setItem(TEMPLATE_SCROLL_KEY, String(currentScrollPos));
         btn.closest('.exercise-row').remove();
+        window.scrollTo(0, currentScrollPos);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -156,12 +163,6 @@
                 if (form.dataset.templateSubmit === 'true') {
                     isSubmittingTemplate = true;
                 }
-            });
-        });
-
-        document.querySelectorAll('.btn-add-exercise, .btn-remove-exercise').forEach(function (button) {
-            button.addEventListener('click', function () {
-                sessionStorage.setItem(TEMPLATE_SCROLL_KEY, String(window.scrollY));
             });
         });
 
