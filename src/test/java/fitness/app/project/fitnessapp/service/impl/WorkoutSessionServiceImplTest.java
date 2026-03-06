@@ -27,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -158,10 +157,8 @@ class WorkoutSessionServiceImplTest {
         final ExerciseSet secondSet = new ExerciseSet();
         secondSet.setId(12);
 
-        when(exerciseSetRepository.findByIdAndSessionExercise_Session_User_Email(11, "user@mail.com"))
-                .thenReturn(Optional.of(firstSet));
-        when(exerciseSetRepository.findByIdAndSessionExercise_Session_User_Email(12, "user@mail.com"))
-                .thenReturn(Optional.of(secondSet));
+        when(exerciseSetRepository.findAllByIdInAndSessionExercise_Session_User_Email(List.of(11, 12), "user@mail.com"))
+                .thenReturn(List.of(firstSet, secondSet));
 
         workoutSessionService.bulkUpdateSets(
                 List.of(
@@ -177,7 +174,7 @@ class WorkoutSessionServiceImplTest {
         assertEquals(new BigDecimal("82.5"), secondSet.getWeight());
         assertEquals(10, secondSet.getReps());
         assertEquals(90, secondSet.getRestSeconds());
-        verify(exerciseSetRepository, times(2)).save(any(ExerciseSet.class));
+        verify(exerciseSetRepository).saveAll(List.of(firstSet, secondSet));
     }
 
     private static TemplateExercise templateExercise(final int exerciseId,

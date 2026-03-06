@@ -114,9 +114,9 @@
                              class="set-row"
                              th:attr="data-set-id=${set.id}">
                             <div class="set-number" th:text="${set.setNumber}">1</div>
-                            <div><input type="number" step="any" min="0" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="0.0"></div>
-                            <div><input type="number" min="0" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="0"></div>
-                            <div><input type="number" min="0" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60"></div>
+                            <div><input type="number" step="any" min="0" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="0.0" th:attr="aria-label='Weight for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="0" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="0" th:attr="aria-label='Reps for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="0" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60" th:attr="aria-label='Rest seconds for set ' + ${set.setNumber}"></div>
                             <div>
                                 <span class="set-badge"
                                       th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
@@ -192,11 +192,12 @@
                     headers['X-CSRF-TOKEN'] = csrfTokenInput.value;
                 }
 
-                const parseNumberOrNull = (value) => {
-                    if (value === '') {
+                const parseInputValueToNumberOrNull = (value) => {
+                    const normalizedValue = value == null ? '' : value.trim();
+                    if (normalizedValue === '') {
                         return null;
                     }
-                    const parsed = Number(value);
+                    const parsed = Number(normalizedValue);
                     return Number.isFinite(parsed) ? parsed : null;
                 };
                 const payload = Array.from(document.querySelectorAll('.set-row[data-set-id]')).map(function (row) {
@@ -205,9 +206,9 @@
                     const restInput = row.querySelector('.set-rest-input');
                     return {
                         setId: Number(row.dataset.setId),
-                        weight: parseNumberOrNull(weightInput ? weightInput.value : ''),
-                        reps: parseNumberOrNull(repsInput ? repsInput.value : ''),
-                        restSeconds: parseNumberOrNull(restInput ? restInput.value : '')
+                        weight: parseInputValueToNumberOrNull(weightInput ? weightInput.value : ''),
+                        reps: parseInputValueToNumberOrNull(repsInput ? repsInput.value : ''),
+                        restSeconds: parseInputValueToNumberOrNull(restInput ? restInput.value : '')
                     };
                 });
 
@@ -220,13 +221,14 @@
                     });
 
                     if (!response.ok) {
-                        throw new Error('Bulk update request failed');
+                        throw new Error(`Bulk update failed with status ${response.status} ${response.statusText}`);
                     }
 
                     HTMLFormElement.prototype.submit.call(finishWorkoutForm);
                 } catch (error) {
                     isSubmitting = false;
-                    window.alert('Unable to save set values. Please check inputs and try again.');
+                    window.alert(`Unable to save set values before finishing workout (${error.message}). Please check inputs or your connection and try again.`);
+                    console.error(error);
                 }
             });
         }

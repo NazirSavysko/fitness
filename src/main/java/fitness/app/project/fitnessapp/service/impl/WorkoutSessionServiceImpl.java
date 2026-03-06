@@ -28,9 +28,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -142,16 +145,35 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
     @Override
     @Transactional
     public void bulkUpdateSets(final List<BulkSetUpdateDTO> bulkSetUpdateDTOs, final String userEmail) {
-        for (BulkSetUpdateDTO setUpdateDTO : bulkSetUpdateDTOs) {
-            final ExerciseSet exerciseSet = this.exerciseSetRepository
-                    .findByIdAndSessionExercise_Session_User_Email(setUpdateDTO.setId(), userEmail)
-                    .orElseThrow(() -> new EntityNotFoundException("Exercise set not found"));
+        if (bulkSetUpdateDTOs == null || bulkSetUpdateDTOs.isEmpty()) {
+            return;
+        }
 
+        final List<Integer> setIds = bulkSetUpdateDTOs.stream()
+                .map(BulkSetUpdateDTO::setId)
+                .toList();
+        final Collection<ExerciseSet> existingExerciseSets = this.exerciseSetRepository
+                .findAllByIdInAndSessionExercise_Session_User_Email(setIds, userEmail);
+        final Map<Integer, ExerciseSet> exerciseSetById = new HashMap<>();
+        for (ExerciseSet exerciseSet : existingExerciseSets) {
+            exerciseSetById.put(exerciseSet.getId(), exerciseSet);
+        }
+        final List<Integer> missingSetIds = setIds.stream()
+                .filter(setId -> !exerciseSetById.containsKey(setId))
+                .distinct()
+                .toList();
+        if (!missingSetIds.isEmpty()) {
+            throw new EntityNotFoundException("Exercise sets not found for IDs: " + missingSetIds);
+        }
+
+        for (BulkSetUpdateDTO setUpdateDTO : bulkSetUpdateDTOs) {
+            final ExerciseSet exerciseSet = exerciseSetById.get(setUpdateDTO.setId());
             exerciseSet.setWeight(setUpdateDTO.weight());
             exerciseSet.setReps(setUpdateDTO.reps());
             exerciseSet.setRestSeconds(setUpdateDTO.restSeconds());
-            this.exerciseSetRepository.save(exerciseSet);
         }
+
+        this.exerciseSetRepository.saveAll(existingExerciseSets);
     }
 
     @Override
