@@ -5,6 +5,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,7 +23,10 @@ class SidebarMenuTemplateTest {
     })
     void sidebarMenuContainsHistoryLink(final String templatePath) throws IOException {
         final ClassPathResource templateResource = new ClassPathResource(templatePath);
-        final String content = new String(templateResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        final String content;
+        try (InputStream inputStream = templateResource.getInputStream()) {
+            content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        }
 
         assertTrue(content.contains("href=\"/history\""), () -> "Missing history link in " + templatePath);
     }
