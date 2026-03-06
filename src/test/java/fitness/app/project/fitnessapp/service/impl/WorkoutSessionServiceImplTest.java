@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -101,6 +102,19 @@ class WorkoutSessionServiceImplTest {
         assertEquals(90, savedSet.getRestSeconds());
         assertEquals(SetType.NORMAL, savedSet.getSetType());
         assertSame(sessionExercise, savedSet.getSessionExercise());
+    }
+
+    @Test
+    void finishWorkoutSetsEndedAtAndSavesSession() {
+        final WorkoutSession session = new WorkoutSession();
+        session.setId(13);
+        session.setEndedAt(null);
+        when(workoutSessionRepository.findByIdAndUser_Email(13, "user@mail.com")).thenReturn(Optional.of(session));
+
+        workoutSessionService.finishWorkout(13, "user@mail.com");
+
+        assertNotNull(session.getEndedAt());
+        verify(workoutSessionRepository).save(session);
     }
 
     private static TemplateExercise templateExercise(final int exerciseId, final int orderIndex) {

@@ -52,7 +52,7 @@
                     <span th:text="${#temporals.format(activeWorkout.startedAt, 'dd MMM yyyy HH:mm')}">Start Time</span>
                 </div>
             </div>
-            <form th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}" method="post">
+            <form id="finish-workout-form" th:action="@{/workouts/{id}/finish(id=${activeWorkout.sessionId})}" method="post">
                 <button type="submit" class="btn-finish">
                     <i class="fa-solid fa-flag-checkered"></i> Finish Workout
                 </button>
@@ -156,6 +156,32 @@
         if (firstExercise) {
             selectExercise(firstExercise.dataset.exerciseId);
         }
+
+        let finishWorkoutTriggered = false;
+        const finishWorkoutForm = document.getElementById('finish-workout-form');
+        if (finishWorkoutForm) {
+            finishWorkoutForm.addEventListener('submit', function () {
+                finishWorkoutTriggered = true;
+            });
+        }
+
+        window.addEventListener('beforeunload', function (e) {
+            if (finishWorkoutTriggered) {
+                return;
+            }
+            e.preventDefault();
+            e.returnValue = '';
+        });
+
+        document.querySelectorAll('a.menu-item').forEach(function (menuLink) {
+            menuLink.addEventListener('click', function (e) {
+                if (finishWorkoutTriggered) {
+                    return;
+                }
+                e.preventDefault();
+                window.alert('You have an active workout! Please finish or cancel it before navigating away.');
+            });
+        });
     });
 </script>
 </body>
