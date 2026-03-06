@@ -189,11 +189,9 @@
                 const headers = {'Content-Type': 'application/json'};
                 const csrfTokenFromData = finishWorkoutForm.dataset.csrfToken;
                 const csrfHeaderName = finishWorkoutForm.dataset.csrfHeader || 'X-XSRF-TOKEN';
-                const csrfTokenFromCookie = document.cookie
-                    .split('; ')
-                    .find(function (part) { return part.startsWith('XSRF-TOKEN='); })
-                    ?.split('=')[1];
-                const csrfToken = csrfTokenFromData || (csrfTokenFromCookie ? decodeURIComponent(csrfTokenFromCookie) : null);
+                const csrfCookieMatch = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+                const csrfTokenFromCookie = csrfCookieMatch ? decodeURIComponent(csrfCookieMatch[1]) : null;
+                const csrfToken = csrfTokenFromData || csrfTokenFromCookie || null;
                 if (csrfToken) {
                     headers[csrfHeaderName] = csrfToken;
                 }
