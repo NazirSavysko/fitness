@@ -168,11 +168,11 @@
         const container = document.getElementById('exercises-container');
         const template = document.getElementById('exercise-row-template');
 
-        // Клонируем шаблон
+        // Clone template
         const clone = template.content.cloneNode(true);
 
         clone.querySelectorAll('[name]').forEach((field) => {
-            field.name = field.name.replaceAll('INDEX', exerciseIndex);
+            field.name = field.name.replace('INDEX', exerciseIndex);
         });
 
         container.appendChild(clone);

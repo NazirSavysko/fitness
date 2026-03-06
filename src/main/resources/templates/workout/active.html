@@ -112,11 +112,12 @@
                               class="set-row"
                               data-scroll-save="true"
                               data-rest-form="true"
+                              th:with="defaultRestSeconds=60"
                               th:action="@{/workouts/set/update}"
                               method="post">
                             <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
                             <input type="hidden" name="setId" th:value="${set.id}">
-                            <input type="hidden" class="rest-seconds-value" th:value="${set.restSeconds == null ? 60 : set.restSeconds}">
+                            <input type="hidden" class="rest-seconds-value" th:value="${set.restSeconds == null ? defaultRestSeconds : set.restSeconds}">
 
                             <div class="set-number" th:text="${set.setNumber}">1</div>
                             <div><input type="number" step="any" min="0" name="weight" class="form-input" th:value="${set.weight}" placeholder="0.0" required></div>
@@ -175,6 +176,9 @@
 
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script>
+    const REST_BEEP_FREQUENCY_HZ = 880;
+    const REST_BEEP_DURATION_SECONDS = 0.2;
+    const REST_BEEP_GAIN = 0.1;
     let isSubmitting = false;
     let restTimerInterval = null;
     let hasBeeped = false;
@@ -210,12 +214,12 @@
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 oscillator.type = 'sine';
-                oscillator.frequency.value = 880;
+                oscillator.frequency.value = REST_BEEP_FREQUENCY_HZ;
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
-                gainNode.gain.value = 0.1;
+                gainNode.gain.value = REST_BEEP_GAIN;
                 oscillator.start();
-                oscillator.stop(audioContext.currentTime + 0.2);
+                oscillator.stop(audioContext.currentTime + REST_BEEP_DURATION_SECONDS);
             } catch (e) {
                 // no-op for unsupported browsers
             }
