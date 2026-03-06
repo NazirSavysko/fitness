@@ -22,6 +22,9 @@ class TemplateExerciseMapperImplTest {
         final TemplateExercise templateExercise = new TemplateExercise();
         templateExercise.setExercise(exerciseDefinition);
         templateExercise.setOrderIndex(4);
+        templateExercise.setNormalSets(3);
+        templateExercise.setFailureSets(1);
+        templateExercise.setRestSeconds(75);
 
         final TemplateExerciseDTO dto = templateExerciseMapper.mapEntityToDto(templateExercise);
 
@@ -29,6 +32,9 @@ class TemplateExerciseMapperImplTest {
         assertEquals("Bench Press", dto.exerciseName());
         assertEquals("Chest", dto.muscleGroup());
         assertEquals(4, dto.orderIndex());
+        assertEquals(3, dto.normalSets());
+        assertEquals(1, dto.failureSets());
+        assertEquals(75, dto.restSeconds());
     }
 
     @Test
@@ -44,5 +50,8 @@ class TemplateExerciseMapperImplTest {
         assertEquals("Lat Pulldown", dto.exerciseName());
         assertEquals("Back", dto.muscleGroup());
         assertNull(dto.orderIndex());
+        assertNull(dto.normalSets());
+        assertNull(dto.failureSets());
+        assertNull(dto.restSeconds());
     }
 }

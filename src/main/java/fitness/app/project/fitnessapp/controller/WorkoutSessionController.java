@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import fitness.app.project.fitnessapp.model.enums.SetType;
 import jakarta.validation.Valid;
@@ -52,6 +53,21 @@ public final class WorkoutSessionController {
             return "workout/active";
         }
         final Integer activeSessionId = this.workoutFacade.addSetToExercise(addSetDTO, principal.getName());
+        return "redirect:/workouts/" + activeSessionId + "/active";
+    }
+
+    @PostMapping("/set/update")
+    public String updateSet(@Valid @ModelAttribute("updateSetDto") final UpdateExerciseSetDTO updateExerciseSetDTO,
+                            final BindingResult bindingResult,
+                            @RequestParam("sessionId") final Integer sessionId,
+                            final Model model,
+                            final Principal principal) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("activeWorkout", this.workoutFacade.getWorkoutDetails(sessionId, principal.getName()));
+            model.addAttribute("setTypes", SetType.values());
+            return "workout/active";
+        }
+        final Integer activeSessionId = this.workoutFacade.updateExerciseSet(updateExerciseSetDTO, principal.getName());
         return "redirect:/workouts/" + activeSessionId + "/active";
     }
 

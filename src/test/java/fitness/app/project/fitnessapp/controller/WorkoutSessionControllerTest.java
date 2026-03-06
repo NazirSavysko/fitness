@@ -1,6 +1,7 @@
 package fitness.app.project.fitnessapp.controller;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.ActiveWorkoutDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import fitness.app.project.fitnessapp.model.enums.SetType;
@@ -36,7 +37,7 @@ class WorkoutSessionControllerTest {
 
         final String result = workoutSessionController.addSet(addSetDTO, bindingResult, 7, model, principal);
 
-        assertEquals("workout-active", result);
+        assertEquals("workout/active", result);
         verify(workoutFacade).getWorkoutDetails(7, "user@mail.com");
         verify(workoutFacade, never()).addSetToExercise(addSetDTO, "user@mail.com");
     }
@@ -51,5 +52,17 @@ class WorkoutSessionControllerTest {
 
         assertEquals("redirect:/workouts/11/active", result);
         verify(workoutFacade).addSetToExercise(addSetDTO, "user@mail.com");
+    }
+
+    @Test
+    void updateSetRedirectsToReturnedSessionWhenValid() {
+        final UpdateExerciseSetDTO updateSetDTO = new UpdateExerciseSetDTO(4, new BigDecimal("72.5"), 12);
+        final BindingResult bindingResult = new BeanPropertyBindingResult(updateSetDTO, "updateSetDto");
+        when(workoutFacade.updateExerciseSet(updateSetDTO, "user@mail.com")).thenReturn(21);
+
+        final String result = workoutSessionController.updateSet(updateSetDTO, bindingResult, 7, model, principal);
+
+        assertEquals("redirect:/workouts/21/active", result);
+        verify(workoutFacade).updateExerciseSet(updateSetDTO, "user@mail.com");
     }
 }

@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.service;
 
+import fitness.app.project.fitnessapp.dto.TemplateExerciseConfigDTO;
 import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 
@@ -14,5 +15,5 @@ public interface WorkoutTemplateService {
 
     void saveWorkout(WorkoutTemplate workoutTemplate);
 
-    List<TemplateExercise> buildTemplateExercises(WorkoutTemplate workoutTemplate, List<Integer> exerciseIds);
+    List<TemplateExercise> buildTemplateExercises(WorkoutTemplate workoutTemplate, List<TemplateExerciseConfigDTO> exercises);
 }

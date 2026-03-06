@@ -1,5 +1,6 @@
 package fitness.app.project.fitnessapp.service.impl;
 
+import fitness.app.project.fitnessapp.dto.TemplateExerciseConfigDTO;
 import fitness.app.project.fitnessapp.exception.WorkoutTemplateNotFoundException;
 import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
@@ -48,14 +49,18 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
     }
 
     @Override
-    public List<TemplateExercise> buildTemplateExercises(final WorkoutTemplate workoutTemplate, final List<Integer> exerciseIds) {
-        final List<TemplateExercise> templateExercises = new ArrayList<>(exerciseIds.size());
+    public List<TemplateExercise> buildTemplateExercises(final WorkoutTemplate workoutTemplate, final List<TemplateExerciseConfigDTO> exercises) {
+        final List<TemplateExercise> templateExercises = new ArrayList<>(exercises.size());
 
-        for (int i = 0; i < exerciseIds.size(); i++) {
+        for (int i = 0; i < exercises.size(); i++) {
+            final TemplateExerciseConfigDTO exerciseConfig = exercises.get(i);
             final TemplateExercise templateExercise = new TemplateExercise();
             templateExercise.setTemplate(workoutTemplate);
-            templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseIds.get(i)));
+            templateExercise.setExercise(this.exerciseDefinitionService.getReferenceById(exerciseConfig.exerciseId()));
             templateExercise.setOrderIndex(i);
+            templateExercise.setNormalSets(exerciseConfig.normalSets());
+            templateExercise.setFailureSets(exerciseConfig.failureSets());
+            templateExercise.setRestSeconds(exerciseConfig.restSeconds());
             templateExercises.add(templateExercise);
         }
 

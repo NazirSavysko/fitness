@@ -3,6 +3,7 @@ package fitness.app.project.fitnessapp.controller;
 import fitness.app.project.fitnessapp.dto.CreateTemplateDTO;
 import fitness.app.project.fitnessapp.dto.GetTemplateDTO;
 import fitness.app.project.fitnessapp.dto.TemplateExerciseDTO;
+import fitness.app.project.fitnessapp.dto.TemplateExerciseConfigDTO;
 import fitness.app.project.fitnessapp.dto.UpdateTemplateDTO;
 import fitness.app.project.fitnessapp.facade.TemplateFacade;
 import jakarta.validation.Valid;
@@ -85,7 +86,12 @@ public final class TemplateController {
                 templateDTO.name(),
                 templateDTO.exercises().stream()
                         .sorted(ORDER_INDEX_COMPARATOR)
-                        .map(TemplateExerciseDTO::exerciseId)
+                        .map(exercise -> new TemplateExerciseConfigDTO(
+                                exercise.exerciseId(),
+                                exercise.normalSets() == null ? 0 : exercise.normalSets(),
+                                exercise.failureSets() == null ? 0 : exercise.failureSets(),
+                                exercise.restSeconds() == null ? 60 : exercise.restSeconds()
+                        ))
                         .toList()
         );
 

@@ -48,7 +48,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
 
         workoutTemplate.setName(templateDTO.name());
         workoutTemplate.getExercises().clear();
-        workoutTemplate.getExercises().addAll(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, templateDTO.exerciseIds()));
+        workoutTemplate.getExercises().addAll(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, templateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }
@@ -73,7 +73,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
         workoutTemplate.setUser(user);
-        workoutTemplate.setExercises(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, createTemplateDTO.exerciseIds()));
+        workoutTemplate.setExercises(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
     }

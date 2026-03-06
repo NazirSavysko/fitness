@@ -29,4 +29,10 @@ public final class TemplateExercise {
     private ExerciseDefinition exercise;
 
     private Integer orderIndex;
+
+    private Integer normalSets = 0;
+
+    private Integer failureSets = 0;
+
+    private Integer restSeconds = 60;
 }

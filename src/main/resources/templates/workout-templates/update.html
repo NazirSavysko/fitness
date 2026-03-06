@@ -74,11 +74,11 @@
                 <p class="text-muted">Modify exercises in your workout template.</p>
 
                 <div id="exercises-container">
-                    <div class="exercise-row" th:each="ex, stat : *{exerciseIds}">
+                    <div class="exercise-row" th:each="ex, stat : *{exercises}">
                         <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
 
                         <div class="form-group mb-0 flex-grow">
-                            <select class="form-input exercise-select" th:field="*{exerciseIds[__${stat.index}__]}">
+                            <select class="form-input exercise-select" th:field="*{exercises[__${stat.index}__].exerciseId}">
                                 <option value="" disabled>Select Exercise</option>
                                 <option th:each="opt : ${exercises}"
                                         th:value="${opt.exerciseId}"
@@ -88,13 +88,25 @@
                             </select>
                         </div>
 
+                        <div class="form-group mb-0">
+                            <input class="form-input" type="number" min="0" th:field="*{exercises[__${stat.index}__].normalSets}" placeholder="Normal Sets">
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <input class="form-input" type="number" min="0" th:field="*{exercises[__${stat.index}__].failureSets}" placeholder="Failure Sets">
+                        </div>
+
+                        <div class="form-group mb-0">
+                            <input class="form-input" type="number" min="0" th:field="*{exercises[__${stat.index}__].restSeconds}" placeholder="Rest (sec)">
+                        </div>
+
                         <button type="button" class="btn-remove-exercise" onclick="removeExerciseRow(this)">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="field-error-text" th:if="${#fields.hasErrors('exerciseIds')}" th:errors="*{exerciseIds}"></div>
+                <div class="field-error-text" th:if="${#fields.hasErrors('exercises')}" th:errors="*{exercises}"></div>
 
                 <button type="button" class="btn-add-exercise" onclick="addExerciseRow()">
                     <i class="fa-solid fa-plus"></i> Add Exercise
@@ -114,7 +126,7 @@
         <span class="drag-handle"><i class="fa-solid fa-grip-lines"></i></span>
 
         <div class="form-group mb-0 flex-grow">
-            <select class="form-input exercise-select" name="exerciseIds[INDEX]">
+            <select class="form-input exercise-select" name="exercises[INDEX].exerciseId">
                 <option value="" disabled selected>Select Exercise</option>
 
                 <option th:each="exercise : ${exercises}"
@@ -123,6 +135,18 @@
                     Exercise Name
                 </option>
             </select>
+        </div>
+
+        <div class="form-group mb-0">
+            <input class="form-input" type="number" min="0" name="exercises[INDEX].normalSets" value="0" placeholder="Normal Sets">
+        </div>
+
+        <div class="form-group mb-0">
+            <input class="form-input" type="number" min="0" name="exercises[INDEX].failureSets" value="0" placeholder="Failure Sets">
+        </div>
+
+        <div class="form-group mb-0">
+            <input class="form-input" type="number" min="0" name="exercises[INDEX].restSeconds" value="60" placeholder="Rest (sec)">
         </div>
 
         <button type="button" class="btn-remove-exercise" onclick="removeExerciseRow(this)">
@@ -147,9 +171,9 @@
         // Клонируем шаблон
         const clone = template.content.cloneNode(true);
 
-        // Находим select и обновляем его имя
-        const select = clone.querySelector('select');
-        select.name = select.name.replace('INDEX', exerciseIndex);
+        clone.querySelectorAll('[name]').forEach((field) => {
+            field.name = field.name.replaceAll('INDEX', exerciseIndex);
+        });
 
         container.appendChild(clone);
         exerciseIndex++;

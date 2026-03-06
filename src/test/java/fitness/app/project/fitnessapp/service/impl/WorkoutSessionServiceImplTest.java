@@ -46,9 +46,12 @@ class WorkoutSessionServiceImplTest {
     );
 
     @Test
-    void startWorkoutCopiesTemplateExercisesWithOrder() {
+    void startWorkoutCopiesTemplateExercisesWithOrderAndPreGeneratesSets() {
         final WorkoutTemplate template = new WorkoutTemplate();
-        template.setExercises(List.of(templateExercise(4, 0), templateExercise(7, 1)));
+        template.setExercises(List.of(
+                templateExercise(4, 0, 2, 1, 90),
+                templateExercise(7, 1, 1, 0, 60)
+        ));
         final User user = new User();
         final WorkoutSession saved = new WorkoutSession();
         saved.setId(42);
@@ -69,8 +72,14 @@ class WorkoutSessionServiceImplTest {
         assertEquals(2, created.getExercises().size());
         assertEquals(0, created.getExercises().get(0).getOrderIndex());
         assertEquals(4, created.getExercises().get(0).getExercise().getId());
+        assertEquals(3, created.getExercises().get(0).getSets().size());
+        assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(0).getSetType());
+        assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(1).getSetType());
+        assertEquals(SetType.FAILURE, created.getExercises().get(0).getSets().get(2).getSetType());
+        assertEquals(90, created.getExercises().get(0).getSets().get(0).getRestSeconds());
         assertEquals(1, created.getExercises().get(1).getOrderIndex());
         assertEquals(7, created.getExercises().get(1).getExercise().getId());
+        assertEquals(1, created.getExercises().get(1).getSets().size());
     }
 
     @Test
@@ -117,12 +126,43 @@ class WorkoutSessionServiceImplTest {
         verify(workoutSessionRepository).save(session);
     }
 
-    private static TemplateExercise templateExercise(final int exerciseId, final int orderIndex) {
+    @Test
+    void updateExerciseSetUpdatesWeightAndReps() {
+        final WorkoutSession workoutSession = new WorkoutSession();
+        workoutSession.setId(22);
+        final SessionExercise sessionExercise = new SessionExercise();
+        sessionExercise.setSession(workoutSession);
+        final ExerciseSet exerciseSet = new ExerciseSet();
+        exerciseSet.setId(15);
+        exerciseSet.setSessionExercise(sessionExercise);
+
+        when(exerciseSetRepository.findByIdAndSessionExercise_Session_User_Email(15, "user@mail.com"))
+                .thenReturn(Optional.of(exerciseSet));
+
+        final Integer sessionId = workoutSessionService.updateExerciseSet(
+                new fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO(15, new BigDecimal("82.5"), 7),
+                "user@mail.com"
+        );
+
+        assertEquals(22, sessionId);
+        assertEquals(new BigDecimal("82.5"), exerciseSet.getWeight());
+        assertEquals(7, exerciseSet.getReps());
+        verify(exerciseSetRepository).save(exerciseSet);
+    }
+
+    private static TemplateExercise templateExercise(final int exerciseId,
+                                                     final int orderIndex,
+                                                     final int normalSets,
+                                                     final int failureSets,
+                                                     final int restSeconds) {
         final ExerciseDefinition exerciseDefinition = new ExerciseDefinition();
         exerciseDefinition.setId(exerciseId);
         final TemplateExercise templateExercise = new TemplateExercise();
         templateExercise.setExercise(exerciseDefinition);
         templateExercise.setOrderIndex(orderIndex);
+        templateExercise.setNormalSets(normalSets);
+        templateExercise.setFailureSets(failureSets);
+        templateExercise.setRestSeconds(restSeconds);
         return templateExercise;
     }
 }

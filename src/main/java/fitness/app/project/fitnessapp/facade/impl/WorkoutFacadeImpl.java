@@ -4,6 +4,7 @@ import fitness.app.project.fitnessapp.dto.ActiveWorkoutDTO;
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
 import fitness.app.project.fitnessapp.dto.ExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.SessionExerciseDTO;
+import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.WorkoutHistoryCardDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import fitness.app.project.fitnessapp.model.ExerciseSet;
@@ -37,6 +38,11 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
     @Override
     public Integer addSetToExercise(final AddSetDTO addSetDTO, final String email) {
         return this.workoutSessionService.addSetToExercise(addSetDTO, email);
+    }
+
+    @Override
+    public Integer updateExerciseSet(final UpdateExerciseSetDTO updateExerciseSetDTO, final String email) {
+        return this.workoutSessionService.updateExerciseSet(updateExerciseSetDTO, email);
     }
 
     @Override

@@ -13,7 +13,10 @@ public class TemplateExerciseMapperImpl implements GetTemplateExerciseMapper {
                 templateExercise.getExercise().getId(),
                 templateExercise.getExercise().getName(),
                 templateExercise.getExercise().getMuscleGroup(),
-                templateExercise.getOrderIndex()
+                templateExercise.getOrderIndex(),
+                templateExercise.getNormalSets(),
+                templateExercise.getFailureSets(),
+                templateExercise.getRestSeconds()
         );
     }
 }

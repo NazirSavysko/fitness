@@ -14,5 +14,5 @@ public record CreateTemplateDTO(
         String name,
         @Valid
         @NotEmpty(message = "You must add at least one exercise")
-        List<@NotNull Integer> exerciseIds
+        List<@NotNull TemplateExerciseConfigDTO> exercises
 ) {}

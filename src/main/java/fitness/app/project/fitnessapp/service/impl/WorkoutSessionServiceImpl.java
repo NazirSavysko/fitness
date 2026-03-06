@@ -1,11 +1,13 @@
 package fitness.app.project.fitnessapp.service.impl;
 
 import fitness.app.project.fitnessapp.dto.AddSetDTO;
+import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.model.ExerciseSet;
 import fitness.app.project.fitnessapp.model.SessionExercise;
 import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutSession;
 import fitness.app.project.fitnessapp.model.WorkoutTemplate;
+import fitness.app.project.fitnessapp.model.enums.SetType;
 import fitness.app.project.fitnessapp.repository.ExerciseSetRepository;
 import fitness.app.project.fitnessapp.repository.SessionExerciseRepository;
 import fitness.app.project.fitnessapp.repository.WorkoutSessionRepository;
@@ -58,6 +60,7 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
                 sessionExercise.setSession(workoutSession);
                 sessionExercise.setExercise(templateExercise.getExercise());
                 sessionExercise.setOrderIndex(templateExercise.getOrderIndex());
+                sessionExercise.setSets(buildSetsFromTemplateConfig(sessionExercise, templateExercise));
                 sessionExercises.add(sessionExercise);
             }
             workoutSession.setExercises(sessionExercises);
@@ -66,6 +69,38 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         }
 
         return this.workoutSessionRepository.save(workoutSession).getId();
+    }
+
+    private static List<ExerciseSet> buildSetsFromTemplateConfig(final SessionExercise sessionExercise,
+                                                                 final TemplateExercise templateExercise) {
+        final int normalSets = templateExercise.getNormalSets() == null ? 0 : templateExercise.getNormalSets();
+        final int failureSets = templateExercise.getFailureSets() == null ? 0 : templateExercise.getFailureSets();
+        final int restSeconds = templateExercise.getRestSeconds() == null ? 60 : templateExercise.getRestSeconds();
+        final List<ExerciseSet> sets = new ArrayList<>(normalSets + failureSets);
+        int setNumber = 1;
+
+        for (int i = 0; i < normalSets; i++) {
+            sets.add(createPresetSet(sessionExercise, setNumber++, restSeconds, SetType.NORMAL));
+        }
+        for (int i = 0; i < failureSets; i++) {
+            sets.add(createPresetSet(sessionExercise, setNumber++, restSeconds, SetType.FAILURE));
+        }
+
+        return sets;
+    }
+
+    private static ExerciseSet createPresetSet(final SessionExercise sessionExercise,
+                                               final int setNumber,
+                                               final int restSeconds,
+                                               final SetType setType) {
+        final ExerciseSet exerciseSet = new ExerciseSet();
+        exerciseSet.setSessionExercise(sessionExercise);
+        exerciseSet.setSetNumber(setNumber);
+        exerciseSet.setWeight(null);
+        exerciseSet.setReps(null);
+        exerciseSet.setRestSeconds(restSeconds);
+        exerciseSet.setSetType(setType);
+        return exerciseSet;
     }
 
     @Override
@@ -90,6 +125,20 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
         this.exerciseSetRepository.save(exerciseSet);
         return sessionExercise.getSession().getId();
+    }
+
+    @Override
+    @Transactional
+    public Integer updateExerciseSet(final UpdateExerciseSetDTO updateExerciseSetDTO, final String userEmail) {
+        final ExerciseSet exerciseSet = this.exerciseSetRepository
+                .findByIdAndSessionExercise_Session_User_Email(updateExerciseSetDTO.setId(), userEmail)
+                .orElseThrow(() -> new EntityNotFoundException("Exercise set not found"));
+
+        exerciseSet.setWeight(updateExerciseSetDTO.weight());
+        exerciseSet.setReps(updateExerciseSetDTO.reps());
+        this.exerciseSetRepository.save(exerciseSet);
+
+        return exerciseSet.getSessionExercise().getSession().getId();
     }
 
     @Override
