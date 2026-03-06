@@ -98,7 +98,7 @@
                     </table>
                 </div>
 
-                <form class="add-set-form" th:action="@{/workouts/set/add}" method="post">
+                <form class="add-set-form" data-scroll-save="true" th:action="@{/workouts/set/add}" method="post">
                     <input type="hidden" name="sessionId" th:value="${activeWorkout.sessionId}">
                     <input type="hidden" name="sessionExerciseId" th:value="${exercise.id}">
                     <table class="sets-table">
@@ -139,12 +139,9 @@
         document.querySelectorAll('form').forEach(function (form) {
             form.addEventListener('submit', function () {
                 isSubmitting = true;
-            });
-        });
-
-        document.querySelectorAll('.add-set-form').forEach(function (form) {
-            form.addEventListener('submit', function () {
-                sessionStorage.setItem('workoutScrollPos', String(window.scrollY));
+                if (form.dataset.scrollSave === 'true') {
+                    sessionStorage.setItem('workoutScrollPos', String(window.scrollY));
+                }
             });
         });
 
@@ -153,15 +150,19 @@
             menuLink.addEventListener('click', function (e) {
                 e.preventDefault();
             });
+            menuLink.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
         });
-    });
-
-    window.addEventListener('beforeunload', function (e) {
-        if (isSubmitting) {
-            return;
-        }
-        e.preventDefault();
-        e.returnValue = '';
+        window.addEventListener('beforeunload', function (e) {
+            if (isSubmitting) {
+                return;
+            }
+            e.preventDefault();
+            e.returnValue = '';
+        });
     });
 </script>
 </body>
