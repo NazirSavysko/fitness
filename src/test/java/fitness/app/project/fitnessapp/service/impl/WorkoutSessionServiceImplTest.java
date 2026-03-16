@@ -19,11 +19,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
@@ -121,6 +123,19 @@ class WorkoutSessionServiceImplTest {
         assertEquals(0, saved.getExercises().size());
         verify(sessionExerciseRepository, never()).saveAll(anyList());
         verify(exerciseSetRepository, never()).saveAll(anyList());
+    }
+
+    @Test
+    void startWorkoutThrowsWhenWorkoutAlreadyExistsForCurrentDay() {
+        when(workoutSessionRepository.existsByUser_EmailAndStartedAtBetween(
+                org.mockito.ArgumentMatchers.eq("user@mail.com"),
+                org.mockito.ArgumentMatchers.any(LocalDateTime.class),
+                org.mockito.ArgumentMatchers.any(LocalDateTime.class)
+        )).thenReturn(true);
+
+        assertThrows(IllegalStateException.class, () -> workoutSessionService.startWorkout(10, "user@mail.com"));
+
+        verify(workoutSessionRepository, never()).saveAndFlush(any(WorkoutSession.class));
     }
 
     @Test

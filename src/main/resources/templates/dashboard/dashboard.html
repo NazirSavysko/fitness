@@ -114,6 +114,7 @@
     const templates = /*[[${templates}]]*/ [];
     const templateScheduleByTemplateId = /*[[${templateScheduleByTemplateId}]]*/ {};
     const completedWorkoutDayKeys = /*[[${completedWorkoutDayKeys}]]*/ [];
+    const workoutCompletionByDate = /*[[${workoutCompletionByDate}]]*/ {};
 
     const monthlyCalendar = document.getElementById('monthlyCalendar');
     const calendarMonthLabel = document.getElementById('calendarMonthLabel');
@@ -175,9 +176,15 @@
     }
 
     function hasCompletedWorkout(date) {
+        return Number.isInteger(getWorkoutCompletionPercentage(date));
+    }
+
+    function getWorkoutCompletionPercentage(date) {
         const dateKey = formatDateKey(date);
-        const dayKey = formatWeekdayKey(date);
-        return normalizeToArray(completedWorkoutDayKeys).some((token) => tokenMatchesDate(token, dayKey, dateKey));
+        if (workoutCompletionByDate && Object.prototype.hasOwnProperty.call(workoutCompletionByDate, dateKey)) {
+            return Number(workoutCompletionByDate[dateKey]);
+        }
+        return null;
     }
 
     function getTemplateScheduleTokens(templateId) {
@@ -206,6 +213,7 @@
         const selected = formatDateKey(date) === formatDateKey(selectedDate);
         const planned = hasScheduledTemplate(date);
         const completed = hasCompletedWorkout(date);
+        const completionPercentage = getWorkoutCompletionPercentage(date);
 
         if (selected) {
             button.classList.add('active');
@@ -218,8 +226,8 @@
         button.innerHTML = `
             <span class="date-label">${dateLabel}</span>
             <span class="indicator-row">
-                ${planned ? '<span class="indicator-dot planned"></span>' : ''}
-                ${completed ? '<span class="indicator-dot completed"></span>' : ''}
+                ${completed ? `<span class="completion-badge">${completionPercentage}%</span>` : ''}
+                ${!completed && planned ? '<span class="planned-icon" aria-hidden="true">🏋️‍♂️</span>' : ''}
             </span>
         `;
 

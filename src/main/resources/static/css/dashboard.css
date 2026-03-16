@@ -129,8 +129,8 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    min-height: 6px;
-    height: 6px;
+    min-height: 18px;
+    height: 18px;
 }
 
 .day-placeholder {
@@ -138,19 +138,23 @@
     opacity: 0;
 }
 
-.indicator-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    display: inline-block;
+.planned-icon {
+    font-size: 13px;
+    line-height: 1;
 }
 
-.indicator-dot.planned {
-    background: #f7a51a;
-}
-
-.indicator-dot.completed {
+.completion-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 16px;
+    padding: 0 6px;
+    border-radius: 999px;
     background: #2d8cff;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
 }
 
 .day-btn.active .date-label,
