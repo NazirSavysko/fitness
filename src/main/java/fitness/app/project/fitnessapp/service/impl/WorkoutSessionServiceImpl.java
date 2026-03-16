@@ -111,9 +111,8 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
     private static boolean canStartTemplateToday(final WorkoutTemplate workoutTemplate) {
         return workoutTemplate == null
-                || workoutTemplate.getScheduledDays() == null
-                || workoutTemplate.getScheduledDays().isEmpty()
-                || workoutTemplate.getScheduledDays().contains(LocalDate.now().getDayOfWeek());
+                || workoutTemplate.getScheduledDay() == null
+                || workoutTemplate.getScheduledDay().equals(LocalDate.now().getDayOfWeek());
     }
 
     private static List<ExerciseSet> buildSetsFromTemplateConfig(final SessionExercise sessionExercise,

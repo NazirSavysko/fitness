@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -144,7 +143,7 @@ class WorkoutSessionServiceImplTest {
     void startWorkoutThrowsWhenTemplateIsNotScheduledForToday() {
         final WorkoutTemplate template = new WorkoutTemplate();
         final DayOfWeek notToday = java.time.LocalDate.now().getDayOfWeek().plus(1);
-        template.setScheduledDays(Set.of(notToday));
+        template.setScheduledDay(notToday);
         when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
 
         final IllegalStateException exception = assertThrows(

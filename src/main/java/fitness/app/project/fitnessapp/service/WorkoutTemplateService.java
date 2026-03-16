@@ -6,7 +6,6 @@ import fitness.app.project.fitnessapp.model.WorkoutTemplate;
 
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Set;
 
 public interface WorkoutTemplateService {
     List<WorkoutTemplate> getTemplatesByUserEmail(String email);
@@ -19,5 +18,5 @@ public interface WorkoutTemplateService {
 
     List<TemplateExercise> buildTemplateExercises(WorkoutTemplate workoutTemplate, List<TemplateExerciseConfigDTO> exercises);
 
-    void validateScheduledDayConflicts(String email, Set<DayOfWeek> scheduledDays, Integer templateIdToExclude);
+    void validateScheduledDayConflicts(String email, DayOfWeek scheduledDay, Integer templateIdToExclude);
 }

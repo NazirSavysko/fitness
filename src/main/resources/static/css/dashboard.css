@@ -315,6 +315,16 @@
     font-weight: 700;
 }
 
+.empty-state {
+    border-radius: 14px;
+    background: #f8f9fd;
+    border: 1px dashed #d7deef;
+    padding: 18px;
+    text-align: center;
+    color: #7f8bab;
+    font-size: 0.88rem;
+}
+
 @media (max-width: 768px) {
     .main-content {
         padding: 16px;
