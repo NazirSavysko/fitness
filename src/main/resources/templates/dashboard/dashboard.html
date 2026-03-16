@@ -81,6 +81,8 @@
                 <a href="/history" class="completed-day-link">Open history</a>
             </section>
 
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}" style="background: #ffe6e6; color: #d93025; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;"></div>
+
             <section class="calendar-card">
                 <div class="calendar-header">
                     <p class="calendar-kicker">Workout schedule</p>
@@ -155,6 +157,10 @@
 
     function formatWeekdayKey(date) {
         return date.toLocaleDateString('en-US', {weekday: 'long'}).toUpperCase();
+    }
+
+    function normalizeToMidnight(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
     function normalizeToArray(value) {
@@ -288,6 +294,7 @@
 
         templateGrid.innerHTML = '';
         const completed = hasCompletedWorkout(selectedDate);
+        const selectedDateIsToday = normalizeToMidnight(selectedDate).getTime() === normalizeToMidnight(today).getTime();
         const sortedTemplates = [...templates].sort((templateA, templateB) => {
             const leftScheduled = isTemplateScheduledForDate(templateA, selectedDate);
             const rightScheduled = isTemplateScheduledForDate(templateB, selectedDate);
@@ -299,22 +306,22 @@
 
         sortedTemplates.forEach((template) => {
             const scheduled = isTemplateScheduledForDate(template, selectedDate);
-            const card = document.createElement('form');
-            card.method = 'post';
-            card.action = '/workouts/start';
+            const card = document.createElement(selectedDateIsToday ? 'form' : 'div');
+            if (selectedDateIsToday) {
+                card.method = 'post';
+                card.action = '/workouts/start';
+            }
             card.className = `template-card${scheduled ? ' scheduled' : ''}${completed ? ' locked' : ''}`;
 
             const badgeText = scheduled ? 'Scheduled' : 'Available';
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'templateId';
-            input.value = String(template.id ?? '');
-
-            const cardButton = document.createElement('button');
-            cardButton.type = 'submit';
+            const cardButton = document.createElement(selectedDateIsToday ? 'button' : 'div');
+            if (selectedDateIsToday) {
+                cardButton.type = 'submit';
+            }
             cardButton.className = 'template-card-btn';
-            cardButton.disabled = completed;
+            if (selectedDateIsToday) {
+                cardButton.disabled = completed;
+            }
 
             const cardHeader = document.createElement('div');
             cardHeader.className = 'template-card-header';
@@ -330,20 +337,31 @@
             const startRow = document.createElement('div');
             startRow.className = 'template-start-row';
 
-            const icon = document.createElement('i');
-            icon.className = 'fa-solid fa-play';
-            icon.setAttribute('aria-hidden', 'true');
+            if (selectedDateIsToday) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'templateId';
+                input.value = String(template.id ?? '');
+                card.appendChild(input);
 
-            const label = document.createElement('span');
-            label.textContent = 'Start';
+                const icon = document.createElement('i');
+                icon.className = 'fa-solid fa-play';
+                icon.setAttribute('aria-hidden', 'true');
 
-            startRow.appendChild(icon);
-            startRow.appendChild(label);
+                const label = document.createElement('span');
+                label.textContent = 'Start';
+
+                startRow.appendChild(icon);
+                startRow.appendChild(label);
+            } else {
+                const plannedOnlyBadge = document.createElement('div');
+                plannedOnlyBadge.className = 'badge-planned-only';
+                plannedOnlyBadge.textContent = 'Scheduled';
+                startRow.appendChild(plannedOnlyBadge);
+            }
 
             cardButton.appendChild(cardHeader);
             cardButton.appendChild(startRow);
-
-            card.appendChild(input);
             card.appendChild(cardButton);
 
             templateGrid.appendChild(card);

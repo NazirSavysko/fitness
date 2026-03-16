@@ -8,10 +8,14 @@ import fitness.app.project.fitnessapp.repository.WorkoutTemplateRepository;
 import fitness.app.project.fitnessapp.service.ExerciseDefinitionService;
 import org.junit.jupiter.api.Test;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,5 +64,38 @@ class WorkoutTemplateServiceImplTest {
         final ExerciseDefinition exerciseDefinition = new ExerciseDefinition();
         exerciseDefinition.setId(id);
         return exerciseDefinition;
+    }
+
+    @Test
+    void validateScheduledDayConflictsThrowsWhenAnotherTemplateUsesSameDay() {
+        final WorkoutTemplate existing = new WorkoutTemplate();
+        existing.setId(5);
+        existing.setScheduledDays(Set.of(DayOfWeek.MONDAY));
+        when(workoutTemplateRepository.findAllByUser_Email("user@mail.com")).thenReturn(List.of(existing));
+
+        final IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> workoutTemplateService.validateScheduledDayConflicts(
+                        "user@mail.com",
+                        Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                        null
+                )
+        );
+
+        assertEquals("Day conflict: You already have a template scheduled for MONDAY.", exception.getMessage());
+    }
+
+    @Test
+    void validateScheduledDayConflictsIgnoresCurrentTemplateDuringUpdate() {
+        final WorkoutTemplate existing = new WorkoutTemplate();
+        existing.setId(7);
+        existing.setScheduledDays(Set.of(DayOfWeek.MONDAY));
+        when(workoutTemplateRepository.findAllByUser_Email("user@mail.com")).thenReturn(List.of(existing));
+
+        assertDoesNotThrow(() -> workoutTemplateService.validateScheduledDayConflicts(
+                "user@mail.com",
+                Set.of(DayOfWeek.MONDAY),
+                7
+        ));
     }
 }

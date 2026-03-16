@@ -19,10 +19,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -135,6 +137,22 @@ class WorkoutSessionServiceImplTest {
 
         assertThrows(IllegalStateException.class, () -> workoutSessionService.startWorkout(10, "user@mail.com"));
 
+        verify(workoutSessionRepository, never()).saveAndFlush(any(WorkoutSession.class));
+    }
+
+    @Test
+    void startWorkoutThrowsWhenTemplateIsNotScheduledForToday() {
+        final WorkoutTemplate template = new WorkoutTemplate();
+        final DayOfWeek notToday = java.time.LocalDate.now().getDayOfWeek().plus(1);
+        template.setScheduledDays(Set.of(notToday));
+        when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
+
+        final IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> workoutSessionService.startWorkout(10, "user@mail.com")
+        );
+
+        assertEquals("You can only start templates scheduled for today.", exception.getMessage());
         verify(workoutSessionRepository, never()).saveAndFlush(any(WorkoutSession.class));
     }
 
