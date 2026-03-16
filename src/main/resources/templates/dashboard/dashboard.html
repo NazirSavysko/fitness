@@ -38,7 +38,8 @@
             border-radius: 14px;
             background: #f9fafc;
             color: #2b3674;
-            padding: 12px 8px;
+            position: relative;
+            padding: 12px 8px 8px;
             cursor: pointer;
             display: flex;
             flex-direction: column;
@@ -58,6 +59,18 @@
         .day-btn .day-number {
             font-size: 18px;
             font-weight: 700;
+        }
+
+        .indicator-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #ff8b1f;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+
+        .day-btn.has-workout .indicator-dot {
+            background-color: #4318FF;
         }
 
         .day-btn.today {
@@ -281,6 +294,28 @@
         `).join('');
     }
 
+    function renderCalendarIndicators() {
+        document.querySelectorAll('.day-btn').forEach(button => {
+            const dateString = button.dataset.date;
+            const dayKey = getDayKey(dateString);
+            const hasWorkout = dashboardData.workouts.some(workout => workout.workoutDate === dateString);
+            const hasTemplate = dashboardData.templates.some(template =>
+                Array.isArray(template.scheduledDays) && template.scheduledDays.includes(dayKey)
+            );
+            if (!hasWorkout && !hasTemplate) {
+                return;
+            }
+            if (!button.querySelector('.indicator-dot')) {
+                const dot = document.createElement('div');
+                dot.className = 'indicator-dot';
+                button.appendChild(dot);
+            }
+            if (hasWorkout) {
+                button.classList.add('has-workout');
+            }
+        });
+    }
+
     function renderDay(dateString) {
         selectedDayTitle.textContent = formatReadableDate(dateString);
 
@@ -300,7 +335,7 @@
             return;
         }
 
-        dayContent.innerHTML = '<div class="rest-day">Rest Day — no workout scheduled.</div>';
+        dayContent.innerHTML = '<article class="rest-day">Rest Day — no workout scheduled.</article>';
     }
 
     document.querySelectorAll('.day-btn').forEach(button => {
@@ -311,6 +346,7 @@
         });
     });
 
+    renderCalendarIndicators();
     renderDay(dashboardData.today);
 </script>
 

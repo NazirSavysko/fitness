@@ -139,7 +139,7 @@
     background: #f9fafc;
 }
 
-.day-chip input:checked + span {
+.day-chip input[type="checkbox"]:checked ~ span {
     background: #4318FF;
     color: #fff;
     border-color: #4318FF;
