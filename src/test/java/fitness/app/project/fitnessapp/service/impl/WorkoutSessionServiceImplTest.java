@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,27 +62,65 @@ class WorkoutSessionServiceImplTest {
 
         when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
         when(userService.getUserByEmail("user@mail.com")).thenReturn(user);
-        when(workoutSessionRepository.save(any(WorkoutSession.class))).thenReturn(saved);
+        when(workoutSessionRepository.saveAndFlush(any(WorkoutSession.class))).thenReturn(saved);
+        when(sessionExerciseRepository.saveAll(anyList())).thenAnswer(invocation -> {
+            final List<SessionExercise> exercises = invocation.getArgument(0);
+            for (int index = 0; index < exercises.size(); index++) {
+                exercises.get(index).setId(index + 100);
+            }
+            return exercises;
+        });
+        when(exerciseSetRepository.saveAll(anyList())).thenAnswer(invocation -> invocation.getArgument(0));
 
         final Integer sessionId = workoutSessionService.startWorkout(10, "user@mail.com");
 
-        final ArgumentCaptor<WorkoutSession> captor = ArgumentCaptor.forClass(WorkoutSession.class);
-        verify(workoutSessionRepository).save(captor.capture());
-        final WorkoutSession created = captor.getValue();
+        final ArgumentCaptor<WorkoutSession> sessionCaptor = ArgumentCaptor.forClass(WorkoutSession.class);
+        verify(workoutSessionRepository).saveAndFlush(sessionCaptor.capture());
+        final WorkoutSession created = sessionCaptor.getValue();
+
+        final ArgumentCaptor<List<SessionExercise>> exercisesCaptor = ArgumentCaptor.forClass(List.class);
+        verify(sessionExerciseRepository).saveAll(exercisesCaptor.capture());
+        final List<SessionExercise> savedExercises = exercisesCaptor.getValue();
+
+        final ArgumentCaptor<List<ExerciseSet>> setsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(exerciseSetRepository).saveAll(setsCaptor.capture());
+        final List<ExerciseSet> savedSets = setsCaptor.getValue();
 
         assertEquals(42, sessionId);
         assertSame(user, created.getUser());
         assertSame(template, created.getSourceTemplate());
-        assertEquals(2, created.getExercises().size());
-        assertEquals(0, created.getExercises().get(0).getOrderIndex());
-        assertEquals(4, created.getExercises().get(0).getExercise().getId());
-        assertEquals(3, created.getExercises().get(0).getSets().size());
-        assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(0).getSetType());
-        assertEquals(SetType.NORMAL, created.getExercises().get(0).getSets().get(1).getSetType());
-        assertEquals(SetType.FAILURE, created.getExercises().get(0).getSets().get(2).getSetType());
-        assertEquals(1, created.getExercises().get(1).getOrderIndex());
-        assertEquals(7, created.getExercises().get(1).getExercise().getId());
-        assertEquals(1, created.getExercises().get(1).getSets().size());
+        assertEquals(2, savedExercises.size());
+        assertEquals(0, savedExercises.get(0).getOrderIndex());
+        assertEquals(4, savedExercises.get(0).getExercise().getId());
+        assertEquals(3, savedExercises.get(0).getSets().size());
+        assertEquals(SetType.NORMAL, savedExercises.get(0).getSets().get(0).getSetType());
+        assertEquals(SetType.NORMAL, savedExercises.get(0).getSets().get(1).getSetType());
+        assertEquals(SetType.FAILURE, savedExercises.get(0).getSets().get(2).getSetType());
+        assertEquals(1, savedExercises.get(1).getOrderIndex());
+        assertEquals(7, savedExercises.get(1).getExercise().getId());
+        assertEquals(1, savedExercises.get(1).getSets().size());
+        assertEquals(4, savedSets.size());
+    }
+
+    @Test
+    void startWorkoutWithNullTemplateExercisesSkipsChildEntitySaves() {
+        final WorkoutTemplate template = new WorkoutTemplate();
+        template.setExercises(null);
+        final User user = new User();
+        final WorkoutSession saved = new WorkoutSession();
+        saved.setId(99);
+        saved.setExercises(new ArrayList<>());
+
+        when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
+        when(userService.getUserByEmail("user@mail.com")).thenReturn(user);
+        when(workoutSessionRepository.saveAndFlush(any(WorkoutSession.class))).thenReturn(saved);
+
+        final Integer sessionId = workoutSessionService.startWorkout(10, "user@mail.com");
+
+        assertEquals(99, sessionId);
+        assertEquals(0, saved.getExercises().size());
+        verify(sessionExerciseRepository, never()).saveAll(anyList());
+        verify(exerciseSetRepository, never()).saveAll(anyList());
     }
 
     @Test

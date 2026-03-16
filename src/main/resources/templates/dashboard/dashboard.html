@@ -55,82 +55,302 @@
             </button>
         </header>
 
-        <div class="dashboard-grid">
+        <div class="dashboard-content">
+            <section id="templatesSection" class="templates-section">
+                <div class="templates-section-header">
+                    <h3 class="section-title">My Templates</h3>
+                    <a href="/templates" class="section-link">Manage</a>
+                </div>
 
-            <div class="card">
-                <h3 class="card-title">Quick Start</h3>
-                <div class="workout-actions">
-                    <form th:action="@{/workouts/start}" method="post" class="action-form">
-                        <button class="workout-btn empty-btn">
-                            <div class="icon-box"><i class="fa-solid fa-play"></i></div>
-                            <div class="text-box">
-                                <span class="main-text">Start Empty</span>
-                                <span class="sub-text">No template</span>
-                            </div>
+                <div id="templateGrid" class="template-grid"></div>
+
+                <div id="emptyTemplateState" class="empty-template-state" th:if="${#lists.isEmpty(templates)}">
+                    <p>No templates yet.</p>
+                    <a href="/templates/create">Create your first template</a>
+                </div>
+            </section>
+
+            <section id="completedDayCard" class="completed-day-card" hidden>
+                <div class="completed-day-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="completed-day-copy">
+                    <h3>Workout already done for this day</h3>
+                    <p>One workout per day is enabled, so template starts are disabled for the selected date.</p>
+                </div>
+                <a href="/history" class="completed-day-link">Open history</a>
+            </section>
+
+            <section class="calendar-card">
+                <div class="calendar-header">
+                    <p class="calendar-kicker">Workout schedule</p>
+                    <div class="calendar-nav">
+                        <button type="button" class="calendar-nav-btn" id="prevMonthBtn" aria-label="Previous month">
+                            <i class="fa-solid fa-arrow-left"></i>
                         </button>
-                    </form>
-
-                    <div class="template-select-wrapper">
-                        <button type="button" class="workout-btn template-btn" onclick="toggleTemplateDropdown()">
-                            <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
-                            <div class="text-box">
-                                <span class="main-text">From Template</span>
-                                <span class="sub-text">Select & Start</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                        <h2 id="calendarMonthLabel" class="calendar-month-label">March 2026</h2>
+                        <button type="button" class="calendar-nav-btn" id="nextMonthBtn" aria-label="Next month">
+                            <i class="fa-solid fa-arrow-right"></i>
                         </button>
-
-                        <div id="templateDropdown" class="template-dropdown-menu">
-                            <div th:if="${#lists.isEmpty(templates)}" class="dropdown-item empty">
-                                <span>No templates yet.</span>
-                                <a href="/templates/create" class="create-link">Create one?</a>
-                            </div>
-
-                            <div th:each="tpl : ${templates}">
-                                <form th:action="@{/workouts/start}" method="post">
-                                    <input type="hidden" name="templateId" th:value="${tpl.id}">
-
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="tpl-name" th:text="${tpl.name}">Template Name</span>
-                                        <i class="fa-solid fa-play play-icon"></i>
-                                    </button>
-                                </form>
-                            </div>
-
-                            <a href="/templates" class="dropdown-footer-link">Manage Templates</a>
-                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="card full-width-card">
-                <h3 class="card-title">Last Workout</h3>
-                <div class="empty-state">
-                    <p>No activity recorded yet.</p>
+                <div class="calendar-weekdays">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
                 </div>
-            </div>
-
+                <div id="monthlyCalendar" class="monthly-calendar"></div>
+            </section>
         </div>
     </main>
 </div>
 
 <script th:src="@{/js/menu-toggle.js}"></script>
-<script>
-    function toggleTemplateDropdown() {
-        const dropdown = document.getElementById('templateDropdown');
-        const btn = document.querySelector('.template-btn');
+<script th:inline="javascript">
+    const templates = /*[[${templates}]]*/ [];
+    const templateScheduleByTemplateId = /*[[${templateScheduleByTemplateId}]]*/ {};
+    const completedWorkoutDayKeys = /*[[${completedWorkoutDayKeys}]]*/ [];
 
-        dropdown.classList.toggle('show');
-        btn.classList.toggle('active');
+    const monthlyCalendar = document.getElementById('monthlyCalendar');
+    const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+    const templateGrid = document.getElementById('templateGrid');
+    const completedDayCard = document.getElementById('completedDayCard');
+    const templatesSection = document.getElementById('templatesSection');
+    const emptyTemplateState = document.getElementById('emptyTemplateState');
+
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+    let selectedDate = new Date(today);
+
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+        moveMonth(-1);
+        renderCalendar();
+        renderTemplates();
+        updateSelectedDayState();
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+        moveMonth(1);
+        renderCalendar();
+        renderTemplates();
+        updateSelectedDayState();
+    });
+
+    function moveMonth(offset) {
+        const nextMonthDate = new Date(currentYear, currentMonth + offset, 1);
+        currentMonth = nextMonthDate.getMonth();
+        currentYear = nextMonthDate.getFullYear();
+        selectedDate = new Date(currentYear, currentMonth, 1);
     }
 
-    window.addEventListener('click', function(e) {
-        const wrapper = document.querySelector('.template-select-wrapper');
-        if (!wrapper.contains(e.target)) {
-            document.getElementById('templateDropdown').classList.remove('show');
-            document.querySelector('.template-btn').classList.remove('active');
+    function formatDateKey(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    function formatWeekdayKey(date) {
+        return date.toLocaleDateString('en-US', {weekday: 'long'}).toUpperCase();
+    }
+
+    function normalizeToArray(value) {
+        if (Array.isArray(value)) {
+            return value;
         }
-    });
+        if (!value) {
+            return [];
+        }
+        if (typeof value === 'object') {
+            return Object.values(value).flatMap((item) => normalizeToArray(item));
+        }
+        return [value];
+    }
+
+    function tokenMatchesDate(token, dayKey, dateKey) {
+        const normalized = String(token || '').toUpperCase();
+        return normalized === dayKey || normalized === dateKey;
+    }
+
+    function hasCompletedWorkout(date) {
+        const dateKey = formatDateKey(date);
+        const dayKey = formatWeekdayKey(date);
+        return normalizeToArray(completedWorkoutDayKeys).some((token) => tokenMatchesDate(token, dayKey, dateKey));
+    }
+
+    function getTemplateScheduleTokens(templateId) {
+        if (!templateScheduleByTemplateId || !templateScheduleByTemplateId[templateId]) {
+            return [];
+        }
+        return normalizeToArray(templateScheduleByTemplateId[templateId]);
+    }
+
+    function isTemplateScheduledForDate(template, date) {
+        const dateKey = formatDateKey(date);
+        const dayKey = formatWeekdayKey(date);
+        return getTemplateScheduleTokens(template.id).some((token) => tokenMatchesDate(token, dayKey, dateKey));
+    }
+
+    function hasScheduledTemplate(date) {
+        return templates.some((template) => isTemplateScheduledForDate(template, date));
+    }
+
+    function renderDay(date) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'day-btn';
+
+        const dateLabel = date.getDate();
+        const selected = formatDateKey(date) === formatDateKey(selectedDate);
+        const planned = hasScheduledTemplate(date);
+        const completed = hasCompletedWorkout(date);
+
+        if (selected) {
+            button.classList.add('active');
+        }
+
+        if (formatDateKey(date) === formatDateKey(today)) {
+            button.classList.add('today');
+        }
+
+        button.innerHTML = `
+            <span class="date-label">${dateLabel}</span>
+            <span class="indicator-row">
+                ${planned ? '<span class="indicator-dot planned"></span>' : ''}
+                ${completed ? '<span class="indicator-dot completed"></span>' : ''}
+            </span>
+        `;
+
+        button.addEventListener('click', () => {
+            selectedDate = new Date(date);
+            renderCalendar();
+            renderTemplates();
+            updateSelectedDayState();
+        });
+
+        return button;
+    }
+
+    function renderPaddingDay() {
+        const filler = document.createElement('button');
+        filler.type = 'button';
+        filler.className = 'day-btn day-placeholder';
+        filler.disabled = true;
+        filler.innerHTML = `
+            <span class="date-label"></span>
+            <span class="indicator-row"></span>
+        `;
+        return filler;
+    }
+
+    function renderCalendar() {
+        monthlyCalendar.innerHTML = '';
+        const monthDate = new Date(currentYear, currentMonth, 1);
+        const monthText = monthDate.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+        calendarMonthLabel.textContent = monthText;
+
+        const firstWeekday = (monthDate.getDay() + 6) % 7;
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let pad = 0; pad < firstWeekday; pad++) {
+            monthlyCalendar.appendChild(renderPaddingDay());
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayDate = new Date(currentYear, currentMonth, day);
+            monthlyCalendar.appendChild(renderDay(dayDate));
+        }
+
+        const totalCells = firstWeekday + daysInMonth;
+        const trailingPads = (7 - (totalCells % 7)) % 7;
+        for (let pad = 0; pad < trailingPads; pad++) {
+            monthlyCalendar.appendChild(renderPaddingDay());
+        }
+    }
+
+    function renderTemplates() {
+        if (emptyTemplateState) {
+            emptyTemplateState.hidden = templates.length !== 0;
+        }
+        if (!templateGrid) {
+            return;
+        }
+
+        templateGrid.innerHTML = '';
+        const completed = hasCompletedWorkout(selectedDate);
+        const sortedTemplates = [...templates].sort((templateA, templateB) => {
+            const leftScheduled = isTemplateScheduledForDate(templateA, selectedDate);
+            const rightScheduled = isTemplateScheduledForDate(templateB, selectedDate);
+            if (leftScheduled === rightScheduled) {
+                return templateA.name.localeCompare(templateB.name);
+            }
+            return leftScheduled ? -1 : 1;
+        });
+
+        sortedTemplates.forEach((template) => {
+            const scheduled = isTemplateScheduledForDate(template, selectedDate);
+            const card = document.createElement('form');
+            card.method = 'post';
+            card.action = '/workouts/start';
+            card.className = `template-card${scheduled ? ' scheduled' : ''}${completed ? ' locked' : ''}`;
+
+            const badgeText = scheduled ? 'Scheduled' : 'Available';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'templateId';
+            input.value = String(template.id ?? '');
+
+            const cardButton = document.createElement('button');
+            cardButton.type = 'submit';
+            cardButton.className = 'template-card-btn';
+            cardButton.disabled = completed;
+
+            const cardHeader = document.createElement('div');
+            cardHeader.className = 'template-card-header';
+            const title = document.createElement('h4');
+            title.textContent = String(template.name || '');
+
+            const badge = document.createElement('span');
+            badge.className = 'template-badge';
+            badge.textContent = badgeText;
+            cardHeader.appendChild(title);
+            cardHeader.appendChild(badge);
+
+            const startRow = document.createElement('div');
+            startRow.className = 'template-start-row';
+
+            const icon = document.createElement('i');
+            icon.className = 'fa-solid fa-play';
+            icon.setAttribute('aria-hidden', 'true');
+
+            const label = document.createElement('span');
+            label.textContent = 'Start';
+
+            startRow.appendChild(icon);
+            startRow.appendChild(label);
+
+            cardButton.appendChild(cardHeader);
+            cardButton.appendChild(startRow);
+
+            card.appendChild(input);
+            card.appendChild(cardButton);
+
+            templateGrid.appendChild(card);
+        });
+    }
+
+    function updateSelectedDayState() {
+        const completed = hasCompletedWorkout(selectedDate);
+        completedDayCard.hidden = !completed;
+        templatesSection.hidden = completed;
+    }
+
+    renderCalendar();
+    renderTemplates();
+    updateSelectedDayState();
 </script>
 
 </body>
