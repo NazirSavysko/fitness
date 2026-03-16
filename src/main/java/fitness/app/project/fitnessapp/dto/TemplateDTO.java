@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 public record TemplateDTO(
@@ -16,5 +17,7 @@ public record TemplateDTO(
         String name,
         @Valid
         @NotEmpty(message = "You must add at least one exercise")
-        List<TemplateExerciseDTO> exercises
+        List<TemplateExerciseDTO> exercises,
+        @NotNull(message = "Please select a day of the week")
+        DayOfWeek scheduledDay
 ) {}

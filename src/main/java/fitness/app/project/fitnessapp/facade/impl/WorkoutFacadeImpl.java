@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
@@ -63,9 +64,11 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                         workoutSession.getId(),
                         workoutSession.getSourceTemplate() == null ? "Free Workout" : workoutSession.getSourceTemplate().getName(),
                         workoutSession.getStartedAt().format(DATE_TIME_DISPLAY_FORMAT),
+                        workoutSession.getStartedAt().toLocalDate().toString(),
                         calculateDurationInMinutes(workoutSession),
                         calculateTotalSets(workoutSession),
-                        calculateMuscleGroups(workoutSession)
+                        calculateMuscleGroups(workoutSession),
+                        calculateCompletionPercentage(workoutSession)
                 ));
     }
 
@@ -125,5 +128,44 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                 .map(exerciseDefinition -> exerciseDefinition.getMuscleGroup().trim())
                 .filter(muscleGroup -> !muscleGroup.isEmpty())
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    private static int calculateCompletionPercentage(final WorkoutSession workoutSession) {
+        final int expectedSets = calculateExpectedSets(workoutSession);
+        if (expectedSets == 0) {
+            return 0;
+        }
+        final int completedSets = calculateCompletedSets(workoutSession);
+        return (completedSets * 100) / expectedSets;
+    }
+
+    private static int calculateExpectedSets(final WorkoutSession workoutSession) {
+        if (workoutSession.getSourceTemplate() == null || workoutSession.getSourceTemplate().getExercises() == null) {
+            return 0;
+        }
+        return workoutSession.getSourceTemplate().getExercises().stream()
+                .filter(templateExercise -> templateExercise != null)
+                .mapToInt(templateExercise -> sanitizeSetCount(templateExercise.getNormalSets()) + sanitizeSetCount(templateExercise.getFailureSets()))
+                .sum();
+    }
+
+    private static int calculateCompletedSets(final WorkoutSession workoutSession) {
+        if (workoutSession.getExercises() == null) {
+            return 0;
+        }
+        return workoutSession.getExercises().stream()
+                .filter(sessionExercise -> sessionExercise != null && sessionExercise.getSets() != null)
+                .flatMap(sessionExercise -> sessionExercise.getSets().stream())
+                .filter(exerciseSet -> exerciseSet != null
+                        && exerciseSet.getWeight() != null
+                        && exerciseSet.getWeight().compareTo(BigDecimal.ZERO) > 0
+                        && exerciseSet.getReps() != null
+                        && exerciseSet.getReps() > 0)
+                .mapToInt(set -> 1)
+                .sum();
+    }
+
+    private static int sanitizeSetCount(final Integer setCount) {
+        return setCount == null || setCount < 0 ? 0 : setCount;
     }
 }

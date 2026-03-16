@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -30,9 +31,16 @@ public final class WorkoutSessionController {
     private final WorkoutFacade workoutFacade;
 
     @PostMapping("/start")
-    public String startWorkout(@RequestParam(required = false) final Integer templateId, final Principal principal) {
-        final Integer workoutId = this.workoutFacade.startWorkout(templateId, principal.getName());
-        return "redirect:/workouts/" + workoutId + "/active";
+    public String startWorkout(@RequestParam(required = false) final Integer templateId,
+                               final Principal principal,
+                               final RedirectAttributes redirectAttributes) {
+        try {
+            final Integer workoutId = this.workoutFacade.startWorkout(templateId, principal.getName());
+            return "redirect:/workouts/" + workoutId + "/active";
+        } catch (IllegalStateException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/dashboard";
+        }
     }
 
     @GetMapping("/{id}/active")

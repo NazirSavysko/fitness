@@ -18,12 +18,19 @@ class DashboardRedesignTemplateTest {
 
         assertTrue(content.contains("id=\"monthlyCalendar\""));
         assertTrue(content.contains("class=\"calendar-weekdays\""));
-        assertTrue(content.contains("class=\"indicator-dot planned\""));
-        assertTrue(content.contains("class=\"indicator-dot completed\""));
+        assertTrue(content.contains("class=\"planned-icon\""));
+        assertTrue(content.contains("class=\"completion-badge\""));
         assertTrue(content.contains("My Templates"));
         assertTrue(content.contains("card.action = '/workouts/start';"));
         assertTrue(content.contains("input.name = 'templateId';"));
+        assertTrue(content.contains("const dayTemplates = dashboardData.templates.filter(t => t.scheduledDay === dayKey);"));
+        assertTrue(content.contains("No workout scheduled for this day. Rest and recover!"));
+        assertTrue(content.contains("completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. ${COMPLETED_DAY_SUFFIX}`;"));
         assertTrue(content.contains("templatesSection.hidden = completed;"));
+        assertTrue(content.contains("th:if=\"${errorMessage}\" class=\"alert alert-danger\""));
+        assertTrue(content.contains("const getLocalISODate = (date) => {"));
+        assertTrue(content.contains("selectedDateIsToday"));
+        assertFalse(content.contains("date.toISOString().split('T')[0]"));
         assertTrue(content.indexOf("id=\"templatesSection\"") < content.indexOf("class=\"calendar-card\""));
         assertFalse(content.contains("id=\"selectedDayTitle\""));
         assertFalse(content.contains("id=\"weeklyCalendar\""));

@@ -19,11 +19,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
@@ -121,6 +124,35 @@ class WorkoutSessionServiceImplTest {
         assertEquals(0, saved.getExercises().size());
         verify(sessionExerciseRepository, never()).saveAll(anyList());
         verify(exerciseSetRepository, never()).saveAll(anyList());
+    }
+
+    @Test
+    void startWorkoutThrowsWhenWorkoutAlreadyExistsForCurrentDay() {
+        when(workoutSessionRepository.existsByUser_EmailAndStartedAtBetween(
+                org.mockito.ArgumentMatchers.eq("user@mail.com"),
+                org.mockito.ArgumentMatchers.any(LocalDateTime.class),
+                org.mockito.ArgumentMatchers.any(LocalDateTime.class)
+        )).thenReturn(true);
+
+        assertThrows(IllegalStateException.class, () -> workoutSessionService.startWorkout(10, "user@mail.com"));
+
+        verify(workoutSessionRepository, never()).saveAndFlush(any(WorkoutSession.class));
+    }
+
+    @Test
+    void startWorkoutThrowsWhenTemplateIsNotScheduledForToday() {
+        final WorkoutTemplate template = new WorkoutTemplate();
+        final DayOfWeek notToday = java.time.LocalDate.now().getDayOfWeek().plus(1);
+        template.setScheduledDay(notToday);
+        when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
+
+        final IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> workoutSessionService.startWorkout(10, "user@mail.com")
+        );
+
+        assertEquals("You can only start templates scheduled for today.", exception.getMessage());
+        verify(workoutSessionRepository, never()).saveAndFlush(any(WorkoutSession.class));
     }
 
     @Test

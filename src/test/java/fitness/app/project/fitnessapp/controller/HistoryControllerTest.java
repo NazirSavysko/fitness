@@ -33,7 +33,7 @@ class HistoryControllerTest {
         template.setId(5);
         template.setName("Leg Day");
         when(workoutFacade.getHistory(eq("user@mail.com"), eq(5L), eq("LAST_30_DAYS"), eq("DATE_ASC"), any(PageRequest.class)))
-                .thenReturn(new PageImpl<>(List.of(new WorkoutHistoryCardDTO(1, "Free Workout", "Jan 10, 2026", 45, 8, ""))));
+                .thenReturn(new PageImpl<>(List.of(new WorkoutHistoryCardDTO(1, "Free Workout", "Jan 10, 2026", "2026-01-10", 45, 8, "", 100))));
         when(workoutTemplateService.getTemplatesByUserEmail("user@mail.com")).thenReturn(List.of(template));
 
         final String result = historyController.getHistoryPage(2, 5L, "LAST_30_DAYS", "DATE_ASC", model, principal);

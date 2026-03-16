@@ -11,9 +11,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -24,6 +26,15 @@ import java.util.List;
 public final class TemplateController {
     private static final Comparator<TemplateExerciseDTO> ORDER_INDEX_COMPARATOR =
             Comparator.comparing(TemplateExerciseDTO::orderIndex, Comparator.nullsLast(Integer::compareTo));
+    private static final List<DayOfWeek> SCHEDULABLE_DAYS = List.of(
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY,
+            DayOfWeek.SATURDAY,
+            DayOfWeek.SUNDAY
+    );
 
     private final TemplateFacade templateFacade;
 
@@ -50,9 +61,10 @@ public final class TemplateController {
     @GetMapping("/create")
     public String getCreatePage(final Model model) {
         final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
-        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>());
+        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>(), null);
         model.addAttribute("templateDto", formDto);
         model.addAttribute("exercises", exercises);
+        model.addAttribute("weekdays", SCHEDULABLE_DAYS);
 
         return "workout-templates/create";
     }
@@ -61,17 +73,24 @@ public final class TemplateController {
     public String createTemplate(final @Valid @ModelAttribute("templateDto") CreateTemplateDTO createTemplateDTO,
                                  final BindingResult result,
                                  final Principal principal,
-                                 final Model model) {
+                                 final Model model,
+                                 final RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
             model.addAttribute("exercises", exercises);
+            model.addAttribute("weekdays", SCHEDULABLE_DAYS);
             model.addAttribute("errors", result.getAllErrors());
 
             return "workout-templates/create";
         }
 
-        this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
+        try {
+            this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/templates/create";
+        }
 
 
         return "redirect:/templates";
@@ -91,11 +110,13 @@ public final class TemplateController {
                                 exercise.normalSets() == null ? 0 : exercise.normalSets(),
                                 exercise.failureSets() == null ? 0 : exercise.failureSets()
                         ))
-                        .toList()
+                        .toList(),
+                templateDTO.scheduledDay()
         );
 
         model.addAttribute("UpdateTemplateDto", updateTemplateDTO);
         model.addAttribute("exercises", exercises);
+        model.addAttribute("weekdays", SCHEDULABLE_DAYS);
 
         return "workout-templates/update";
     }
@@ -103,16 +124,23 @@ public final class TemplateController {
     public String editTemplate(final @Valid @ModelAttribute("UpdateTemplateDto") UpdateTemplateDTO templateDTO,
                                final BindingResult result,
                                final Principal principal,
-                               final Model model) {
+                               final Model model,
+                               final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
             model.addAttribute("exercises", exercises);
+            model.addAttribute("weekdays", SCHEDULABLE_DAYS);
 
 
             return "workout-templates/update";
         }
 
-        this.templateFacade.updateTemplate(templateDTO, principal.getName());
+        try {
+            this.templateFacade.updateTemplate(templateDTO, principal.getName());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/templates/edit/" + templateDTO.id();
+        }
 
         return "redirect:/templates";
     }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,4 +37,8 @@ public final class WorkoutTemplate {
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     private List<TemplateExercise> exercises;
+
+    @Column(name = "scheduled_day")
+    @Enumerated(EnumType.STRING)
+    private DayOfWeek scheduledDay;
 }

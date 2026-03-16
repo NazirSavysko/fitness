@@ -76,10 +76,12 @@
                 </div>
                 <div class="completed-day-copy">
                     <h3>Workout already done for this day</h3>
-                    <p>One workout per day is enabled, so template starts are disabled for the selected date.</p>
+                    <p id="completedDayCopy">One workout per day is enabled, so template starts are disabled for the selected date.</p>
                 </div>
                 <a href="/history" class="completed-day-link">Open history</a>
             </section>
+
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}" style="background: #ffe6e6; color: #d93025; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;"></div>
 
             <section class="calendar-card">
                 <div class="calendar-header">
@@ -111,14 +113,21 @@
 
 <script th:src="@{/js/menu-toggle.js}"></script>
 <script th:inline="javascript">
-    const templates = /*[[${templates}]]*/ [];
-    const templateScheduleByTemplateId = /*[[${templateScheduleByTemplateId}]]*/ {};
+    const dashboardData = {
+        templates: /*[[${templates}]]*/ []
+    };
+    const EMPTY_DAY_MESSAGE = 'No workout scheduled for this day. Rest and recover!';
+    const COMPLETED_DAY_SUFFIX = 'One workout per day is enabled, so template starts are disabled for the selected date.';
+    const TODAY_START_CONFIG = {iconClass: 'fa-solid fa-play', label: 'Start'};
+    const NON_TODAY_START_CONFIG = {iconClass: 'fa-solid fa-calendar-day', label: 'Scheduled'};
     const completedWorkoutDayKeys = /*[[${completedWorkoutDayKeys}]]*/ [];
+    const workoutCompletionByDate = /*[[${workoutCompletionByDate}]]*/ {};
 
     const monthlyCalendar = document.getElementById('monthlyCalendar');
     const calendarMonthLabel = document.getElementById('calendarMonthLabel');
     const templateGrid = document.getElementById('templateGrid');
     const completedDayCard = document.getElementById('completedDayCard');
+    const completedDayCopy = document.getElementById('completedDayCopy');
     const templatesSection = document.getElementById('templatesSection');
     const emptyTemplateState = document.getElementById('emptyTemplateState');
 
@@ -148,12 +157,21 @@
         selectedDate = new Date(currentYear, currentMonth, 1);
     }
 
+    const getLocalISODate = (date) => {
+        const d = new Date(date);
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    };
+
     function formatDateKey(date) {
-        return date.toISOString().split('T')[0];
+        return getLocalISODate(date);
     }
 
     function formatWeekdayKey(date) {
         return date.toLocaleDateString('en-US', {weekday: 'long'}).toUpperCase();
+    }
+
+    function normalizeToMidnight(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
 
     function normalizeToArray(value) {
@@ -169,32 +187,25 @@
         return [value];
     }
 
-    function tokenMatchesDate(token, dayKey, dateKey) {
-        const normalized = String(token || '').toUpperCase();
-        return normalized === dayKey || normalized === dateKey;
-    }
-
     function hasCompletedWorkout(date) {
-        const dateKey = formatDateKey(date);
-        const dayKey = formatWeekdayKey(date);
-        return normalizeToArray(completedWorkoutDayKeys).some((token) => tokenMatchesDate(token, dayKey, dateKey));
+        return Number.isInteger(getWorkoutCompletionPercentage(date));
     }
 
-    function getTemplateScheduleTokens(templateId) {
-        if (!templateScheduleByTemplateId || !templateScheduleByTemplateId[templateId]) {
-            return [];
+    function getWorkoutCompletionPercentage(date) {
+        const dateKey = formatDateKey(date);
+        if (workoutCompletionByDate && Object.prototype.hasOwnProperty.call(workoutCompletionByDate, dateKey)) {
+            return Number(workoutCompletionByDate[dateKey]);
         }
-        return normalizeToArray(templateScheduleByTemplateId[templateId]);
+        return null;
     }
 
     function isTemplateScheduledForDate(template, date) {
-        const dateKey = formatDateKey(date);
         const dayKey = formatWeekdayKey(date);
-        return getTemplateScheduleTokens(template.id).some((token) => tokenMatchesDate(token, dayKey, dateKey));
+        return String(template.scheduledDay || '').toUpperCase() === dayKey;
     }
 
     function hasScheduledTemplate(date) {
-        return templates.some((template) => isTemplateScheduledForDate(template, date));
+        return dashboardData.templates.some((template) => isTemplateScheduledForDate(template, date));
     }
 
     function renderDay(date) {
@@ -206,6 +217,7 @@
         const selected = formatDateKey(date) === formatDateKey(selectedDate);
         const planned = hasScheduledTemplate(date);
         const completed = hasCompletedWorkout(date);
+        const completionPercentage = getWorkoutCompletionPercentage(date);
 
         if (selected) {
             button.classList.add('active');
@@ -218,8 +230,8 @@
         button.innerHTML = `
             <span class="date-label">${dateLabel}</span>
             <span class="indicator-row">
-                ${planned ? '<span class="indicator-dot planned"></span>' : ''}
-                ${completed ? '<span class="indicator-dot completed"></span>' : ''}
+                ${completed ? `<span class="completion-badge">${completionPercentage}%</span>` : ''}
+                ${!completed && planned ? '<span class="planned-icon" aria-hidden="true">🏋️‍♂️</span>' : ''}
             </span>
         `;
 
@@ -272,41 +284,35 @@
 
     function renderTemplates() {
         if (emptyTemplateState) {
-            emptyTemplateState.hidden = templates.length !== 0;
+            emptyTemplateState.hidden = true;
         }
         if (!templateGrid) {
             return;
         }
 
         templateGrid.innerHTML = '';
+        const dayKey = formatWeekdayKey(selectedDate);
+        const dayTemplates = dashboardData.templates.filter(t => t.scheduledDay === dayKey);
         const completed = hasCompletedWorkout(selectedDate);
-        const sortedTemplates = [...templates].sort((templateA, templateB) => {
-            const leftScheduled = isTemplateScheduledForDate(templateA, selectedDate);
-            const rightScheduled = isTemplateScheduledForDate(templateB, selectedDate);
-            if (leftScheduled === rightScheduled) {
-                return templateA.name.localeCompare(templateB.name);
-            }
-            return leftScheduled ? -1 : 1;
-        });
+        const completionPercentage = getWorkoutCompletionPercentage(selectedDate);
+        const selectedDateIsToday = normalizeToMidnight(selectedDate).getTime() === normalizeToMidnight(today).getTime();
+        if (dayTemplates.length === 0) {
+            templateGrid.innerHTML = `<div class="empty-state">${EMPTY_DAY_MESSAGE}</div>`;
+            return;
+        }
+
+        const sortedTemplates = [...dayTemplates].sort((templateA, templateB) => templateA.name.localeCompare(templateB.name));
 
         sortedTemplates.forEach((template) => {
-            const scheduled = isTemplateScheduledForDate(template, selectedDate);
             const card = document.createElement('form');
             card.method = 'post';
             card.action = '/workouts/start';
-            card.className = `template-card${scheduled ? ' scheduled' : ''}${completed ? ' locked' : ''}`;
-
-            const badgeText = scheduled ? 'Scheduled' : 'Available';
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'templateId';
-            input.value = String(template.id ?? '');
+            card.className = `template-card scheduled${completed ? ' locked' : ''}`;
 
             const cardButton = document.createElement('button');
             cardButton.type = 'submit';
             cardButton.className = 'template-card-btn';
-            cardButton.disabled = completed;
+            cardButton.disabled = completed || !selectedDateIsToday;
 
             const cardHeader = document.createElement('div');
             cardHeader.className = 'template-card-header';
@@ -315,27 +321,32 @@
 
             const badge = document.createElement('span');
             badge.className = 'template-badge';
-            badge.textContent = badgeText;
+            badge.textContent = 'Scheduled';
             cardHeader.appendChild(title);
             cardHeader.appendChild(badge);
 
             const startRow = document.createElement('div');
             startRow.className = 'template-start-row';
 
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'templateId';
+            input.value = String(template.id ?? '');
+            card.appendChild(input);
+
+            const startConfig = selectedDateIsToday ? TODAY_START_CONFIG : NON_TODAY_START_CONFIG;
             const icon = document.createElement('i');
-            icon.className = 'fa-solid fa-play';
+            icon.className = startConfig.iconClass;
             icon.setAttribute('aria-hidden', 'true');
 
             const label = document.createElement('span');
-            label.textContent = 'Start';
+            label.textContent = startConfig.label;
 
             startRow.appendChild(icon);
             startRow.appendChild(label);
 
             cardButton.appendChild(cardHeader);
             cardButton.appendChild(startRow);
-
-            card.appendChild(input);
             card.appendChild(cardButton);
 
             templateGrid.appendChild(card);
@@ -344,7 +355,11 @@
 
     function updateSelectedDayState() {
         const completed = hasCompletedWorkout(selectedDate);
+        const completionPercentage = getWorkoutCompletionPercentage(selectedDate);
         completedDayCard.hidden = !completed;
+        if (completedDayCopy && Number.isInteger(completionPercentage)) {
+            completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. ${COMPLETED_DAY_SUFFIX}`;
+        }
         templatesSection.hidden = completed;
     }
 

@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,5 +65,23 @@ public final class WorkoutTemplateServiceImpl implements WorkoutTemplateService 
         }
 
         return templateExercises;
+    }
+
+    @Override
+    public void validateScheduledDayConflicts(final String email,
+                                              final DayOfWeek scheduledDay,
+                                              final Integer templateIdToExclude) {
+        if (scheduledDay == null) {
+            return;
+        }
+
+        final List<WorkoutTemplate> existingTemplates = this.workoutTemplateRepository.findAllByUser_Email(email);
+        final boolean hasConflict = existingTemplates.stream()
+                .filter(template -> templateIdToExclude == null || !templateIdToExclude.equals(template.getId()))
+                .map(WorkoutTemplate::getScheduledDay)
+                .anyMatch(scheduledDay::equals);
+        if (hasConflict) {
+            throw new IllegalArgumentException("Day conflict: You already have a template scheduled for " + scheduledDay + ".");
+        }
     }
 }

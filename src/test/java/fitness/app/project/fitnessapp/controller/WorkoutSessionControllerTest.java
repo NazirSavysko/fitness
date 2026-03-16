@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -74,5 +75,16 @@ class WorkoutSessionControllerTest {
 
         assertEquals(HttpStatusCode.valueOf(200), response.getStatusCode());
         verify(workoutFacade).bulkUpdateSets(updates, "user@mail.com");
+    }
+
+    @Test
+    void startWorkoutRedirectsToDashboardWithErrorWhenFacadeThrows() {
+        final RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+        when(workoutFacade.startWorkout(3, "user@mail.com")).thenThrow(new IllegalStateException("Only one workout is allowed per day."));
+
+        final String result = workoutSessionController.startWorkout(3, principal, redirectAttributes);
+
+        assertEquals("redirect:/dashboard", result);
+        assertEquals("Only one workout is allowed per day.", redirectAttributes.getFlashAttributes().get("errorMessage"));
     }
 }
