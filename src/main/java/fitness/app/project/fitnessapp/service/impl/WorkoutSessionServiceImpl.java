@@ -60,10 +60,7 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         final WorkoutTemplate workoutTemplate = templateId == null
                 ? null
                 : this.workoutTemplateService.getWorkoutTemplateById(templateId, userEmail);
-        if (workoutTemplate != null
-                && workoutTemplate.getScheduledDays() != null
-                && !workoutTemplate.getScheduledDays().isEmpty()
-                && !workoutTemplate.getScheduledDays().contains(LocalDate.now().getDayOfWeek())) {
+        if (!canStartTemplateToday(workoutTemplate)) {
             throw new IllegalStateException("You can only start templates scheduled for today.");
         }
 
@@ -110,6 +107,13 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
         savedSession.setExercises(savedExercises);
         return savedSession.getId();
+    }
+
+    private static boolean canStartTemplateToday(final WorkoutTemplate workoutTemplate) {
+        return workoutTemplate == null
+                || workoutTemplate.getScheduledDays() == null
+                || workoutTemplate.getScheduledDays().isEmpty()
+                || workoutTemplate.getScheduledDays().contains(LocalDate.now().getDayOfWeek());
     }
 
     private static List<ExerciseSet> buildSetsFromTemplateConfig(final SessionExercise sessionExercise,

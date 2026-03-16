@@ -143,7 +143,7 @@ class WorkoutSessionServiceImplTest {
     @Test
     void startWorkoutThrowsWhenTemplateIsNotScheduledForToday() {
         final WorkoutTemplate template = new WorkoutTemplate();
-        final DayOfWeek notToday = DayOfWeek.of((java.time.LocalDate.now().getDayOfWeek().getValue() % 7) + 1);
+        final DayOfWeek notToday = java.time.LocalDate.now().getDayOfWeek().plus(1);
         template.setScheduledDays(Set.of(notToday));
         when(workoutTemplateService.getWorkoutTemplateById(10, "user@mail.com")).thenReturn(template);
 
