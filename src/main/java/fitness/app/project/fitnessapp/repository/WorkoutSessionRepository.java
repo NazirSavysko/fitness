@@ -17,7 +17,7 @@ public interface WorkoutSessionRepository extends JpaRepository<WorkoutSession, 
     Optional<WorkoutSession> findFirstByUser_EmailAndEndedAtIsNull(String email);
     boolean existsByUser_EmailAndStartedAtBetween(String email, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    @EntityGraph(attributePaths = {"sourceTemplate", "sourceTemplate.exercises", "exercises", "exercises.exercise", "exercises.sets"})
+    @EntityGraph(attributePaths = {"sourceTemplate", "sourceTemplate.exercises", "exercises", "exercises.exercise"})
     List<WorkoutSession> findAllByUser_EmailAndStartedAtBetweenOrderByStartedAtAsc(String userEmail, LocalDateTime start, LocalDateTime end);
 
     @EntityGraph(attributePaths = {"sourceTemplate", "exercises", "exercises.exercise"})
