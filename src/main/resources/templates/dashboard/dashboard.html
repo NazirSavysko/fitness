@@ -236,13 +236,17 @@
     const dayContent = document.getElementById('dayContent');
     const selectedDayTitle = document.getElementById('selectedDayTitle');
 
+    function parseLocalDate(dateString) {
+        return new Date(dateString + 'T00:00:00');
+    }
+
     function getDayKey(dateString) {
-        const date = new Date(dateString + 'T00:00:00');
+        const date = parseLocalDate(dateString);
         return ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()];
     }
 
     function formatReadableDate(dateString) {
-        return new Date(dateString + 'T00:00:00').toLocaleDateString(undefined, {
+        return parseLocalDate(dateString).toLocaleDateString(undefined, {
             weekday: 'long',
             month: 'short',
             day: 'numeric'

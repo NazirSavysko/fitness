@@ -9,7 +9,6 @@ import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.WorkoutHistoryCardDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
 import fitness.app.project.fitnessapp.model.SessionExercise;
-import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutSession;
 import fitness.app.project.fitnessapp.service.WorkoutSessionService;
 import lombok.AllArgsConstructor;
@@ -17,11 +16,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static fitness.app.project.fitnessapp.utils.WorkoutSessionMetrics.calculateCompletionPercentage;
+import static fitness.app.project.fitnessapp.utils.WorkoutSessionMetrics.calculateDurationInMinutes;
+import static fitness.app.project.fitnessapp.utils.WorkoutSessionMetrics.calculateMuscleGroups;
+import static fitness.app.project.fitnessapp.utils.WorkoutSessionMetrics.calculateTotalSets;
 
 @Service
 @AllArgsConstructor
@@ -98,58 +99,5 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                                         )).toList()
                         )).toList()
         );
-    }
-
-    private static long calculateDurationInMinutes(final WorkoutSession workoutSession) {
-        if (workoutSession.getEndedAt() == null) {
-            return 0;
-        }
-        return Duration.between(workoutSession.getStartedAt(), workoutSession.getEndedAt()).toMinutes();
-    }
-
-    private static int calculateTotalSets(final WorkoutSession workoutSession) {
-        if (workoutSession.getExercises() == null) {
-            return 0;
-        }
-        return workoutSession.getExercises().stream()
-                .mapToInt(sessionExercise -> sessionExercise.getSets() == null ? 0 : sessionExercise.getSets().size())
-                .sum();
-    }
-
-    private static String calculateMuscleGroups(final WorkoutSession workoutSession) {
-        if (workoutSession.getExercises() == null) {
-            return "";
-        }
-        return String.join(", ", workoutSession.getExercises().stream()
-                .map(SessionExercise::getExercise)
-                .filter(exerciseDefinition -> exerciseDefinition != null && exerciseDefinition.getMuscleGroup() != null)
-                .map(exerciseDefinition -> exerciseDefinition.getMuscleGroup().trim())
-                .filter(muscleGroup -> !muscleGroup.isEmpty())
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
-    }
-
-    private static int calculateCompletionPercentage(final WorkoutSession workoutSession) {
-        if (workoutSession.getSourceTemplate() == null || workoutSession.getSourceTemplate().getExercises() == null) {
-            return 0;
-        }
-        final int expectedSets = workoutSession.getSourceTemplate().getExercises().stream()
-                .mapToInt(WorkoutFacadeImpl::countExpectedSets)
-                .sum();
-        if (expectedSets <= 0 || workoutSession.getExercises() == null) {
-            return 0;
-        }
-        final long completedSets = workoutSession.getExercises().stream()
-                .map(SessionExercise::getSets)
-                .filter(sets -> sets != null)
-                .flatMap(List::stream)
-                .filter(set -> set.getWeight() != null && set.getReps() != null)
-                .count();
-        return (int) ((completedSets * 100) / expectedSets);
-    }
-
-    private static int countExpectedSets(final TemplateExercise templateExercise) {
-        final int normalSets = templateExercise.getNormalSets() == null ? 0 : templateExercise.getNormalSets();
-        final int failureSets = templateExercise.getFailureSets() == null ? 0 : templateExercise.getFailureSets();
-        return normalSets + failureSets;
     }
 }
