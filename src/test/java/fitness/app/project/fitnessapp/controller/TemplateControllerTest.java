@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
@@ -30,7 +29,7 @@ class TemplateControllerTest {
         final CreateTemplateDTO dto = new CreateTemplateDTO(
                 "Push Day",
                 List.of(new TemplateExerciseConfigDTO(1, 3, 0)),
-                Set.of(DayOfWeek.MONDAY)
+                DayOfWeek.MONDAY
         );
         final BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(dto, "templateDto");
         final RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
@@ -51,7 +50,7 @@ class TemplateControllerTest {
                 9,
                 "Leg Day",
                 List.of(new TemplateExerciseConfigDTO(1, 4, 1)),
-                Set.of(DayOfWeek.MONDAY)
+                DayOfWeek.MONDAY
         );
         final BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(dto, "UpdateTemplateDto");
         final RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();

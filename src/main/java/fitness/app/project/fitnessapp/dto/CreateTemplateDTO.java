@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Set;
 
 public record CreateTemplateDTO(
         @NotBlank(message = "Template name cannot be empty")
@@ -17,5 +16,6 @@ public record CreateTemplateDTO(
         @Valid
         @NotEmpty(message = "You must add at least one exercise")
         List<@NotNull TemplateExerciseConfigDTO> exercises,
-        Set<DayOfWeek> scheduledDays
+        @NotNull(message = "Please select a scheduled day")
+        DayOfWeek scheduledDay
 ) {}

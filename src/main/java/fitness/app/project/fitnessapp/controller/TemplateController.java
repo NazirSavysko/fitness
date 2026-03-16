@@ -19,7 +19,6 @@ import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -62,7 +61,7 @@ public final class TemplateController {
     @GetMapping("/create")
     public String getCreatePage(final Model model) {
         final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
-        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>(), Set.of());
+        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>(), null);
         model.addAttribute("templateDto", formDto);
         model.addAttribute("exercises", exercises);
         model.addAttribute("weekdays", SCHEDULABLE_DAYS);
@@ -112,7 +111,7 @@ public final class TemplateController {
                                 exercise.failureSets() == null ? 0 : exercise.failureSets()
                         ))
                         .toList(),
-                templateDTO.scheduledDays()
+                templateDTO.scheduledDay()
         );
 
         model.addAttribute("UpdateTemplateDto", updateTemplateDTO);

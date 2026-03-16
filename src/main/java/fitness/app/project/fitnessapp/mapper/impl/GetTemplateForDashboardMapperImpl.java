@@ -13,7 +13,7 @@ public class GetTemplateForDashboardMapperImpl implements GetTemplateForDashboar
         return new GetDashboardTemplateDTO(
             workoutTemplate.getId(),
             workoutTemplate.getName(),
-            workoutTemplate.getScheduledDays()
+            workoutTemplate.getScheduledDay()
         );
     }
 }
