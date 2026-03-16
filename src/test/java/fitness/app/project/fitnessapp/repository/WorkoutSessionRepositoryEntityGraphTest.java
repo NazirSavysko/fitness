@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class WorkoutSessionRepositoryEntityGraphTest {
 
     @Test
-    void dashboardDateRangeQueryDoesNotFetchExerciseSetsBag() throws NoSuchMethodException {
+    void dashboardDateRangeQueryAvoidsBagCollisionsInFetchGraph() throws NoSuchMethodException {
         final Method method = WorkoutSessionRepository.class.getMethod(
                 "findAllByUser_EmailAndStartedAtBetweenOrderByStartedAtAsc",
                 String.class,
@@ -27,7 +27,11 @@ class WorkoutSessionRepositoryEntityGraphTest {
         final List<String> attributePaths = List.of(entityGraph.attributePaths());
         assertTrue(attributePaths.contains("exercises"),
                 "Dashboard date range query should still prefetch session exercises");
+        assertTrue(attributePaths.contains("sourceTemplate"),
+                "Dashboard date range query should still prefetch source template");
         assertFalse(attributePaths.contains("exercises.sets"),
                 "Dashboard date range query must not prefetch exercises.sets to avoid MultipleBagFetchException");
+        assertFalse(attributePaths.contains("sourceTemplate.exercises"),
+                "Dashboard date range query must not prefetch sourceTemplate.exercises to avoid MultipleBagFetchException");
     }
 }
