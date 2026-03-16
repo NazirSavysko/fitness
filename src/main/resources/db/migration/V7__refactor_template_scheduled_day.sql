@@ -4,6 +4,8 @@ ALTER TABLE fitness_app.workout_template
 UPDATE fitness_app.workout_template wt
 SET scheduled_day = source.scheduled_day
 FROM (
+         -- Legacy templates may have multiple scheduled days; keep a deterministic single value
+         -- by selecting the lexicographically first enum string.
          SELECT workout_template_id,
                 MIN(scheduled_days) AS scheduled_day
          FROM fitness_app.workout_template_scheduled_days

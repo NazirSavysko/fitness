@@ -25,7 +25,7 @@ class DashboardRedesignTemplateTest {
         assertTrue(content.contains("input.name = 'templateId';"));
         assertTrue(content.contains("const dayTemplates = dashboardData.templates.filter(t => t.scheduledDay === dayKey);"));
         assertTrue(content.contains("No workout scheduled for this day. Rest and recover!"));
-        assertTrue(content.contains("completedDayCopy.textContent = `Workout completion: ${completionPercentage}%"));
+        assertTrue(content.contains("completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. ${COMPLETED_DAY_SUFFIX}`;"));
         assertTrue(content.contains("templatesSection.hidden = completed;"));
         assertTrue(content.contains("th:if=\"${errorMessage}\" class=\"alert alert-danger\""));
         assertTrue(content.contains("selectedDateIsToday"));

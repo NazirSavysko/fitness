@@ -13,6 +13,6 @@ public record UpdateTemplateDTO(
         @Valid
         @NotEmpty(message = "You must add at least one exercise")
         List<@NotNull TemplateExerciseConfigDTO> exercises,
-        @NotNull(message = "Please select a scheduled day")
+        @NotNull(message = "Please select a day of the week")
         DayOfWeek scheduledDay
 ) {}

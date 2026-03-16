@@ -116,6 +116,10 @@
     const dashboardData = {
         templates: /*[[${templates}]]*/ []
     };
+    const EMPTY_DAY_MESSAGE = 'No workout scheduled for this day. Rest and recover!';
+    const COMPLETED_DAY_SUFFIX = 'One workout per day is enabled, so template starts are disabled for the selected date.';
+    const TODAY_START_CONFIG = {iconClass: 'fa-solid fa-play', label: 'Start'};
+    const NON_TODAY_START_CONFIG = {iconClass: 'fa-solid fa-calendar-day', label: 'Scheduled'};
     const completedWorkoutDayKeys = /*[[${completedWorkoutDayKeys}]]*/ [];
     const workoutCompletionByDate = /*[[${workoutCompletionByDate}]]*/ {};
 
@@ -288,7 +292,7 @@
         const completionPercentage = getWorkoutCompletionPercentage(selectedDate);
         const selectedDateIsToday = normalizeToMidnight(selectedDate).getTime() === normalizeToMidnight(today).getTime();
         if (dayTemplates.length === 0) {
-            templateGrid.innerHTML = '<div class="empty-state">No workout scheduled for this day. Rest and recover!</div>';
+            templateGrid.innerHTML = `<div class="empty-state">${EMPTY_DAY_MESSAGE}</div>`;
             return;
         }
 
@@ -325,12 +329,13 @@
             input.value = String(template.id ?? '');
             card.appendChild(input);
 
+            const startConfig = selectedDateIsToday ? TODAY_START_CONFIG : NON_TODAY_START_CONFIG;
             const icon = document.createElement('i');
-            icon.className = selectedDateIsToday ? 'fa-solid fa-play' : 'fa-solid fa-calendar-day';
+            icon.className = startConfig.iconClass;
             icon.setAttribute('aria-hidden', 'true');
 
             const label = document.createElement('span');
-            label.textContent = selectedDateIsToday ? 'Start' : 'Scheduled';
+            label.textContent = startConfig.label;
 
             startRow.appendChild(icon);
             startRow.appendChild(label);
@@ -348,7 +353,7 @@
         const completionPercentage = getWorkoutCompletionPercentage(selectedDate);
         completedDayCard.hidden = !completed;
         if (completedDayCopy && Number.isInteger(completionPercentage)) {
-            completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. One workout per day is enabled, so template starts are disabled for the selected date.`;
+            completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. ${COMPLETED_DAY_SUFFIX}`;
         }
         templatesSection.hidden = completed;
     }
