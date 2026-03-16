@@ -27,15 +27,6 @@ public final class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(final Model model,final Principal principal) {
         final List<GetDashboardTemplateDTO> templates = this.templateFacade.getDashboardTemplates(principal.getName());
-        final Map<Integer, List<String>> templateScheduleByTemplateId = templates.stream()
-                .collect(java.util.stream.Collectors.toMap(
-                        GetDashboardTemplateDTO::id,
-                        template -> template.scheduledDays() == null
-                                ? List.of()
-                                : template.scheduledDays().stream()
-                                .map(Enum::name)
-                                .toList()
-                ));
         final List<WorkoutHistoryCardDTO> historyCards = this.workoutFacade
                 .getHistory(principal.getName(), null, "ALL", "DATE_DESC", PageRequest.of(0, 400))
                 .getContent();
@@ -45,7 +36,6 @@ public final class DashboardController {
         }
 
         model.addAttribute("templates", templates);
-        model.addAttribute("templateScheduleByTemplateId", templateScheduleByTemplateId);
         model.addAttribute("completedWorkoutDayKeys", workoutCompletionByDate.keySet());
         model.addAttribute("workoutCompletionByDate", workoutCompletionByDate);
 

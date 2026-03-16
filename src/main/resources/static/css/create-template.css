@@ -276,7 +276,7 @@
     align-items: center;
 }
 
-.day-chip input[type="checkbox"] {
+.day-chip input[type="radio"] {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -301,7 +301,7 @@
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.day-chip input[type="checkbox"]:checked ~ span {
+.day-chip input[type="radio"]:checked ~ span {
     background-color: #4318FF;
     color: #ffffff;
     border-color: #4318FF;

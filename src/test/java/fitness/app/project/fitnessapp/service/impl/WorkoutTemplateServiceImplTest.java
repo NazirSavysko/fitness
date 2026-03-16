@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,14 +69,14 @@ class WorkoutTemplateServiceImplTest {
     void validateScheduledDayConflictsThrowsWhenAnotherTemplateUsesSameDay() {
         final WorkoutTemplate existing = new WorkoutTemplate();
         existing.setId(5);
-        existing.setScheduledDays(Set.of(DayOfWeek.MONDAY));
+        existing.setScheduledDay(DayOfWeek.MONDAY);
         when(workoutTemplateRepository.findAllByUser_Email("user@mail.com")).thenReturn(List.of(existing));
 
         final IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> workoutTemplateService.validateScheduledDayConflicts(
                         "user@mail.com",
-                        Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY),
+                        DayOfWeek.MONDAY,
                         null
                 )
         );
@@ -89,12 +88,12 @@ class WorkoutTemplateServiceImplTest {
     void validateScheduledDayConflictsIgnoresCurrentTemplateDuringUpdate() {
         final WorkoutTemplate existing = new WorkoutTemplate();
         existing.setId(7);
-        existing.setScheduledDays(Set.of(DayOfWeek.MONDAY));
+        existing.setScheduledDay(DayOfWeek.MONDAY);
         when(workoutTemplateRepository.findAllByUser_Email("user@mail.com")).thenReturn(List.of(existing));
 
         assertDoesNotThrow(() -> workoutTemplateService.validateScheduledDayConflicts(
                 "user@mail.com",
-                Set.of(DayOfWeek.MONDAY),
+                DayOfWeek.MONDAY,
                 7
         ));
     }

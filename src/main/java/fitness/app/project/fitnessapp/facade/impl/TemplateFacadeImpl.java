@@ -16,10 +16,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.time.DayOfWeek;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
 
@@ -48,10 +45,10 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     @Override
     public void updateTemplate(final @NonNull UpdateTemplateDTO templateDTO, final String email) {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
-        this.workoutTemplateService.validateScheduledDayConflicts(email, templateDTO.scheduledDays(), templateDTO.id());
+        this.workoutTemplateService.validateScheduledDayConflicts(email, templateDTO.scheduledDay(), templateDTO.id());
 
         workoutTemplate.setName(templateDTO.name());
-        workoutTemplate.setScheduledDays(safeScheduledDays(templateDTO.scheduledDays()));
+        workoutTemplate.setScheduledDay(templateDTO.scheduledDay());
         workoutTemplate.getExercises().clear();
         workoutTemplate.getExercises().addAll(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, templateDTO.exercises()));
 
@@ -75,11 +72,11 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     @Override
     public void createTemplate(final @NonNull CreateTemplateDTO createTemplateDTO, final String email) {
         final User user = this.userService.getUserByEmail(email);
-        this.workoutTemplateService.validateScheduledDayConflicts(email, createTemplateDTO.scheduledDays(), null);
+        this.workoutTemplateService.validateScheduledDayConflicts(email, createTemplateDTO.scheduledDay(), null);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
         workoutTemplate.setUser(user);
-        workoutTemplate.setScheduledDays(safeScheduledDays(createTemplateDTO.scheduledDays()));
+        workoutTemplate.setScheduledDay(createTemplateDTO.scheduledDay());
         workoutTemplate.setExercises(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);
@@ -90,10 +87,6 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final List<WorkoutTemplate> templates = this.workoutTemplateService.getTemplatesByUserEmail(email);
 
         return mapList(templates, this.getTemplateForDashboardMapper);
-    }
-
-    private static Set<DayOfWeek> safeScheduledDays(final Set<DayOfWeek> scheduledDays) {
-        return scheduledDays == null ? new HashSet<>() : new HashSet<>(scheduledDays);
     }
 
 }

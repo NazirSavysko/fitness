@@ -9,9 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -40,13 +38,7 @@ public final class WorkoutTemplate {
     @OrderBy("orderIndex ASC")
     private List<TemplateExercise> exercises;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(
-            name = "workout_template_scheduled_days",
-            schema = "fitness_app",
-            joinColumns = @JoinColumn(name = "workout_template_id")
-    )
-    @Column(name = "scheduled_days", nullable = false)
+    @Column(name = "scheduled_day")
     @Enumerated(EnumType.STRING)
-    private Set<DayOfWeek> scheduledDays = new HashSet<>();
+    private DayOfWeek scheduledDay;
 }
