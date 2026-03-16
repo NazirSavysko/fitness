@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +60,9 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         final WorkoutTemplate workoutTemplate = templateId == null
                 ? null
                 : this.workoutTemplateService.getWorkoutTemplateById(templateId, userEmail);
+        if (!canStartTemplateToday(workoutTemplate)) {
+            throw new IllegalStateException("You can only start templates scheduled for today.");
+        }
 
         final WorkoutSession workoutSession = new WorkoutSession();
         workoutSession.setUser(this.userService.getUserByEmail(userEmail));
@@ -103,6 +107,13 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
 
         savedSession.setExercises(savedExercises);
         return savedSession.getId();
+    }
+
+    private static boolean canStartTemplateToday(final WorkoutTemplate workoutTemplate) {
+        return workoutTemplate == null
+                || workoutTemplate.getScheduledDays() == null
+                || workoutTemplate.getScheduledDays().isEmpty()
+                || workoutTemplate.getScheduledDays().contains(LocalDate.now().getDayOfWeek());
     }
 
     private static List<ExerciseSet> buildSetsFromTemplateConfig(final SessionExercise sessionExercise,

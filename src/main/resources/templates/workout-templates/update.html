@@ -53,6 +53,7 @@
               method="post"
               th:object="${UpdateTemplateDto}"
               data-template-submit="true">
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}" style="background: #ffe6e6; color: #d93025; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;"></div>
 
             <input type="hidden" th:field="*{id}"/>
 
