@@ -25,7 +25,8 @@ public class TemplateMapperImpl implements TemplateWorkoutMapper {
                 mapList(workoutTemplate.getExercises().stream()
                                 .sorted(Comparator.comparing(templateExercise -> templateExercise.getOrderIndex(), Comparator.nullsLast(Integer::compareTo)))
                                 .toList(),
-                        this.getTemplateExerciseMapper)
+                        this.getTemplateExerciseMapper),
+                workoutTemplate.getScheduledDays()
         );
     }
 }
