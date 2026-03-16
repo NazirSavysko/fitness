@@ -28,7 +28,9 @@ class DashboardRedesignTemplateTest {
         assertTrue(content.contains("completedDayCopy.textContent = `Workout completion: ${completionPercentage}%. ${COMPLETED_DAY_SUFFIX}`;"));
         assertTrue(content.contains("templatesSection.hidden = completed;"));
         assertTrue(content.contains("th:if=\"${errorMessage}\" class=\"alert alert-danger\""));
+        assertTrue(content.contains("const getLocalISODate = (date) => {"));
         assertTrue(content.contains("selectedDateIsToday"));
+        assertFalse(content.contains("date.toISOString().split('T')[0]"));
         assertTrue(content.indexOf("id=\"templatesSection\"") < content.indexOf("class=\"calendar-card\""));
         assertFalse(content.contains("id=\"selectedDayTitle\""));
         assertFalse(content.contains("id=\"weeklyCalendar\""));
