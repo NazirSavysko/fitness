@@ -48,6 +48,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     @Override
     public void updateTemplate(final @NonNull UpdateTemplateDTO templateDTO, final String email) {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
+        this.workoutTemplateService.validateScheduledDayConflicts(email, templateDTO.scheduledDays(), templateDTO.id());
 
         workoutTemplate.setName(templateDTO.name());
         workoutTemplate.setScheduledDays(safeScheduledDays(templateDTO.scheduledDays()));
@@ -74,6 +75,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
     @Override
     public void createTemplate(final @NonNull CreateTemplateDTO createTemplateDTO, final String email) {
         final User user = this.userService.getUserByEmail(email);
+        this.workoutTemplateService.validateScheduledDayConflicts(email, createTemplateDTO.scheduledDays(), null);
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
         workoutTemplate.setUser(user);

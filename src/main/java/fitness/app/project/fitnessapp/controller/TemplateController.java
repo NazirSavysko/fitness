@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -73,7 +74,8 @@ public final class TemplateController {
     public String createTemplate(final @Valid @ModelAttribute("templateDto") CreateTemplateDTO createTemplateDTO,
                                  final BindingResult result,
                                  final Principal principal,
-                                 final Model model) {
+                                 final Model model,
+                                 final RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
@@ -84,7 +86,12 @@ public final class TemplateController {
             return "workout-templates/create";
         }
 
-        this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
+        try {
+            this.templateFacade.createTemplate(createTemplateDTO, principal.getName());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/templates/create";
+        }
 
 
         return "redirect:/templates";
@@ -118,7 +125,8 @@ public final class TemplateController {
     public String editTemplate(final @Valid @ModelAttribute("UpdateTemplateDto") UpdateTemplateDTO templateDTO,
                                final BindingResult result,
                                final Principal principal,
-                               final Model model) {
+                               final Model model,
+                               final RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
             model.addAttribute("exercises", exercises);
@@ -128,7 +136,12 @@ public final class TemplateController {
             return "workout-templates/update";
         }
 
-        this.templateFacade.updateTemplate(templateDTO, principal.getName());
+        try {
+            this.templateFacade.updateTemplate(templateDTO, principal.getName());
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/templates/edit/" + templateDTO.id();
+        }
 
         return "redirect:/templates";
     }

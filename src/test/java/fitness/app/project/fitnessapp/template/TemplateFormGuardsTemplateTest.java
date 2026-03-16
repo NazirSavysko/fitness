@@ -32,6 +32,8 @@ class TemplateFormGuardsTemplateTest {
                 () -> "Missing scheduledDays day selector binding in " + templatePath);
         assertTrue(content.contains("class=\"day-chip\""),
                 () -> "Missing day chip selector UI in " + templatePath);
+        assertTrue(content.contains("th:if=\"${errorMessage}\" class=\"alert alert-danger\""),
+                () -> "Missing error message banner in " + templatePath);
     }
 
     private String readTemplate(final String templatePath) throws IOException {
