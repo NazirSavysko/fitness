@@ -64,40 +64,50 @@
     background: #e9eefc;
 }
 
-.weekly-calendar {
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 12px;
+    color: #a3aed0;
+    margin-bottom: 5px;
+}
+
+.monthly-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.monthly-calendar .day-btn {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    padding: 10px 0;
-    gap: 6px;
+    aspect-ratio: 1 / 1;
+    min-height: 45px;
+    padding: 6px 4px;
 }
 
 .day-btn {
     border: none;
     background: transparent;
     box-shadow: none;
-    min-height: 82px;
-    padding: 2px 4px;
+    min-height: 45px;
+    padding: 6px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 5px;
     cursor: pointer;
-    flex: 1 1 0;
+    flex: 1 1 auto;
     transition: transform 0.18s ease;
 }
 
 .day-btn:hover {
     transform: translateY(-1px);
-}
-
-.day-btn .weekday-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    color: #9aa7bf;
-    text-transform: uppercase;
-    line-height: 1;
 }
 
 .day-btn .date-label {
@@ -121,6 +131,11 @@
     gap: 4px;
     min-height: 6px;
     height: 6px;
+}
+
+.day-placeholder {
+    pointer-events: none;
+    opacity: 0;
 }
 
 .indicator-dot {

@@ -56,33 +56,6 @@
         </header>
 
         <div class="dashboard-content">
-            <section class="calendar-card">
-                <div class="calendar-header">
-                    <p class="calendar-kicker">Workout schedule</p>
-                    <div class="calendar-nav">
-                        <button type="button" class="calendar-nav-btn" id="prevWeekBtn" aria-label="Previous week">
-                            <i class="fa-solid fa-arrow-left"></i>
-                        </button>
-                        <h2 id="calendarMonthLabel" class="calendar-month-label">March 2026</h2>
-                        <button type="button" class="calendar-nav-btn" id="nextWeekBtn" aria-label="Next week">
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div id="weeklyCalendar" class="weekly-calendar"></div>
-            </section>
-
-            <section id="completedDayCard" class="completed-day-card" hidden>
-                <div class="completed-day-icon">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-                <div class="completed-day-copy">
-                    <h3>Workout already done for this day</h3>
-                    <p>One workout per day is enabled, so template starts are disabled for the selected date.</p>
-                </div>
-                <a href="/history" class="completed-day-link">Open history</a>
-            </section>
-
             <section id="templatesSection" class="templates-section">
                 <div class="templates-section-header">
                     <h3 class="section-title">My Templates</h3>
@@ -96,6 +69,42 @@
                     <a href="/templates/create">Create your first template</a>
                 </div>
             </section>
+
+            <section id="completedDayCard" class="completed-day-card" hidden>
+                <div class="completed-day-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div class="completed-day-copy">
+                    <h3>Workout already done for this day</h3>
+                    <p>One workout per day is enabled, so template starts are disabled for the selected date.</p>
+                </div>
+                <a href="/history" class="completed-day-link">Open history</a>
+            </section>
+
+            <section class="calendar-card">
+                <div class="calendar-header">
+                    <p class="calendar-kicker">Workout schedule</p>
+                    <div class="calendar-nav">
+                        <button type="button" class="calendar-nav-btn" id="prevMonthBtn" aria-label="Previous month">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <h2 id="calendarMonthLabel" class="calendar-month-label">March 2026</h2>
+                        <button type="button" class="calendar-nav-btn" id="nextMonthBtn" aria-label="Next month">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="calendar-weekdays">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+                <div id="monthlyCalendar" class="monthly-calendar"></div>
+            </section>
         </div>
     </main>
 </div>
@@ -106,7 +115,7 @@
     const templateScheduleByTemplateId = /*[[${templateScheduleByTemplateId}]]*/ {};
     const completedWorkoutDayKeys = /*[[${completedWorkoutDayKeys}]]*/ [];
 
-    const weeklyCalendar = document.getElementById('weeklyCalendar');
+    const monthlyCalendar = document.getElementById('monthlyCalendar');
     const calendarMonthLabel = document.getElementById('calendarMonthLabel');
     const templateGrid = document.getElementById('templateGrid');
     const completedDayCard = document.getElementById('completedDayCard');
@@ -114,32 +123,29 @@
     const emptyTemplateState = document.getElementById('emptyTemplateState');
 
     const today = new Date();
-    let currentWeekStartDate = startOfWeek(today);
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
     let selectedDate = new Date(today);
 
-    document.getElementById('prevWeekBtn').addEventListener('click', () => {
-        currentWeekStartDate = shiftDate(currentWeekStartDate, -7);
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+        moveMonth(-1);
         renderCalendar();
+        renderTemplates();
+        updateSelectedDayState();
     });
 
-    document.getElementById('nextWeekBtn').addEventListener('click', () => {
-        currentWeekStartDate = shiftDate(currentWeekStartDate, 7);
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+        moveMonth(1);
         renderCalendar();
+        renderTemplates();
+        updateSelectedDayState();
     });
 
-    function shiftDate(baseDate, offsetDays) {
-        const next = new Date(baseDate);
-        next.setDate(next.getDate() + offsetDays);
-        return next;
-    }
-
-    function startOfWeek(inputDate) {
-        const date = new Date(inputDate);
-        const day = date.getDay();
-        const diff = day === 0 ? -6 : 1 - day;
-        date.setHours(0, 0, 0, 0);
-        date.setDate(date.getDate() + diff);
-        return date;
+    function moveMonth(offset) {
+        const nextMonthDate = new Date(currentYear, currentMonth + offset, 1);
+        currentMonth = nextMonthDate.getMonth();
+        currentYear = nextMonthDate.getFullYear();
+        selectedDate = new Date(currentYear, currentMonth, 1);
     }
 
     function formatDateKey(date) {
@@ -197,7 +203,6 @@
         button.className = 'day-btn';
 
         const dateLabel = date.getDate();
-        const weekDayLabel = date.toLocaleDateString('en-US', {weekday: 'short'}).charAt(0).toUpperCase();
         const selected = formatDateKey(date) === formatDateKey(selectedDate);
         const planned = hasScheduledTemplate(date);
         const completed = hasCompletedWorkout(date);
@@ -211,7 +216,6 @@
         }
 
         button.innerHTML = `
-            <span class="weekday-label">${weekDayLabel}</span>
             <span class="date-label">${dateLabel}</span>
             <span class="indicator-row">
                 ${planned ? '<span class="indicator-dot planned"></span>' : ''}
@@ -229,14 +233,40 @@
         return button;
     }
 
+    function renderPaddingDay() {
+        const filler = document.createElement('button');
+        filler.type = 'button';
+        filler.className = 'day-btn day-placeholder';
+        filler.disabled = true;
+        filler.innerHTML = `
+            <span class="date-label"></span>
+            <span class="indicator-row"></span>
+        `;
+        return filler;
+    }
+
     function renderCalendar() {
-        weeklyCalendar.innerHTML = '';
-        const monthText = currentWeekStartDate.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+        monthlyCalendar.innerHTML = '';
+        const monthDate = new Date(currentYear, currentMonth, 1);
+        const monthText = monthDate.toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
         calendarMonthLabel.textContent = monthText;
 
-        for (let offset = 0; offset < 7; offset++) {
-            const dayDate = shiftDate(currentWeekStartDate, offset);
-            weeklyCalendar.appendChild(renderDay(dayDate));
+        const firstWeekday = (monthDate.getDay() + 6) % 7;
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let pad = 0; pad < firstWeekday; pad++) {
+            monthlyCalendar.appendChild(renderPaddingDay());
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayDate = new Date(currentYear, currentMonth, day);
+            monthlyCalendar.appendChild(renderDay(dayDate));
+        }
+
+        const totalCells = firstWeekday + daysInMonth;
+        const trailingPads = (7 - (totalCells % 7)) % 7;
+        for (let pad = 0; pad < trailingPads; pad++) {
+            monthlyCalendar.appendChild(renderPaddingDay());
         }
     }
 

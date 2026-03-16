@@ -56,23 +56,45 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         workoutSession.setUser(this.userService.getUserByEmail(userEmail));
         workoutSession.setSourceTemplate(workoutTemplate);
         workoutSession.setStartedAt(LocalDateTime.now());
+        final WorkoutSession savedSession = this.workoutSessionRepository.saveAndFlush(workoutSession);
+        savedSession.setExercises(List.of());
 
-        if (workoutTemplate != null) {
-            final List<SessionExercise> sessionExercises = new ArrayList<>();
-            for (TemplateExercise templateExercise : workoutTemplate.getExercises()) {
-                final SessionExercise sessionExercise = new SessionExercise();
-                sessionExercise.setSession(workoutSession);
-                sessionExercise.setExercise(templateExercise.getExercise());
-                sessionExercise.setOrderIndex(templateExercise.getOrderIndex());
-                sessionExercise.setSets(buildSetsFromTemplateConfig(sessionExercise, templateExercise));
-                sessionExercises.add(sessionExercise);
-            }
-            workoutSession.setExercises(sessionExercises);
-        } else {
-            workoutSession.setExercises(List.of());
+        if (workoutTemplate == null || workoutTemplate.getExercises() == null) {
+            return savedSession.getId();
         }
 
-        return this.workoutSessionRepository.save(workoutSession).getId();
+        final List<TemplateExercise> templateExercises = new ArrayList<>();
+        for (TemplateExercise templateExercise : workoutTemplate.getExercises()) {
+            if (templateExercise != null) {
+                templateExercises.add(templateExercise);
+            }
+        }
+        if (templateExercises.isEmpty()) {
+            return savedSession.getId();
+        }
+
+        final List<SessionExercise> sessionExercises = new ArrayList<>();
+        for (TemplateExercise templateExercise : templateExercises) {
+            final SessionExercise sessionExercise = new SessionExercise();
+            sessionExercise.setSession(savedSession);
+            sessionExercise.setExercise(templateExercise.getExercise());
+            sessionExercise.setOrderIndex(templateExercise.getOrderIndex());
+            sessionExercises.add(sessionExercise);
+        }
+        final List<SessionExercise> savedExercises = this.sessionExerciseRepository.saveAll(sessionExercises);
+
+        final List<ExerciseSet> sets = new ArrayList<>();
+        for (int index = 0; index < templateExercises.size(); index++) {
+            final List<ExerciseSet> exerciseSets = buildSetsFromTemplateConfig(savedExercises.get(index), templateExercises.get(index));
+            savedExercises.get(index).setSets(exerciseSets);
+            sets.addAll(exerciseSets);
+        }
+        if (!sets.isEmpty()) {
+            this.exerciseSetRepository.saveAll(sets);
+        }
+
+        savedSession.setExercises(savedExercises);
+        return savedSession.getId();
     }
 
     private static List<ExerciseSet> buildSetsFromTemplateConfig(final SessionExercise sessionExercise,
