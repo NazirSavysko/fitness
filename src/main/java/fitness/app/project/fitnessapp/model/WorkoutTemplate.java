@@ -41,6 +41,12 @@ public final class WorkoutTemplate {
     private List<TemplateExercise> exercises;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "workout_template_scheduled_days",
+            schema = "fitness_app",
+            joinColumns = @JoinColumn(name = "workout_template_id")
+    )
+    @Column(name = "scheduled_days", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<DayOfWeek> scheduledDays = new HashSet<>();
 }
