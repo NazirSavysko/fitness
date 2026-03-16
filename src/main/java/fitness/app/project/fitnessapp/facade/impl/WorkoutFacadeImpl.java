@@ -22,6 +22,7 @@ import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -144,7 +145,7 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
             return 0;
         }
         return workoutSession.getSourceTemplate().getExercises().stream()
-                .filter(templateExercise -> templateExercise != null)
+                .filter(Objects::nonNull)
                 .mapToInt(templateExercise -> sanitizeSetCount(templateExercise.getNormalSets()) + sanitizeSetCount(templateExercise.getFailureSets()))
                 .sum();
     }
