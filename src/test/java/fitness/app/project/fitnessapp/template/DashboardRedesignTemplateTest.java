@@ -18,8 +18,8 @@ class DashboardRedesignTemplateTest {
 
         assertTrue(content.contains("id=\"monthlyCalendar\""));
         assertTrue(content.contains("class=\"calendar-weekdays\""));
-        assertTrue(content.contains("class=\"indicator-dot planned\""));
-        assertTrue(content.contains("class=\"indicator-dot completed\""));
+        assertTrue(content.contains("class=\"planned-icon\""));
+        assertTrue(content.contains("class=\"completion-badge\""));
         assertTrue(content.contains("My Templates"));
         assertTrue(content.contains("card.action = '/workouts/start';"));
         assertTrue(content.contains("input.name = 'templateId';"));

@@ -14,7 +14,9 @@ import fitness.app.project.fitnessapp.service.WorkoutTemplateService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -60,7 +62,8 @@ class TemplateFacadeImplTest {
         templateFacade.createTemplate(
                 new CreateTemplateDTO(
                         "Back day",
-                        exercises
+                        exercises,
+                        Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY)
                 ),
                 "user@mail.com"
         );
@@ -74,6 +77,7 @@ class TemplateFacadeImplTest {
         assertSame(user, builtTemplate.getUser());
         assertSame(builtTemplate, savedTemplate);
         assertEquals("Back day", savedTemplate.getName());
+        assertEquals(Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY), savedTemplate.getScheduledDays());
         assertTrue(savedTemplate.getExercises().isEmpty());
     }
 
@@ -94,7 +98,8 @@ class TemplateFacadeImplTest {
                 new UpdateTemplateDTO(
                         55,
                         "Back day updated",
-                        exercises
+                        exercises,
+                        Set.of(DayOfWeek.FRIDAY)
                 ),
                 "user@mail.com"
         );
@@ -103,6 +108,7 @@ class TemplateFacadeImplTest {
         verify(workoutTemplateService).saveWorkout(existingTemplate);
 
         assertEquals("Back day updated", existingTemplate.getName());
+        assertEquals(Set.of(DayOfWeek.FRIDAY), existingTemplate.getScheduledDays());
         assertTrue(existingTemplate.getExercises().isEmpty());
     }
 }

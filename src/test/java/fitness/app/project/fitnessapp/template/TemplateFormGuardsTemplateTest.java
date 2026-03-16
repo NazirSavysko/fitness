@@ -28,6 +28,10 @@ class TemplateFormGuardsTemplateTest {
                 () -> "Missing beforeunload guard in " + templatePath);
         assertTrue(content.contains("template-nav-locked"),
                 () -> "Missing silent navigation lock in " + templatePath);
+        assertTrue(content.contains("th:field=\"*{scheduledDays}\""),
+                () -> "Missing scheduledDays day selector binding in " + templatePath);
+        assertTrue(content.contains("class=\"day-chip\""),
+                () -> "Missing day chip selector UI in " + templatePath);
     }
 
     private String readTemplate(final String templatePath) throws IOException {

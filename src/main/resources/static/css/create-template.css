@@ -264,6 +264,12 @@
     box-shadow: 0 6px 15px rgba(67, 24, 255, 0.3);
 }
 
+.day-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .day-chip {
     position: relative;
     display: inline-flex;
@@ -284,6 +290,14 @@
 }
 
 .day-chip span {
+    border: 1px solid #d9e1f5;
+    border-radius: 999px;
+    padding: 6px 12px;
+    color: #2b3674;
+    font-size: 13px;
+    font-weight: 600;
+    background: #f4f7fe;
+    cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
