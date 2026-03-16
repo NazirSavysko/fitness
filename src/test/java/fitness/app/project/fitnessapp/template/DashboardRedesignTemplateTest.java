@@ -20,9 +20,12 @@ class DashboardRedesignTemplateTest {
         assertTrue(content.contains("class=\"indicator-dot planned\""));
         assertTrue(content.contains("class=\"indicator-dot completed\""));
         assertTrue(content.contains("My Templates"));
-        assertTrue(content.contains("form.action = '/workouts/start';"));
+        assertTrue(content.contains("card.action = '/workouts/start';"));
         assertTrue(content.contains("input.name = 'templateId';"));
+        assertTrue(content.contains("templatesSection.hidden = completed;"));
         assertFalse(content.contains("id=\"selectedDayTitle\""));
+        assertFalse(content.contains("Quick Workout"));
+        assertFalse(content.contains("Start Empty"));
     }
 
     private String readTemplate(final String templatePath) throws IOException {

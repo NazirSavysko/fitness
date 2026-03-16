@@ -83,7 +83,7 @@
                 <a href="/history" class="completed-day-link">Open history</a>
             </section>
 
-            <section class="templates-section">
+            <section id="templatesSection" class="templates-section">
                 <div class="templates-section-header">
                     <h3 class="section-title">My Templates</h3>
                     <a href="/templates" class="section-link">Manage</a>
@@ -110,6 +110,7 @@
     const calendarMonthLabel = document.getElementById('calendarMonthLabel');
     const templateGrid = document.getElementById('templateGrid');
     const completedDayCard = document.getElementById('completedDayCard');
+    const templatesSection = document.getElementById('templatesSection');
     const emptyTemplateState = document.getElementById('emptyTemplateState');
 
     const today = new Date();
@@ -196,13 +197,13 @@
         button.className = 'day-btn';
 
         const dateLabel = date.getDate();
-        const weekDayLabel = date.toLocaleDateString('en-US', {weekday: 'short'});
+        const weekDayLabel = date.toLocaleDateString('en-US', {weekday: 'short'}).charAt(0).toUpperCase();
         const selected = formatDateKey(date) === formatDateKey(selectedDate);
         const planned = hasScheduledTemplate(date);
         const completed = hasCompletedWorkout(date);
 
         if (selected) {
-            button.classList.add('selected');
+            button.classList.add('active');
         }
 
         if (formatDateKey(date) === formatDateKey(today)) {
@@ -222,7 +223,7 @@
             selectedDate = new Date(date);
             renderCalendar();
             renderTemplates();
-            updateCompletedCardVisibility();
+            updateSelectedDayState();
         });
 
         return button;
@@ -260,66 +261,66 @@
 
         sortedTemplates.forEach((template) => {
             const scheduled = isTemplateScheduledForDate(template, selectedDate);
-            const card = document.createElement('article');
+            const card = document.createElement('form');
+            card.method = 'post';
+            card.action = '/workouts/start';
             card.className = `template-card${scheduled ? ' scheduled' : ''}${completed ? ' locked' : ''}`;
 
             const badgeText = scheduled ? 'Scheduled' : 'Available';
-
-            const cardHeader = document.createElement('div');
-            cardHeader.className = 'template-card-header';
-
-            const title = document.createElement('h4');
-            title.textContent = String(template.name || '');
-
-            const badge = document.createElement('span');
-            badge.className = 'template-badge';
-            badge.textContent = badgeText;
-
-            cardHeader.appendChild(title);
-            cardHeader.appendChild(badge);
-
-            const form = document.createElement('form');
-            form.method = 'post';
-            form.action = '/workouts/start';
-            form.className = 'start-template-form';
 
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'templateId';
             input.value = String(template.id ?? '');
 
-            const button = document.createElement('button');
-            button.type = 'submit';
-            button.className = 'start-template-btn';
-            button.disabled = completed;
+            const cardButton = document.createElement('button');
+            cardButton.type = 'submit';
+            cardButton.className = 'template-card-btn';
+            cardButton.disabled = completed;
+
+            const cardHeader = document.createElement('div');
+            cardHeader.className = 'template-card-header';
+            const title = document.createElement('h4');
+            title.textContent = String(template.name || '');
+
+            const badge = document.createElement('span');
+            badge.className = 'template-badge';
+            badge.textContent = badgeText;
+            cardHeader.appendChild(title);
+            cardHeader.appendChild(badge);
+
+            const startRow = document.createElement('div');
+            startRow.className = 'template-start-row';
 
             const icon = document.createElement('i');
             icon.className = 'fa-solid fa-play';
             icon.setAttribute('aria-hidden', 'true');
 
             const label = document.createElement('span');
-            label.textContent = 'Start workout';
+            label.textContent = 'Start';
 
-            button.appendChild(icon);
-            button.appendChild(label);
+            startRow.appendChild(icon);
+            startRow.appendChild(label);
 
-            form.appendChild(input);
-            form.appendChild(button);
+            cardButton.appendChild(cardHeader);
+            cardButton.appendChild(startRow);
 
-            card.appendChild(cardHeader);
-            card.appendChild(form);
+            card.appendChild(input);
+            card.appendChild(cardButton);
 
             templateGrid.appendChild(card);
         });
     }
 
-    function updateCompletedCardVisibility() {
-        completedDayCard.hidden = !hasCompletedWorkout(selectedDate);
+    function updateSelectedDayState() {
+        const completed = hasCompletedWorkout(selectedDate);
+        completedDayCard.hidden = !completed;
+        templatesSection.hidden = completed;
     }
 
     renderCalendar();
     renderTemplates();
-    updateCompletedCardVisibility();
+    updateSelectedDayState();
 </script>
 
 </body>

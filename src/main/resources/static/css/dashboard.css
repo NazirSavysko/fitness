@@ -5,7 +5,7 @@
 .dashboard-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     max-width: 720px;
     margin: 0 auto;
 }
@@ -19,7 +19,7 @@
 }
 
 .calendar-card {
-    padding: 18px 16px 20px;
+    padding: 16px 16px 14px;
 }
 
 .calendar-header {
@@ -65,55 +65,67 @@
 }
 
 .weekly-calendar {
-    display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 10px 0;
+    gap: 6px;
 }
 
 .day-btn {
     border: none;
-    background: #f8f9fd;
-    border-radius: 14px;
-    min-height: 86px;
-    padding: 10px 6px;
+    background: transparent;
+    box-shadow: none;
+    min-height: 82px;
+    padding: 2px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
+    justify-content: flex-start;
+    gap: 5px;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    flex: 1 1 0;
+    transition: transform 0.18s ease;
 }
 
 .day-btn:hover {
     transform: translateY(-1px);
-    background: #eef3ff;
 }
 
 .day-btn .weekday-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    color: #8a94b2;
+    color: #9aa7bf;
     text-transform: uppercase;
+    line-height: 1;
 }
 
 .day-btn .date-label {
-    font-size: 1.25rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
     color: #2b3674;
     line-height: 1;
+    background: transparent;
 }
 
 .indicator-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    min-height: 8px;
+    gap: 4px;
+    min-height: 6px;
+    height: 6px;
 }
 
 .indicator-dot {
-    width: 8px;
-    height: 8px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     display: inline-block;
 }
@@ -126,18 +138,10 @@
     background: #2d8cff;
 }
 
-.day-btn.today {
-    box-shadow: inset 0 0 0 1px #d6def5;
-}
-
-.day-btn.selected {
-    background: #eef2ff;
-    box-shadow: inset 0 0 0 2px #4318FF;
-}
-
-.day-btn.selected .date-label,
-.day-btn.selected .weekday-label {
-    color: #4318FF;
+.day-btn.active .date-label,
+.day-btn.today .date-label {
+    background: #4318FF;
+    color: #ffffff;
 }
 
 .completed-day-card {
@@ -171,7 +175,7 @@
 }
 
 .templates-section {
-    padding: 18px 16px;
+    padding: 14px 16px 16px;
 }
 
 .templates-section-header {
@@ -195,17 +199,14 @@
 
 .template-grid {
     display: grid;
-    gap: 10px;
+    gap: 9px;
 }
 
 .template-card {
-    border: 1px solid #e7ebf7;
-    border-radius: 14px;
-    padding: 12px;
+    border: 1px solid #edf0f9;
+    border-radius: 12px;
+    padding: 0;
     background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -221,6 +222,17 @@
 
 .template-card.locked {
     opacity: 0.62;
+}
+
+.template-card-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+    text-align: left;
 }
 
 .template-card-header {
@@ -250,36 +262,21 @@
     color: #b87200;
 }
 
-.start-template-form,
-.start-template-btn {
-    width: 100%;
-}
-
-.start-template-btn {
-    border: none;
-    border-radius: 12px;
-    background: #4318FF;
-    color: #ffffff;
-    padding: 11px 12px;
-    font-size: 0.9rem;
+.template-start-row {
+    color: #4318FF;
+    font-size: 0.88rem;
     font-weight: 700;
-    cursor: pointer;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: background-color 0.2s ease, transform 0.2s ease;
+    gap: 6px;
 }
 
-.start-template-btn:hover {
-    background: #3511d9;
-    transform: translateY(-1px);
-}
-
-.start-template-btn:disabled {
-    background: #c7cfeb;
+.template-card-btn:disabled {
     cursor: not-allowed;
-    transform: none;
+}
+
+.template-card-btn:disabled .template-start-row {
+    color: #9faacc;
 }
 
 .empty-template-state {
