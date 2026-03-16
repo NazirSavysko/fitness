@@ -5,11 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dashboard-shell {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 18px 40px rgba(112, 144, 176, 0.12);
+            padding: 22px;
+        }
+
+        .dashboard-title {
+            margin: 0 0 16px;
+            color: #2b3674;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .day-btn {
+            border: 1px solid #e0e5f2;
+            border-radius: 14px;
+            background: #f9fafc;
+            color: #2b3674;
+            padding: 12px 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .day-btn .weekday {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            opacity: 0.7;
+        }
+
+        .day-btn .day-number {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .day-btn.today {
+            border-color: #4318FF;
+            box-shadow: 0 6px 16px rgba(67, 24, 255, 0.18);
+        }
+
+        .day-btn.active {
+            background: #4318FF;
+            color: #fff;
+            border-color: #4318FF;
+        }
+
+        .day-content {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .status-card {
+            border: 1px solid #e9edf7;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fcfdff;
+        }
+
+        .status-card h4 {
+            margin: 0;
+            color: #2b3674;
+            font-size: 16px;
+        }
+
+        .status-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .badge {
+            background: #f4f7fe;
+            color: #4318FF;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge.active {
+            background: #fff0e0;
+            color: #ff8b1f;
+        }
+
+        .planned-actions form {
+            margin-top: 6px;
+        }
+
+        .btn-start {
+            border: none;
+            background: #4318FF;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-start:hover {
+            background: #3311db;
+        }
+
+        .rest-day {
+            border: 1px dashed #d5ddf1;
+            border-radius: 16px;
+            background: #f8faff;
+            color: #7d8bb2;
+            text-align: center;
+            padding: 28px 16px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .week-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            .week-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+    </style>
 </head>
 <body>
-
 <div class="page-container">
 
     <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
@@ -55,82 +202,112 @@
             </button>
         </header>
 
-        <div class="dashboard-grid">
-
-            <div class="card">
-                <h3 class="card-title">Quick Start</h3>
-                <div class="workout-actions">
-                    <form th:action="@{/workouts/start}" method="post" class="action-form">
-                        <button class="workout-btn empty-btn">
-                            <div class="icon-box"><i class="fa-solid fa-play"></i></div>
-                            <div class="text-box">
-                                <span class="main-text">Start Empty</span>
-                                <span class="sub-text">No template</span>
-                            </div>
-                        </button>
-                    </form>
-
-                    <div class="template-select-wrapper">
-                        <button type="button" class="workout-btn template-btn" onclick="toggleTemplateDropdown()">
-                            <div class="icon-box"><i class="fa-solid fa-list-check"></i></div>
-                            <div class="text-box">
-                                <span class="main-text">From Template</span>
-                                <span class="sub-text">Select & Start</span>
-                            </div>
-                            <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
-                        </button>
-
-                        <div id="templateDropdown" class="template-dropdown-menu">
-                            <div th:if="${#lists.isEmpty(templates)}" class="dropdown-item empty">
-                                <span>No templates yet.</span>
-                                <a href="/templates/create" class="create-link">Create one?</a>
-                            </div>
-
-                            <div th:each="tpl : ${templates}">
-                                <form th:action="@{/workouts/start}" method="post">
-                                    <input type="hidden" name="templateId" th:value="${tpl.id}">
-
-                                    <button type="submit" class="dropdown-item">
-                                        <span class="tpl-name" th:text="${tpl.name}">Template Name</span>
-                                        <i class="fa-solid fa-play play-icon"></i>
-                                    </button>
-                                </form>
-                            </div>
-
-                            <a href="/templates" class="dropdown-footer-link">Manage Templates</a>
-                        </div>
-                    </div>
+        <div class="dashboard-shell">
+            <section class="dashboard-card">
+                <h3 class="dashboard-title">Weekly Calendar</h3>
+                <div class="week-grid" id="weekGrid">
+                    <button type="button"
+                            class="day-btn"
+                            th:each="date : ${dashboardData.weekDates}"
+                            th:attr="data-date=${date}"
+                            th:classappend="${date.equals(dashboardData.today)} ? ' today active' : ''">
+                        <span class="weekday" th:text="${#strings.substring(date.dayOfWeek.name(), 0, 3)}">MON</span>
+                        <span class="day-number" th:text="${date.dayOfMonth}">1</span>
+                    </button>
                 </div>
-            </div>
+            </section>
 
-            <div class="card full-width-card">
-                <h3 class="card-title">Last Workout</h3>
-                <div class="empty-state">
-                    <p>No activity recorded yet.</p>
-                </div>
-            </div>
-
+            <section class="dashboard-card">
+                <h3 class="dashboard-title" id="selectedDayTitle">Plan</h3>
+                <div id="dayContent" class="day-content"></div>
+            </section>
         </div>
     </main>
 </div>
 
 <script th:src="@{/js/menu-toggle.js}"></script>
-<script>
-    function toggleTemplateDropdown() {
-        const dropdown = document.getElementById('templateDropdown');
-        const btn = document.querySelector('.template-btn');
+<script th:inline="javascript">
+    const dashboardData = {
+        today: /*[[${dashboardData.today}]]*/ '',
+        templates: /*[[${dashboardData.templates}]]*/ [],
+        workouts: /*[[${dashboardData.workouts}]]*/ []
+    };
 
-        dropdown.classList.toggle('show');
-        btn.classList.toggle('active');
+    const dayContent = document.getElementById('dayContent');
+    const selectedDayTitle = document.getElementById('selectedDayTitle');
+
+    function getDayKey(dateString) {
+        const date = new Date(dateString + 'T00:00:00');
+        return ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][date.getDay()];
     }
 
-    window.addEventListener('click', function(e) {
-        const wrapper = document.querySelector('.template-select-wrapper');
-        if (!wrapper.contains(e.target)) {
-            document.getElementById('templateDropdown').classList.remove('show');
-            document.querySelector('.template-btn').classList.remove('active');
+    function formatReadableDate(dateString) {
+        return new Date(dateString + 'T00:00:00').toLocaleDateString(undefined, {
+            weekday: 'long',
+            month: 'short',
+            day: 'numeric'
+        });
+    }
+
+    function renderWorkoutCard(workout) {
+        return `
+            <article class="status-card">
+                <h4>${workout.name}</h4>
+                <div class="status-row">
+                    <span class="badge ${workout.active ? 'active' : ''}">${workout.active ? 'In Progress' : 'Completed'}</span>
+                    <span class="badge">${workout.durationMinutes} min</span>
+                    <span class="badge">${workout.totalSets} sets</span>
+                    <span class="badge">${workout.completionPercentage}% complete</span>
+                </div>
+                <div>${workout.muscleGroups || 'No muscle groups recorded'}</div>
+            </article>
+        `;
+    }
+
+    function renderPlannedCards(templates) {
+        return templates.map(template => `
+            <article class="status-card planned-actions">
+                <h4>${template.name}</h4>
+                <div>Planned workout for this day.</div>
+                <form method="post" action="/workouts/start">
+                    <input type="hidden" name="templateId" value="${template.id}">
+                    <button type="submit" class="btn-start">Start Workout</button>
+                </form>
+            </article>
+        `).join('');
+    }
+
+    function renderDay(dateString) {
+        selectedDayTitle.textContent = formatReadableDate(dateString);
+
+        const workoutsForDay = dashboardData.workouts.filter(workout => workout.workoutDate === dateString);
+        if (workoutsForDay.length > 0) {
+            dayContent.innerHTML = renderWorkoutCard(workoutsForDay[workoutsForDay.length - 1]);
+            return;
         }
+
+        const dayKey = getDayKey(dateString);
+        const plannedTemplates = dashboardData.templates.filter(template =>
+            Array.isArray(template.scheduledDays) && template.scheduledDays.includes(dayKey)
+        );
+
+        if (plannedTemplates.length > 0) {
+            dayContent.innerHTML = renderPlannedCards(plannedTemplates);
+            return;
+        }
+
+        dayContent.innerHTML = '<div class="rest-day">Rest Day — no workout scheduled.</div>';
+    }
+
+    document.querySelectorAll('.day-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.day-btn').forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+            renderDay(button.dataset.date);
+        });
     });
+
+    renderDay(dashboardData.today);
 </script>
 
 </body>

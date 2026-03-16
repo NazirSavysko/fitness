@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static fitness.app.project.fitnessapp.utils.MapperUtils.mapList;
@@ -47,6 +48,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = this.workoutTemplateService.getWorkoutTemplateById(templateDTO.id(), email);
 
         workoutTemplate.setName(templateDTO.name());
+        workoutTemplate.setScheduledDays(templateDTO.scheduledDays() == null ? new HashSet<>() : new HashSet<>(templateDTO.scheduledDays()));
         workoutTemplate.getExercises().clear();
         workoutTemplate.getExercises().addAll(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, templateDTO.exercises()));
 
@@ -73,6 +75,7 @@ public final class TemplateFacadeImpl implements TemplateFacade {
         final WorkoutTemplate workoutTemplate = new WorkoutTemplate();
         workoutTemplate.setName(createTemplateDTO.name());
         workoutTemplate.setUser(user);
+        workoutTemplate.setScheduledDays(createTemplateDTO.scheduledDays() == null ? new HashSet<>() : new HashSet<>(createTemplateDTO.scheduledDays()));
         workoutTemplate.setExercises(this.workoutTemplateService.buildTemplateExercises(workoutTemplate, createTemplateDTO.exercises()));
 
         this.workoutTemplateService.saveWorkout(workoutTemplate);

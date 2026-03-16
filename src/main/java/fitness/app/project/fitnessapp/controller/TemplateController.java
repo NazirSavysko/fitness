@@ -13,10 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DayOfWeek;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @AllArgsConstructor
@@ -50,9 +52,10 @@ public final class TemplateController {
     @GetMapping("/create")
     public String getCreatePage(final Model model) {
         final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
-        final CreateTemplateDTO formDto = new CreateTemplateDTO("", new ArrayList<>());
+        final CreateTemplateDTO formDto = new CreateTemplateDTO("", Set.of(), new ArrayList<>());
         model.addAttribute("templateDto", formDto);
         model.addAttribute("exercises", exercises);
+        model.addAttribute("weekDays", DayOfWeek.values());
 
         return "workout-templates/create";
     }
@@ -66,6 +69,7 @@ public final class TemplateController {
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
             model.addAttribute("exercises", exercises);
+            model.addAttribute("weekDays", DayOfWeek.values());
             model.addAttribute("errors", result.getAllErrors());
 
             return "workout-templates/create";
@@ -84,6 +88,7 @@ public final class TemplateController {
         final UpdateTemplateDTO updateTemplateDTO = new UpdateTemplateDTO(
                 templateDTO.id(),
                 templateDTO.name(),
+                templateDTO.scheduledDays(),
                 templateDTO.exercises().stream()
                         .sorted(ORDER_INDEX_COMPARATOR)
                         .map(exercise -> new TemplateExerciseConfigDTO(
@@ -96,6 +101,7 @@ public final class TemplateController {
 
         model.addAttribute("UpdateTemplateDto", updateTemplateDTO);
         model.addAttribute("exercises", exercises);
+        model.addAttribute("weekDays", DayOfWeek.values());
 
         return "workout-templates/update";
     }
@@ -107,6 +113,7 @@ public final class TemplateController {
         if (result.hasErrors()) {
             final List<TemplateExerciseDTO> exercises = this.templateFacade.getExerciseDefinitions();
             model.addAttribute("exercises", exercises);
+            model.addAttribute("weekDays", DayOfWeek.values());
 
 
             return "workout-templates/update";

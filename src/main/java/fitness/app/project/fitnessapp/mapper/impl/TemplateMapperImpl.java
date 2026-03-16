@@ -22,6 +22,7 @@ public class TemplateMapperImpl implements TemplateWorkoutMapper {
         return new GetTemplateDTO(
                 workoutTemplate.getId(),
                 workoutTemplate.getName(),
+                workoutTemplate.getScheduledDays(),
                 mapList(workoutTemplate.getExercises().stream()
                                 .sorted(Comparator.comparing(templateExercise -> templateExercise.getOrderIndex(), Comparator.nullsLast(Integer::compareTo)))
                                 .toList(),

@@ -1,12 +1,16 @@
 package fitness.app.project.fitnessapp.dto;
 
-public record WorkoutHistoryCardDTO(
+import java.time.LocalDate;
+
+public record DashboardWorkoutDTO(
         Integer sessionId,
         String name,
+        LocalDate workoutDate,
         String date,
         long durationMinutes,
         int totalSets,
         String muscleGroups,
-        Integer completionPercentage
+        Integer completionPercentage,
+        boolean active
 ) {
 }

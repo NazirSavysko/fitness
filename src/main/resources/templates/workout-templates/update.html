@@ -67,6 +67,16 @@
                            placeholder="e.g., Upper Body Power">
                     <div class="field-error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">Scheduled Days</label>
+                    <div class="day-selector">
+                        <label class="day-chip" th:each="day : ${weekDays}">
+                            <input type="checkbox" th:field="*{scheduledDays}" th:value="${day.name()}">
+                            <span th:text="${#strings.substring(day.name(), 0, 3)}">MON</span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <div class="card">

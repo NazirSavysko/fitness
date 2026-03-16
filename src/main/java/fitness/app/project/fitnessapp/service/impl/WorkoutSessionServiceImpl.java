@@ -26,6 +26,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,13 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
     @Override
     @Transactional
     public Integer startWorkout(final Integer templateId, final String userEmail) {
+        final LocalDate today = LocalDate.now();
+        final LocalDateTime startOfDay = today.atStartOfDay();
+        final LocalDateTime endOfDay = today.plusDays(1).atStartOfDay().minusNanos(1);
+        if (this.workoutSessionRepository.existsByUser_EmailAndStartedAtBetween(userEmail, startOfDay, endOfDay)) {
+            throw new IllegalStateException("Only one workout allowed per day");
+        }
+
         final WorkoutTemplate workoutTemplate = templateId == null
                 ? null
                 : this.workoutTemplateService.getWorkoutTemplateById(templateId, userEmail);
@@ -255,5 +263,11 @@ public final class WorkoutSessionServiceImpl implements WorkoutSessionService {
         }
 
         return workoutSession;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<WorkoutSession> getSessionsForDateRange(final String userEmail, final LocalDateTime start, final LocalDateTime end) {
+        return this.workoutSessionRepository.findAllByUser_EmailAndStartedAtBetweenOrderByStartedAtAsc(userEmail, start, end);
     }
 }

@@ -8,8 +8,8 @@ import fitness.app.project.fitnessapp.dto.SessionExerciseDTO;
 import fitness.app.project.fitnessapp.dto.UpdateExerciseSetDTO;
 import fitness.app.project.fitnessapp.dto.WorkoutHistoryCardDTO;
 import fitness.app.project.fitnessapp.facade.WorkoutFacade;
-import fitness.app.project.fitnessapp.model.ExerciseSet;
 import fitness.app.project.fitnessapp.model.SessionExercise;
+import fitness.app.project.fitnessapp.model.TemplateExercise;
 import fitness.app.project.fitnessapp.model.WorkoutSession;
 import fitness.app.project.fitnessapp.service.WorkoutSessionService;
 import lombok.AllArgsConstructor;
@@ -65,7 +65,8 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                         workoutSession.getStartedAt().format(DATE_TIME_DISPLAY_FORMAT),
                         calculateDurationInMinutes(workoutSession),
                         calculateTotalSets(workoutSession),
-                        calculateMuscleGroups(workoutSession)
+                        calculateMuscleGroups(workoutSession),
+                        calculateCompletionPercentage(workoutSession)
                 ));
     }
 
@@ -125,5 +126,30 @@ public final class WorkoutFacadeImpl implements WorkoutFacade {
                 .map(exerciseDefinition -> exerciseDefinition.getMuscleGroup().trim())
                 .filter(muscleGroup -> !muscleGroup.isEmpty())
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
+    }
+
+    private static int calculateCompletionPercentage(final WorkoutSession workoutSession) {
+        if (workoutSession.getSourceTemplate() == null || workoutSession.getSourceTemplate().getExercises() == null) {
+            return 0;
+        }
+        final int expectedSets = workoutSession.getSourceTemplate().getExercises().stream()
+                .mapToInt(WorkoutFacadeImpl::countExpectedSets)
+                .sum();
+        if (expectedSets <= 0 || workoutSession.getExercises() == null) {
+            return 0;
+        }
+        final long completedSets = workoutSession.getExercises().stream()
+                .map(SessionExercise::getSets)
+                .filter(sets -> sets != null)
+                .flatMap(List::stream)
+                .filter(set -> set.getWeight() != null && set.getReps() != null)
+                .count();
+        return (int) ((completedSets * 100) / expectedSets);
+    }
+
+    private static int countExpectedSets(final TemplateExercise templateExercise) {
+        final int normalSets = templateExercise.getNormalSets() == null ? 0 : templateExercise.getNormalSets();
+        final int failureSets = templateExercise.getFailureSets() == null ? 0 : templateExercise.getFailureSets();
+        return normalSets + failureSets;
     }
 }

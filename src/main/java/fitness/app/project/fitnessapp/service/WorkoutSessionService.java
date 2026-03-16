@@ -7,6 +7,7 @@ import fitness.app.project.fitnessapp.model.WorkoutSession;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface WorkoutSessionService {
@@ -24,4 +25,6 @@ public interface WorkoutSessionService {
     Page<WorkoutSession> getHistory(String userEmail, Long templateId, String dateRange, String sortBy, Pageable pageable);
 
     WorkoutSession getWorkoutDetails(Integer sessionId, String userEmail);
+
+    List<WorkoutSession> getSessionsForDateRange(String userEmail, LocalDateTime start, LocalDateTime end);
 }

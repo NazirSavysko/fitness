@@ -23,10 +23,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -80,6 +82,19 @@ class WorkoutSessionServiceImplTest {
         assertEquals(1, created.getExercises().get(1).getOrderIndex());
         assertEquals(7, created.getExercises().get(1).getExercise().getId());
         assertEquals(1, created.getExercises().get(1).getSets().size());
+    }
+
+    @Test
+    void startWorkoutThrowsWhenWorkoutAlreadyExistsToday() {
+        when(workoutSessionRepository.existsByUser_EmailAndStartedAtBetween(any(), any(), any())).thenReturn(true);
+
+        final IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> workoutSessionService.startWorkout(10, "user@mail.com")
+        );
+
+        assertEquals("Only one workout allowed per day", exception.getMessage());
+        verify(workoutSessionRepository, never()).save(any(WorkoutSession.class));
     }
 
     @Test
