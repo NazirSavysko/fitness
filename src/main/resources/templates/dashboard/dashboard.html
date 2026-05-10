@@ -308,6 +308,7 @@
             card.method = 'post';
             card.action = '/workouts/start';
             card.className = `template-card scheduled${completed ? ' locked' : ''}`;
+            card.autocomplete = 'off';
 
             const cardButton = document.createElement('button');
             cardButton.type = 'submit';
