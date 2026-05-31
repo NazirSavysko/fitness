@@ -114,9 +114,9 @@
                              class="set-row"
                              th:attr="data-set-id=${set.id}">
                             <div class="set-number" th:text="${set.setNumber}">1</div>
-                            <div><input type="number" step="any" min="0" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="0.0" th:attr="aria-label='Weight for set ' + ${set.setNumber}"></div>
-                            <div><input type="number" min="0" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="0" th:attr="aria-label='Reps for set ' + ${set.setNumber}"></div>
-                            <div><input type="number" min="0" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60" th:attr="aria-label='Rest seconds for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" step="any" min="1" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="1.0" th:attr="aria-label='Weight for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="1" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="1" th:attr="aria-label='Reps for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="1" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60" th:attr="aria-label='Rest seconds for set ' + ${set.setNumber}"></div>
                             <div>
                                 <span class="set-badge"
                                       th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
