@@ -2,6 +2,7 @@ package fitness.app.project.fitnessapp.exception;
 
 import com.nimbusds.jose.JOSEException;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -28,11 +29,17 @@ class ExceptionControllerAdvice {
         return "error/500";
     }
 
-    @ExceptionHandler({UsernameNotFoundException.class})
-    public String handleUsernameNotFoundException(final @NonNull UsernameNotFoundException ex,final HttpServletResponse response) {
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public String handleUsernameNotFoundException(final UsernameNotFoundException ex, final HttpServletResponse response) {
         LOGGER.error("User not found: {}", ex.getMessage());
-        response.setStatus(SC_NOT_FOUND);
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        return "error/404";
+    }
 
+    @ExceptionHandler({WorkoutTemplateNotFoundException.class, EntityNotFoundException.class})
+    public String handleEntityNotFoundException(final RuntimeException ex, final HttpServletResponse response) {
+        LOGGER.error("Entity not found: {}", ex.getMessage());
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         return "error/404";
     }
 
