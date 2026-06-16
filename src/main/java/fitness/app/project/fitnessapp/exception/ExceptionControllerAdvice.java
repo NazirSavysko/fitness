@@ -43,7 +43,7 @@ class ExceptionControllerAdvice {
         return "error/404";
     }
 
-    // 3. Ошибка почты -> Специальная страница
+
     @ExceptionHandler(MessagingException.class)
     public String handleMessagingException(final MessagingException ex, HttpServletResponse response) {
         LOGGER.error("Error sending email: {}", ex.getMessage(), ex);
