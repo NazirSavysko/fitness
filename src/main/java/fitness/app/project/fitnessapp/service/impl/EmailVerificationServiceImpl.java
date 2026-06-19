@@ -7,6 +7,7 @@ import fitness.app.project.fitnessapp.model.EmailVerification;
 import fitness.app.project.fitnessapp.repository.EmailVerificationRepository;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import static java.time.LocalDateTime.now;
 import static java.util.stream.IntStream.range;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public final class EmailVerificationServiceImpl implements EmailVerificationService {
     private static final String VERIFICATION_EMAIL_SUBJECT = "Your Verification Code";
     private static final String VERIFICATION_EMAIL_TEMPLATE = "email/verification-code";
