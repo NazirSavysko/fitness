@@ -74,11 +74,12 @@
         </div>
 
         <div class="active-workout-grid" th:if="${!#lists.isEmpty(activeWorkout.exercises)}">
+            <!-- Sidebar -->
             <div class="exercises-sidebar">
                 <h3 class="sidebar-header">Exercises</h3>
                 <div class="exercise-nav-list">
                     <div th:each="exercise, iterStat : ${activeWorkout.exercises}"
-                         class="exercise-nav-list"
+                         class="exercise-nav-item"
                          th:onclick="'switchTab(' + ${iterStat.index} + ')'"
                          th:id="'nav-item-' + ${iterStat.index}"
                          th:classappend="${iterStat.index == 0} ? 'active'">
@@ -88,6 +89,7 @@
                 </div>
             </div>
 
+            <!-- Details Panel -->
             <div class="exercise-detail-container">
                 <div th:each="exercise, iterStat : ${activeWorkout.exercises}"
                      class="exercise-tab-content"
@@ -112,31 +114,9 @@
                              class="set-row"
                              th:attr="data-set-id=${set.id}">
                             <div class="set-number" th:text="${set.setNumber}">1</div>
-
-                            <div>
-                                <input type="number" step="any" min="0" name="weight"
-                                       class="form-input set-value-input set-weight-input"
-                                       th:value="${set.weight != null ? set.weight : '0'}"
-                                       placeholder="0.0"
-                                       th:attr="aria-label='Weight for set ' + ${set.setNumber}">
-                            </div>
-
-                            <div>
-                                <input type="number" min="0" name="reps"
-                                       class="form-input set-value-input set-reps-input"
-                                       th:value="${set.reps != null ? set.reps : '0'}"
-                                       placeholder="0"
-                                       th:attr="aria-label='Reps for set ' + ${set.setNumber}">
-                            </div>
-
-                            <div>
-                                <input type="number" min="0" name="restSeconds"
-                                       class="form-input set-value-input set-rest-input"
-                                       th:value="${set.restSeconds != null ? set.restSeconds : '0'}"
-                                       placeholder="0"
-                                       th:attr="aria-label='Rest seconds for set ' + ${set.setNumber}">
-                            </div>
-
+                            <div><input type="number" step="any" min="1" name="weight" class="form-input set-value-input set-weight-input" th:value="${set.weight}" placeholder="1.0" th:attr="aria-label='Weight for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="1" name="reps" class="form-input set-value-input set-reps-input" th:value="${set.reps}" placeholder="1" th:attr="aria-label='Reps for set ' + ${set.setNumber}"></div>
+                            <div><input type="number" min="1" name="restSeconds" class="form-input set-value-input set-rest-input" th:value="${set.restSeconds}" placeholder="60" th:attr="aria-label='Rest seconds for set ' + ${set.setNumber}"></div>
                             <div>
                                 <span class="set-badge"
                                       th:classappend="${set.setType != null ? set.setType.name().toLowerCase() + '-badge' : ''}"
