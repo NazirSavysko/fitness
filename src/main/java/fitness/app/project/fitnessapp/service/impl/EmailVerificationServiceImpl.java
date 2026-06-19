@@ -1,16 +1,14 @@
 package fitness.app.project.fitnessapp.service.impl;
 
+import com.resend.Resend;
+import com.resend.services.emails.model.CreateEmailOptions;
 import fitness.app.project.fitnessapp.exception.InvalidVerificationCodeException;
 import fitness.app.project.fitnessapp.model.EmailVerification;
 import fitness.app.project.fitnessapp.repository.EmailVerificationRepository;
 import fitness.app.project.fitnessapp.service.EmailVerificationService;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.jspecify.annotations.NonNull;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -32,35 +30,51 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final TemplateEngine templateEngine;
-    private final JavaMailSender mailSender;
+
+    // Беремо ключ та адресу відправника з конфігурації
+    @Value("${resend.api.key}")
+    private String apiKey;
+
+//    @Value("${mail.from:Bank Emulator <no-reply@bank-emulator.app>}")
+//    private String fromEmail;
 
     @Override
-    @SneakyThrows(MessagingException.class)
     public void sendVerificationEmail(final String email) {
         final EmailVerification emailVerification = this.createEmailVerificationRecord(email);
-        this.saveVerificationRecord(emailVerification);
 
-        final MimeMessage mimeMessage = mailSender.createMimeMessage();
-        final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        this.deleteVerificationRecordByEmail(email);
+        this.saveVerificationRecord(emailVerification);
 
         final Context context = new Context();
         context.setVariable("code", emailVerification.getVerificationCode());
-
         final String htmlContent = templateEngine.process(VERIFICATION_EMAIL_TEMPLATE, context);
 
-        helper.setTo(emailVerification.getEmail());
-        helper.setSubject(VERIFICATION_EMAIL_SUBJECT);
-        helper.setText(htmlContent, true);
+        final Resend resend = new Resend(apiKey);
 
-        mailSender.send(mimeMessage);
+        try {
+            final CreateEmailOptions sendEmailRequest = CreateEmailOptions.builder()
+                    .from("Fitness <no-reply@bank-emulator.app>")
+                    .to(emailVerification.getEmail())
+                    .subject(VERIFICATION_EMAIL_SUBJECT)
+                    .html(htmlContent)
+                    .build();
+
+            // Відправляємо через HTTPS
+            resend.emails().send(sendEmailRequest);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Помилка відправки листа через Resend API", e);
+        }
     }
 
     @Override
     public void verifyEmailCode(final String email, final String code) {
-        this.emailVerificationRepository.findByEmail((email))
-                .filter(record ->
-                        record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
+        this.emailVerificationRepository.findByEmail(email)
+                .filter(record -> record.getVerificationCode().equals(code) && !record.getExpiryDate().isBefore(now()))
                 .orElseThrow(() -> new InvalidVerificationCodeException(VERIFICATION_CODE_INVALID_ERROR));
+
+        this.deleteVerificationRecordByEmail(email);
     }
 
     @Override
@@ -77,11 +91,9 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     @Override
     public @NonNull EmailVerification createEmailVerificationRecord(final String email) {
         final EmailVerification emailVerification = new EmailVerification();
-
         emailVerification.setEmail(email);
         emailVerification.setExpiryDate(now().plusMinutes(VERIFICATION_CODE_EXPIRY_MINUTES));
         emailVerification.setVerificationCode(this.generateVerificationCode());
-
         return emailVerification;
     }
 
@@ -89,6 +101,7 @@ public final class EmailVerificationServiceImpl implements EmailVerificationServ
     public String generateVerificationCode() {
         return range(0, VERIFICATION_CODE_LENGTH)
                 .map(i -> (int) (Math.random() * 10))
-                .mapToObj(String::valueOf).collect(Collectors.joining());
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining());
     }
 }
